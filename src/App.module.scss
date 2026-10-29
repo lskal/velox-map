@@ -1,0 +1,9 @@
+@use './styles/breakpoints' as bp;
+
+.app {
+	padding: var(--space-4);
+
+	@include bp.up(md) {
+		padding: var(--space-8);
+	}
+}

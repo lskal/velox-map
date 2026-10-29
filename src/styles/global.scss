@@ -1,0 +1,28 @@
+:root {
+	--color-bg: #ffffff;
+	--color-text: #1a1a1a;
+	--space-4: 1rem;
+	--space-8: 2rem;
+
+	color-scheme: light dark;
+	font-family: system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-bg: #121212;
+		--color-text: #f0f0f0;
+	}
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background: var(--color-bg);
+	color: var(--color-text);
+}
