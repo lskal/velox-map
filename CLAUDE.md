@@ -1,7 +1,7 @@
 # Velox Map - notes for Claude
 
 Personal, non-commercial learning project: a web map of official speed-camera
-data (IT, FR, NO, SE, PL, ES). Max is learning: explain the why, keep steps small.
+data (IT, FR, NO, SE, PL, ES).
 
 ## Stack
 
@@ -39,3 +39,13 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
   notice is always visible.
 - No cookies, no analytics.
 - No API keys in code or docs (use Vercel env vars).
+
+## Project docs (private repo, read when relevant)
+
+Decisions are already written - check before proposing something new:
+
+- `velox-map-design/docs/plan.md` - all decisions: scope, stack, data flow, data shape (types), UI, tests
+- `velox-map-design/docs/data-sources.md` - every source: endpoint, fields, gotchas, normaliser examples
+- `velox-map-design/docs/ui-implementation-process.md` - UI steps and checklist per step
+- `velox-map-design/docs/handoff.md` - current status and how we work
+  If a spec contradicts a doc, ask which one is right.
