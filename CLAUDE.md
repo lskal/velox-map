@@ -1,4 +1,4 @@
-# Velox Map – notes for Claude
+# Velox Map - notes for Claude
 
 Personal, non-commercial learning project: a web map of official speed-camera
 data (IT, FR, NO, SE, PL, ES). Max is learning: explain the why, keep steps small.
@@ -16,7 +16,7 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
 - Read the spec first. Write `plan.md` + `tasks.md` and **wait for approval
   before writing any code**.
 - One task at a time. Don't add anything that isn't in the spec.
-- If the spec is unclear, ask – don't guess.
+- If the spec is unclear, ask - don't guess.
 - Simple over clever: smallest solution that works, no abstractions "for later".
 
 ## Design
