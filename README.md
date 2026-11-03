@@ -19,21 +19,23 @@ It uses **official data only**. Italy is the one exception: the official registr
 
 ## Data sources
 
-| Country                            | Source                                                                                                                                         | Licence                                          |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| 🇮🇹 Italy                           | Ministero delle Infrastrutture e dei Trasporti - national registry of speed-enforcement devices ([velox.mit.gov.it](https://velox.mit.gov.it)) | No licence stated - reuse confirmation requested |
-| 🇫🇷 France                          | Ministère de l'Intérieur - fixed speed cameras ([data.gouv.fr](https://www.data.gouv.fr/datasets/liste-des-radars-fixes-en-france/))           | Licence Ouverte 2.0                              |
-| 🇳🇴 Norway                          | Statens vegvesen - NVDB (Nasjonal vegdatabank)                                                                                                 | NLOD                                             |
-| 🇸🇪 Sweden                          | Trafikverket - Open API                                                                                                                        | CC0 1.0                                          |
-| 🇵🇱 Poland                          | GITD - CANARD device map ([canard.gitd.gov.pl](https://www.canard.gitd.gov.pl/cms/o-nas/mapa-urzadzen))                                        | No licence stated - reuse confirmation requested |
-| 🇪🇸 Spain                           | DGT - National Access Point ([nap.dgt.es](https://nap.dgt.es/en/dataset/radares-fijos-dgt))                                                    | CC BY                                            |
-| 🇮🇹 Italy (community layer)         | © OpenStreetMap contributors                                                                                                                   | ODbL 1.0                                         |
-| Base map                           | [OpenFreeMap](https://openfreemap.org), © OpenStreetMap contributors                                                                           | ODbL 1.0                                         |
-| Italian municipalities (reference) | ISTAT - administrative boundaries                                                                                                              | CC BY                                            |
+| Country                            | Source                                                                                                                                                     | Licence                                                  |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| 🇮🇹 Italy                           | Ministero delle Infrastrutture e dei Trasporti - national registry of speed-enforcement devices ([velox.mit.gov.it](https://velox.mit.gov.it/dispositivi)) | CC BY 3.0 IT ([MIT legal notes](https://www.mit.gov.it)) |
+| 🇫🇷 France                          | Ministère de l'Intérieur - fixed speed cameras ([data.gouv.fr](https://www.data.gouv.fr/datasets/liste-des-radars-fixes-en-france/))                       | Licence Ouverte 2.0                                      |
+| 🇳🇴 Norway                          | Statens vegvesen - NVDB (Nasjonal vegdatabank)                                                                                                             | NLOD                                                     |
+| 🇸🇪 Sweden                          | Trafikverket - Open API                                                                                                                                    | CC0 1.0                                                  |
+| 🇵🇱 Poland                          | GITD - CANARD device map ([canard.gitd.gov.pl](https://www.canard.gitd.gov.pl/cms/o-nas/mapa-urzadzen))                                                    | Free reuse without consent (site terms); CC BY 4.0 PL    |
+| 🇪🇸 Spain                           | DGT - National Access Point ([nap.dgt.es](https://nap.dgt.es/en/dataset/radares-fijos-dgt))                                                                | CC BY                                                    |
+| 🇮🇹 Italy (community layer)         | © OpenStreetMap contributors                                                                                                                               | ODbL 1.0                                                 |
+| Base map                           | [OpenFreeMap](https://openfreemap.org), © OpenStreetMap contributors                                                                                       | ODbL 1.0                                                 |
+| Italian municipalities (reference) | ISTAT - administrative boundaries                                                                                                                          | CC BY                                                    |
 
 Norway: _Inneholder data under norsk lisens for offentlige data (NLOD) tilgjengeliggjort av Statens vegvesen._
 
-Spain and Catalonia / Basque Country: the DGT feed does not cover these two regions, which have their own traffic authorities.
+Italy: positions are derived from the municipality of each registered device (the registry has no coordinates) - _dati elaborati_.
+
+Spain: the DGT feed does not cover Catalonia and the Basque Country, which have their own traffic authorities.
 
 ## Licence
 
