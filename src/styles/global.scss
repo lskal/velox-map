@@ -17,3 +17,10 @@ h1,
 h2 {
 	font-family: var(--font-display);
 }
+
+// Focus ring - DESIGN.md chapter 4. :focus-visible = keyboard and assistive tech,
+// so a mouse click doesn't leave a ring behind.
+:focus-visible {
+	outline: 2px solid var(--color-accent);
+	outline-offset: 2px;
+}
