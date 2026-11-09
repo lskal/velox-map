@@ -1,0 +1,90 @@
+@use '../../styles/breakpoints' as bp;
+
+// Layout values from the canvas (Main.dc.html, LandingMobile.dc.html):
+// height 56 / 64px. Not tokens (VXM-002 plan D3).
+
+.header {
+	border-bottom: 1px solid var(--color-border-subtle);
+	background: var(--color-canvas);
+}
+
+.inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-4);
+	height: 56px;
+	padding: 0 var(--space-3) 0 var(--space-4);
+
+	@include bp.up(md) {
+		height: 64px;
+		padding: 0 var(--space-6);
+	}
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+	color: var(--color-text);
+	text-decoration: none;
+}
+
+.wordmark {
+	font-family: var(--font-display);
+	font-size: var(--font-size-logo);
+	letter-spacing: var(--letter-spacing-logo);
+	line-height: 1;
+}
+
+// Desktop controls: hidden on mobile (display: none also hides them from screen readers)
+.controls {
+	display: none;
+
+	@include bp.up(md) {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+	}
+}
+
+// Icon button - DESIGN.md chapter 6
+.iconButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--touch-target);
+	height: var(--touch-target);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-control);
+	background: var(--color-panel);
+	color: var(--color-text-2);
+	cursor: pointer;
+
+	&:hover {
+		color: var(--color-accent);
+	}
+}
+
+// Select - DESIGN.md chapter 6 ("like Button + chevron"; the native chevron for now)
+.select {
+	height: var(--touch-target);
+	padding: 0 var(--space-3);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-control);
+	background: var(--color-panel);
+	color: var(--color-text);
+	font-size: var(--font-size-body-s);
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--color-accent);
+	}
+}
+
+// Burger: mobile only. Must stay after .iconButton: same specificity, so the later rule wins.
+.burger {
+	@include bp.up(md) {
+		display: none;
+	}
+}
