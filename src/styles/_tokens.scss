@@ -80,10 +80,12 @@
 	--radius-control: 8px;
 	--radius-pill: 9999px;
 	--touch-target: 44px;
+	--size-logo-icon: 26px;
 
 	@include bp.up(md) {
 		--font-size-body: 1rem; // 16px
 		--line-height-body: 1.625; // 26px
 		--font-size-logo: 1.375rem; // 22px
+		--size-logo-icon: 30px;
 	}
 }
