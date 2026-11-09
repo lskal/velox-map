@@ -1,14 +1,19 @@
 @use 'tokens';
+@use 'fonts';
 @use 'reset';
 
 :root {
 	--space-4: 1rem;
 	--space-8: 2rem;
-
-	font-family: system-ui, sans-serif;
 }
 
 body {
 	background: var(--color-canvas);
 	color: var(--color-text);
+	font-family: var(--font-body);
+}
+
+h1,
+h2 {
+	font-family: var(--font-display);
 }

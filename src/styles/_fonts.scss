@@ -1,0 +1,12 @@
+// Self-hosted fonts - DESIGN.md chapter 3.
+// Roboto Flex comes from Fontsource (imported in main.tsx).
+// Tiny5 Duo isn't on Fontsource, so it's hosted by hand: one woff2, weight 400,
+// Latin + Latin Extended. Licence: SIL OFL 1.1 (../assets/fonts/OFL-tiny5-duo.txt).
+
+@font-face {
+	font-family: 'Tiny5 Duo';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('../assets/fonts/tiny5-duo-400.woff2') format('woff2');
+}
