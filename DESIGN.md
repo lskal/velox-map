@@ -1,13 +1,13 @@
-# Velox Map – Design system
+# Velox Map - Design system
 
-Final design as of **2026-10-30**. Source: the Claude design canvas "Velox Map – UI design" (tokens, landing, map, about; desktop 1440 px + mobile 390 px; dark + light) and its "Map interactions" row (region views, detail cards, loading, error – dark desktop). This file is the spec the code is built from. Change it first, then the code.
+Final design as of **2026-10-30**. Source: the Claude design canvas "Velox Map - UI design" (tokens, landing, map, about; desktop 1440 px + mobile 390 px; dark + light) and its "Map interactions" row (region views, detail cards, loading, error - dark desktop). This file is the spec the code is built from. Change it first, then the code.
 
 ---
 
 ## 1. Principles
 
 - **Calm, not alarmist.** A reference viewer for official open data, not a radar warner. No sirens, flashes, warning triangles, speedometers or "danger" reds as brand colours.
-- **Information only.** No user position, no navigation, no alerts. The notice "Information only – not for use while driving" is visible on every page.
+- **Information only.** No user position, no navigation, no alerts. The notice "Information only - not for use while driving" is visible on every page.
 - **Dark first, light equal.** Dark is the default look. Light is a full theme, not an afterthought. Both pass WCAG AA.
 - **Flat and precise.** Tonal layers + 1 px borders instead of shadows. Only floating cards get a shadow.
 - **Two fonts with strict roles.** A pixel font for identity, a variable sans for everything you read.
@@ -49,7 +49,7 @@ Named by **role**, not by value. In CSS: custom properties on `:root` (dark) and
 | `map-country`        | `#1C2533`               | `#FFFFFF`                                                            | the six supported countries                         |
 | `map-country-border` | `#64748B`               | `#64748B`                                                            | border of supported countries (3:1 against the sea) |
 | `map-country-off`    | `#131A22`               | `#EEF2F6`                                                            | all other countries (not focusable)                 |
-| `map-spotlight`      | `rgba(56,189,248,0.18)` | `rgba(2,132,199,0.12)` (not on the canvas yet – tune in the browser) | hover glow, clipped to the country shape            |
+| `map-spotlight`      | `rgba(56,189,248,0.18)` | `rgba(2,132,199,0.12)` (not on the canvas yet - tune in the browser) | hover glow, clipped to the country shape            |
 
 ### Map markers
 
@@ -64,7 +64,7 @@ Each marker has its **own shape** (WCAG 1.4.1: never colour alone) and a halo (d
 | OpenStreetMap report (not official)                                                 | hollow dashed ring (`2.4 2`) with "?"                                                                                                                | `#E2E8F0` on `#0B0F14`                                       | `#334155` on `#FFFFFF`                         |
 | Comune indicator (Italy)                                                            | pill 22 px high, building icon + count                                                                                                               | border `#10B981`, text `#6EE7B7`, bg `rgba(16,185,129,0.14)` | border `#059669`, text `#047857`, bg `#ECFDF5` |
 | **Approximate position** (Italy: derived from road + km, address or motorway exits) | the type's own shape + a **dashed halo** (points: ring r 15, 1.5 px, dash `3 2.5`, fill 12%; sections: 14 px band at 22% under the line)             | halo in the marker's colour                                  | same                                           |
-| **May not be active** (NO, SE, ES: installation site or cabin)                      | the type's own shape + a **grey dotted ring** (r 14, 2 px, dash `1 3`, round caps, no fill) – different pattern and colour from the approximate halo | ring `#94A3B8`                                               | ring `#64748B`                                 |
+| **May not be active** (NO, SE, ES: installation site or cabin)                      | the type's own shape + a **grey dotted ring** (r 14, 2 px, dash `1 3`, round caps, no fill) - different pattern and colour from the approximate halo | ring `#94A3B8`                                               | ring `#64748B`                                 |
 | Cluster                                                                             | circle 34 px + 4 px soft ring, count inside                                                                                                          | `#475569`, text `#FFFFFF`                                    | `#475569`, text `#FFFFFF`                      |
 
 - **Speed = yellow (decided 2026-10-30).** It used to share the accent cyan, so a speed camera looked like a selected control. Yellow has the highest contrast of the coloured candidates checked (yellow, lime, blue, indigo, pink): at least 10.1:1 on the dark map and 3.9:1 on the light map (`#A16207`, worst case on the light sea). Under colour-blindness simulation it stays apart from the accent; it gets closest to the orange section line, which has a different shape.
@@ -73,14 +73,14 @@ Each marker has its **own shape** (WCAG 1.4.1: never colour alone) and a halo (d
 - **Card fields are dynamic:** each country passes its own detail rows (speed limit, direction, bearing, road, km…). Empty fields are **hidden**, never shown as "Not given". Sweden has no device type → every point is a speed camera.
 - **Same position:** devices with identical coordinates are grouped in code before they reach the map (one marker, the card lists all of them).
 - **Later (not designed yet):** French sections known by one point only; PL/ES sections known by start + end only (path not known); areas not covered by a source (ES: Catalonia, Basque Country). See `plan.md` → UI → Later.
-- **Map labels – spec to check and test (2026-11-02):** keep the map clean, show only place names, by zoom band. Names come from the basemap (OpenFreeMap `place` layer), never drawn by us.
+- **Map labels - spec to check and test (2026-11-02):** keep the map clean, show only place names, by zoom band. Names come from the basemap (OpenFreeMap `place` layer), never drawn by us.
     | Zoom band                       | Show                            | Filter idea (OpenMapTiles `place`)        |
     | ------------------------------- | ------------------------------- | ----------------------------------------- |
     | Country (fitted to the country) | region names + national capital | `class = state` or `capital = 2`          |
     | Region                          | main cities (province capitals) | `class = city` (+ `capital` where tagged) |
     | Local                           | smaller towns, later villages   | `class = town` (`village` later)          |
     - Hide all other basemap labels: road numbers, POIs, neighbourhoods. MapLibre drops overlapping labels by itself (most important first).
-    - **Same zoom bands for every country** by default (European countries have similar sizes). Keep a small **per-country override** possible (e.g. NO/SE fit at a lower zoom; region tagging may differ per country) – one config entry, applied with `setLayerZoomRange` when the country loads. Add an override only if a test shows it's needed.
+    - **Same zoom bands for every country** by default (European countries have similar sizes). Keep a small **per-country override** possible (e.g. NO/SE fit at a lower zoom; region tagging may differ per country) - one config entry, applied with `setLayerZoomRange` when the country loads. Add an override only if a test shows it's needed.
     - **Test per country** with the real tiles (Maputnik first, then the app): are regions tagged `state`? Is the capital tagged `capital = 2`? Do the bands fall right at the fitted zoom?
 - **Zoom rule:** at country zoom only **clusters** are shown. Comune indicators and OSM reports appear from **region zoom**. A hint line says so ("Country view: groups only · zoom in to a region for comuni and OSM reports").
 
@@ -108,7 +108,7 @@ Re-check every pair in the accessibility pass (step 9 of `ui-implementation-proc
 | Font                       | Role                                                                                                            | Loading                                                         |
 | -------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | **Tiny5 Duo** (pixel, 400) | logo, H1, H2, country names. Fixed UI text only, **uppercase via CSS**. Never for data, numbers, body or inputs | self-hosted, `font-display: swap`                               |
-| **Roboto Flex** (variable) | everything else: H3–H6, body, controls, tables, captions                                                        | self-hosted, `font-display: swap`, Latin Extended (PL, NO, SV…) |
+| **Roboto Flex** (variable) | everything else: H3-H6, body, controls, tables, captions                                                        | self-hosted, `font-display: swap`, Latin Extended (PL, NO, SV…) |
 
 Fallback stacks (if a web font fails or before it arrives):
 
@@ -146,7 +146,7 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 | H6      | Roboto Flex | 12/16, +0.08em, uppercase | same    | 600     | panel labels ("Legend", "Choose a country"), colour `text-2`       |
 | Body    | Roboto Flex | 16/26                     | 15/24   | 400     | running text, subtitles, About paragraphs, colour `text-body`      |
 | Body S  | Roboto Flex | 14/21                     | 14/21   | 400     | lists, cards, controls, table cells                                |
-| Caption | Roboto Flex | 12/17                     | 12/17   | 400–500 | attribution, dates, footer notice, colour `text-2`                 |
+| Caption | Roboto Flex | 12/17                     | 12/17   | 400-500 | attribution, dates, footer notice, colour `text-2`                 |
 | Logo    | Tiny5 Duo   | 22                        | 19      | 400     | header wordmark (32 for large use)                                 |
 | Country | Tiny5 Duo   | 18/22                     | 18/22   | 400     | country names in lists and the mobile sheet                        |
 | Numbers | Roboto Flex | inherit                   | inherit | 600     | counts, table numbers, dates: `font-variant-numeric: tabular-nums` |
@@ -159,7 +159,7 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 ## 4. Shape, spacing, depth
 
 - **Radius:** 8 px controls · 12 px cards · 16 px sheets (top corners) · pill (`9999px`) for badges, the notice and clusters.
-- **Spacing:** 4 px base – 4, 8, 12, 16, 24, 32, 48.
+- **Spacing:** 4 px base - 4, 8, 12, 16, 24, 32, 48.
 - **Touch targets:** ≥ 44 × 44 px for every button, toggle and link in a list.
 - **Focus ring:** `2px solid accent`, `2px` offset, on every focusable element.
 - **Depth:** canvas → panel → elevated, each with a 1 px `border`. Shadow only on floating cards: `0 10px 25px -5px rgba(0,0,0,0.6), 0 8px 10px -6px rgba(0,0,0,0.4)` (dark); lighter in light mode.
@@ -179,14 +179,14 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 | 768px and up | **desktop**: desktop type sizes, landing = country list + Europe map, full map header   |
 
 - **Mobile first:** base styles are the mobile ones; desktop styles go inside `@media (min-width: 768px)`. The value lives only in `src/styles/_breakpoints.scss`; components use the variable or mixin, never a hard-coded number.
-- **Tablets (768–1023px)** get the desktop layout, not designed on the canvas. Check them in the browser when building the pages (step 8 of `ui-implementation-process.md`); if something looks cramped (e.g. the Europe map next to the list), add a second breakpoint then, only for that component.
+- **Tablets (768-1023px)** get the desktop layout, not designed on the canvas. Check them in the browser when building the pages (step 8 of `ui-implementation-process.md`); if something looks cramped (e.g. the Europe map next to the list), add a second breakpoint then, only for that component.
 
 ### Every page
 
 - **Header (desktop):** logo (icon + "VELOX MAP" wordmark → `/`) + settings. **Settings live in the header and footer**: no settings page.
 - **Header (mobile, decided 2026-11-02):** landing and about = logo + wordmark + **burger** (right); language and theme move into the side menu. Map = logo icon + country selector + burger. The side menu itself is not designed yet (TODO).
 - **Footer:** the notice pill + links. Exact content per page below.
-- **Notice pill:** "Information only – not for use while driving", `notice-*` colours, pill shape. Its **(i)** is a link to the Disclaimer section of `/about` (`/about#disclaimer`): a pop-up would be too long to read.
+- **Notice pill:** "Information only - not for use while driving", `notice-*` colours, pill shape. Its **(i)** is a link to the Disclaimer section of `/about` (`/about#disclaimer`): a pop-up would be too long to read.
 - **Theme toggle:** sun / moon icon button ("Switch to light mode"). Default from `prefers-color-scheme`, user choice in `localStorage`.
 - **Language:** EN / IT.
 
@@ -200,11 +200,11 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 ### Map `/:country`
 
 - **Header (desktop):** logo + country selector (shows "Italy · 4,143") + "OSM reports" toggle (Italy only) + Legend + language + theme toggle.
-- **Header (mobile):** logo + country selector + **burger** ("Open menu") → today a sheet with OSM reports, legend, language, light mode (to be merged with the side menu). OSM switch on mobile – **two options kept, to decide later** (2026-11-02): A) compact "OSM" switch in the header between selector and burger; B) floating "OSM reports" pill at the top right of the map (Italy only). Both are boards on the canvas.
+- **Header (mobile):** logo + country selector + **burger** ("Open menu") → today a sheet with OSM reports, legend, language, light mode (to be merged with the side menu). OSM switch on mobile - **two options kept, to decide later** (2026-11-02): A) compact "OSM" switch in the header between selector and burger; B) floating "OSM reports" pill at the top right of the map (Italy only). Both are boards on the canvas.
 - **Country line:** country name (H1 style on mobile) + "4,143 devices · last update: 21 Oct 2026".
 - **Country note** when needed (Italy: "Positions per comune only. The official registry has no coordinates.").
 - **Map:** full width, markers and zoom rule from chapter 2.
-- **Bottom table:** "Device table" panel; for now the empty state "The table is coming soon – it will list every device of the selected country, as the keyboard and screen-reader alternative to the map."
+- **Bottom table:** "Device table" panel; for now the empty state "The table is coming soon - it will list every device of the selected country, as the keyboard and screen-reader alternative to the map."
 - **Region view** (zoomed in): top-left a "Whole of <country>" button + a hint line ("Region view · select a marker for details"); Italy adds a chip "Not on the map: 416 Polizia Stradale mobile devices, usable anywhere in Italy". Legend panel bottom-left, map controls bottom-right.
 - **Map controls:** vertical group bottom-right, 44 px buttons: zoom in, zoom out, show the whole country.
 - **Detail card:** see chapter 6.
@@ -233,22 +233,22 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 | **Notice pill**                                | see chapter 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Legend**                                     | panel with H6 "LEGEND", one row per marker: shape + label                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | **Country row** (landing)                      | Country-style name, count in Numbers style, source in Caption; whole row is the link                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| **Detail card** (designed 2026-10-30)          | floating `elevated` card, 1 px `border`, radius 12, card shadow; **desktop: 360–380 px, top-right of the map** (never covers the clicked marker), mobile: not designed yet. Header: badge ("Official · <source>" in comune green, or dashed "Not official · OpenStreetMap"), marker icon + title in H3, place line in `text-2`, close button 44 px. Body: dynamic rows in a 2-column `dl` (label Caption `text-2`, value 14/600 `tabular-nums`), empty rows hidden. Approximate positions add a dashed yellow box "Approximate position" + how it was computed + the original note quoted. Footer: source link · licence · "data as of <date>". The selected marker gets a 2.5–3.5 px `accent` outline |
+| **Detail card** (designed 2026-10-30)          | floating `elevated` card, 1 px `border`, radius 12, card shadow; **desktop: 360-380 px, top-right of the map** (never covers the clicked marker), mobile: not designed yet. Header: badge ("Official · <source>" in comune green, or dashed "Not official · OpenStreetMap"), marker icon + title in H3, place line in `text-2`, close button 44 px. Body: dynamic rows in a 2-column `dl` (label Caption `text-2`, value 14/600 `tabular-nums`), empty rows hidden. Approximate positions add a dashed yellow box "Approximate position" + how it was computed + the original note quoted. Footer: source link · licence · "data as of <date>". The selected marker gets a 2.5-3.5 px `accent` outline |
 | **Comune card** (Italy)                        | same shell; total "N registered devices without a position", 3 boxes Fixed / Mobile / Fixed or mobile, "+N more on the map at an approximate position", first 3 devices, "See all in the table", OSM note in a dashed box when OSM reports remain                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Modal / bottom sheet** (designed 2026-11-02) | Radix Dialog. Desktop: centred, 420 px, `elevated`, radius 12, page dimmed (`rgba(5,8,12,0.72)`), title H3 + close, text, actions right (secondary, then primary). Below 768 px: bottom sheet, radius 16 top, grab handle, full-width buttons, primary first. Focus trapped, Esc closes, focus returns. Only short confirmations                                                                                                                                                                                                                                                                                                                                                                       |
 | **Device table** (designed 2026-11-02)         | in the map's bottom sheet (40% height). Toolbar: title + removable filter chip ("Comune: Milano") + "18 of 4,143". Real `<table>`, sticky header, sortable columns (`aria-sort`, active in `accent-text`), rows 48 px, `border-subtle` dividers, hover `elevated`, selected (= open card) `active`; columns dynamic per country; position badge (Approximate / Comune); "show on map" icon button per row; `tabular-nums` dates. Long lists virtualised (Virtuoso), no pagination. Mobile: list of rows (icon · title · place · meta · map button), sort in a chip                                                                                                                                     |
 | **Empty state**                                | inside a table or list: dashed border, icon, title, one line, optional action ("Clear filter")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | **Overlay panel**                              | legend, hint chips, "Whole of <country>", hover tooltip, open select list: translucent `panel` (92%) on the map, card shadow when floating over content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 
-All components with their states: canvas board "Components – dark (desktop + mobile)".
+All components with their states: canvas board "Components - dark (desktop + mobile)".
 
 ### Not designed yet (later)
 
-- **Mobile side menu (burger)** – content and layout (TODO, 2026-11-02).
+- **Mobile side menu (burger)** - content and layout (TODO, 2026-11-02).
 - **Mobile table row → detail card in the bottom sheet** (idea 2026-11-02): tapping a row opens the same detail card inside the sheet shell; the map-pin button still flies to the device.
 - **Keyboard mode** (idea 2026-11-02): the first `Tab` / `Shift+Tab` sets `<html data-input="keyboard">`, the next pointer/touch use sets it back to `pointer`. Only in keyboard mode: the **pan pad** on the map (↑ ← → ↓ + zoom), the hint "Arrow keys move the map, + and − zoom" (MapLibre already pans with arrows when the map is focused), and a **skip link** "Skip to the device table" as the first focusable element of the map page. Mouse users never see them.
 - **OSM switch explanation** (idea 2026-11-02): tooltip on hover **and** keyboard focus (Radix Tooltip) on desktop; a small (i) button next to the switch on mobile (no long press). Text: "Speed cameras mapped by OpenStreetMap volunteers. Not official and possibly out of date. Shown only where they don't match an official device."
-- **Draggable detail card** (idea – think about it after the main development is done): based on the work `DraggablePopup` (position, onDrag, mapBounds clamp, close, pin). Width stays 360–380 px; a non-drag alternative is required (WCAG 2.5.7: pin / move button / arrow keys on the header); no drag on mobile (bottom sheet). v1: one card at a time; pinning several cards only if needed.
+- **Draggable detail card** (idea - think about it after the main development is done): based on the work `DraggablePopup` (position, onDrag, mapBounds clamp, close, pin). Width stays 360-380 px; a non-drag alternative is required (WCAG 2.5.7: pin / move button / arrow keys on the header); no drag on mobile (bottom sheet). v1: one card at a time; pinning several cards only if needed.
 - **Search** (after v1 works, with the table filter): desktop = icon button in the map header → field top-left over the map; mobile = at the top of the table sheet. Searches **our own data** first (comuni, roads in notes, operators: local, instant). Place/address search needs a geocoder: Nominatim forbids browser type-ahead → other provider or server cache, later.
 - **Table filter** (future): the removable filter chip on the components board ("Comune: Milano") is a later feature, not v1.
 - **Settings page** (future): suggested country on/off, language, theme, "Forget your choices" (the modal example). Would replace the v1 rule "settings live in header and footer".
@@ -282,7 +282,7 @@ Design them on the canvas first, then add them here.
     | Use                                                                                       | Body stroke | Notes                                                               |
     | ----------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------- |
     | large (64 px)                                                                             | 2           | reference SVG above                                                 |
-    | header (26–30 px)                                                                         | 2.2         | same drawing                                                        |
+    | header (26-30 px)                                                                         | 2.2         | same drawing                                                        |
     | favicon (16 px)                                                                           | 2.6         | simplified: **no small lens, no hat band**; crown 2.1, big lens 1.5 |
     | Files: `logo.svg` (`currentColor`) and `favicon.svg` (light/dark colour inside the file). |
 - **Colours:** `accent` on dark (`#38BDF8`), `accent` on light (`#0284C7`), single colour for monochrome use.
