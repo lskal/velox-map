@@ -1,0 +1,42 @@
+// Colour tokens - DESIGN.md chapter 2 (Interface).
+// The only file with colour values. Dark is the default; light via <html data-theme="light">.
+
+:root {
+	color-scheme: dark;
+
+	--color-canvas: #0b0f14;
+	--color-bg: #101419;
+	--color-panel: #141b24;
+	--color-elevated: #1c2533;
+	--color-active: #263344;
+	--color-border: #233041;
+	--color-border-subtle: #1a2430;
+	--color-text: #f1f5f9;
+	--color-text-body: #cbd5e1;
+	--color-text-2: #94a3b8;
+	--color-accent: #38bdf8;
+	--color-accent-text: #7dd3fc;
+	--color-notice-text: #fbbf24;
+	--color-notice-bg: rgba(245, 158, 11, 0.1);
+	--color-notice-border: rgba(245, 158, 11, 0.3);
+}
+
+[data-theme='light'] {
+	color-scheme: light;
+
+	--color-canvas: #f8fafc;
+	--color-bg: #f8fafc;
+	--color-panel: #ffffff;
+	--color-elevated: #f1f5f9;
+	--color-active: #f0f9ff;
+	--color-border: #cbd5e1;
+	--color-border-subtle: #e2e8f0;
+	--color-text: #0f172a;
+	--color-text-body: #334155;
+	--color-text-2: #475569;
+	--color-accent: #0284c7;
+	--color-accent-text: #0369a1;
+	--color-notice-text: #92400e;
+	--color-notice-bg: #fffbeb;
+	--color-notice-border: #fcd34d;
+}
