@@ -31,6 +31,12 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
   `hotfix/*` from `main`, merged into `main` and `develop`.
 - Conventional Commits: `type(scope): description`
   (feat, fix, chore, docs, refactor, test, build, style).
+  Scope = area of the code (`styles`, `map`, `landing`, `about`, `i18n`, `data`, `cron`,
+  country codes…), never the ticket. No scope for changes across areas (`docs: …`).
+- Commit footer: `Refs: VXM-NNN-TN #N` (ticket + task from `tasks.md` + GitHub issue),
+  e.g. `git commit -m "feat(styles): …" -m "Refs: VXM-001-T3 #1"`.
+  Commits that aren't a task: `Refs: VXM-NNN #N`.
+- VXM number = GitHub issue number, for every issue (bugs too).
 - Never commit to `main`. PRs into `develop` with "Closes #N".
 
 ## Never
