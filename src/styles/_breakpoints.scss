@@ -1,5 +1,8 @@
 @use 'sass:map';
 
+// Breakpoints in px (1rem = 16px, the browser default):
+// sm 576px, md 768px, lg 1024px
+
 $breakpoints: (
 	sm: 36rem,
 	md: 48rem,
