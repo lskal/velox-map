@@ -2,15 +2,12 @@
 @use 'fonts';
 @use 'reset';
 
-:root {
-	--space-4: 1rem;
-	--space-8: 2rem;
-}
-
 body {
 	background: var(--color-canvas);
 	color: var(--color-text);
 	font-family: var(--font-body);
+	font-size: var(--font-size-body);
+	line-height: var(--line-height-body);
 }
 
 h1,
