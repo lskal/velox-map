@@ -1,4 +1,5 @@
 @use '../../styles/breakpoints' as bp;
+@use '../../styles/typography' as type;
 
 // Layout values from the canvas (Main.dc.html, LandingMobile.dc.html):
 // height 56 / 64px. Not tokens (VXM-002 plan D3).
@@ -31,9 +32,7 @@
 }
 
 .wordmark {
-	font-family: var(--font-display);
-	font-size: var(--font-size-logo);
-	letter-spacing: var(--letter-spacing-logo);
+	@include type.logo;
 	line-height: 1;
 }
 
@@ -68,13 +67,13 @@
 
 // Select - DESIGN.md chapter 6 ("like Button + chevron"; the native chevron for now)
 .select {
+	@include type.body-s;
 	height: var(--touch-target);
 	padding: 0 var(--space-3);
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-control);
 	background: var(--color-panel);
 	color: var(--color-text);
-	font-size: var(--font-size-body-s);
 	cursor: pointer;
 
 	&:hover {

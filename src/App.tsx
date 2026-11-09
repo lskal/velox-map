@@ -1,3 +1,4 @@
+import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import styles from './App.module.scss';
 
@@ -8,6 +9,7 @@ export default function App() {
 			<main className={styles.app}>
 				<h1>Velox Map</h1>
 			</main>
+			<Footer />
 		</>
 	);
 }
