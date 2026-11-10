@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-// Type styles of DESIGN.md chapter 3 that <Text> can render (Logo stays a mixin, used once).
+// Type styles of DESIGN.md chapter 3 that <Text> can render.
 export type TextVariant =
 	| 'h1'
 	| 'h2'
@@ -11,6 +11,7 @@ export type TextVariant =
 	| 'body'
 	| 'body-s'
 	| 'caption'
+	| 'logo'
 	| 'country'
 	| 'numbers';
 

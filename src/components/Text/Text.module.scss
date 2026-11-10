@@ -42,6 +42,10 @@
 	color: var(--color-text-2);
 }
 
+.logo {
+	@include type.logo;
+}
+
 .country {
 	@include type.country;
 }

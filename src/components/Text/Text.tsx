@@ -12,6 +12,7 @@ const defaultTag: Record<TextVariant, TextTag> = {
 	body: 'p',
 	'body-s': 'p',
 	caption: 'p',
+	logo: 'span',
 	country: 'span',
 	numbers: 'span',
 };

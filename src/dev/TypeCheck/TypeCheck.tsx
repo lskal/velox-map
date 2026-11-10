@@ -14,6 +14,7 @@ const variants: TextVariant[] = [
 	'body',
 	'body-s',
 	'caption',
+	'logo',
 	'country',
 ];
 

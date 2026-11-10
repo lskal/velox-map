@@ -1,6 +1,7 @@
 import LogoIcon from '@/assets/icons/LogoIcon/LogoIcon';
 import MenuIcon from '@/assets/icons/MenuIcon/MenuIcon';
 import MoonIcon from '@/assets/icons/MoonIcon/MoonIcon';
+import Text from '@/components/Text/Text';
 import styles from './Header.module.scss';
 
 // Page header - DESIGN.md chapter 5 "Every page".
@@ -11,7 +12,7 @@ export default function Header() {
 			<div className={styles.inner}>
 				<a href="/" className={styles.logo}>
 					<LogoIcon />
-					<span className={styles.wordmark}>VELOX MAP</span>
+					<Text variant="logo">Velox Map</Text>
 				</a>
 
 				{/* Desktop (768px and up): language + theme */}

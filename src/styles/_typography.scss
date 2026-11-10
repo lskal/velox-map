@@ -89,9 +89,11 @@
 }
 
 // Pixel-font styles
+// DESIGN.md gives the Logo no line height: 1 keeps the wordmark tight next to the icon.
 @mixin logo {
 	font-family: var(--font-display);
 	font-size: var(--font-size-logo);
+	line-height: 1;
 	font-weight: 400;
 	letter-spacing: var(--letter-spacing-logo);
 	text-transform: uppercase;

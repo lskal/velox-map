@@ -21,8 +21,3 @@
 	background: var(--color-notice-bg);
 	color: var(--color-notice-text);
 }
-
-.attribution {
-	@include type.caption;
-	color: var(--color-text-2);
-}
