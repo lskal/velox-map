@@ -36,7 +36,7 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
 - Commit footer: `Refs: VXM-NNN-TN #N` (ticket + task from `tasks.md` + GitHub issue),
   e.g. `git commit -m "feat(styles): …" -m "Refs: VXM-001-T3 #1"`.
   Commits that aren't a task: `Refs: VXM-NNN #N`.
-- VXM number = GitHub issue number, for every issue (bugs too).
+- VXM numbers follow the work order (no gaps); the GitHub issue number goes after `#` in the footer. Issues and PRs share one counter, so issue numbers skip (e.g. VXM-007 is issue #9).
 - Never commit to `main`. PRs into `develop` with "Closes #N".
 
 ## Never
