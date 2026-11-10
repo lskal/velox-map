@@ -53,6 +53,6 @@ Decisions are already written - check before proposing something new:
 
 - `velox-map-design/docs/plan.md` - all decisions: scope, stack, data flow, data shape (types), UI, tests
 - `velox-map-design/docs/data-sources.md` - every source: endpoint, fields, gotchas, normaliser examples
-- `velox-map-design/docs/ui-implementation-process.md` - UI steps and checklist per step
+- `velox-map-design/docs/implementation-process.md` - current tickets, backlog, long-term order, definition of done
 - `velox-map-design/docs/handoff.md` - current status and how we work
   If a spec contradicts a doc, ask which one is right.
