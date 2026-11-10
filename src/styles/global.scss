@@ -1,18 +1,38 @@
 @use 'tokens';
 @use 'fonts';
 @use 'reset';
+@use 'typography' as type;
 
 body {
+	@include type.body;
 	background: var(--color-canvas);
 	color: var(--color-text);
-	font-family: var(--font-body);
-	font-size: var(--font-size-body);
-	line-height: var(--line-height-body);
 }
 
-h1,
+// Plain headings get their style, so plain markup looks right (VXM-003 R4).
+// Use <Text variant="…" as="…"> when the look must differ from the level.
+h1 {
+	@include type.h1;
+}
+
 h2 {
-	font-family: var(--font-display);
+	@include type.h2;
+}
+
+h3 {
+	@include type.h3;
+}
+
+h4 {
+	@include type.h4;
+}
+
+h5 {
+	@include type.h5;
+}
+
+h6 {
+	@include type.h6;
 }
 
 // Focus ring - DESIGN.md chapter 4. :focus-visible = keyboard and assistive tech,
