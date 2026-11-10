@@ -1,6 +1,6 @@
-import LogoIcon from '../../assets/icons/LogoIcon/LogoIcon';
-import MenuIcon from '../../assets/icons/MenuIcon/MenuIcon';
-import MoonIcon from '../../assets/icons/MoonIcon/MoonIcon';
+import LogoIcon from '@/assets/icons/LogoIcon/LogoIcon';
+import MenuIcon from '@/assets/icons/MenuIcon/MenuIcon';
+import MoonIcon from '@/assets/icons/MoonIcon/MoonIcon';
 import styles from './Header.module.scss';
 
 // Page header - DESIGN.md chapter 5 "Every page".

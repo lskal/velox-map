@@ -18,6 +18,7 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
 - One task at a time. Don't add anything that isn't in the spec.
 - If the spec is unclear, ask - don't guess.
 - Simple over clever: smallest solution that works, no abstractions "for later".
+- Exported TypeScript types and interfaces live in `src/types/` (one file per area), never inside components.
 
 ## Design
 
