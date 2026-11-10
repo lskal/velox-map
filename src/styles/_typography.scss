@@ -1,0 +1,19 @@
+// Type styles - DESIGN.md chapter 3, as mixins. Values live in _tokens.scss:
+// mixins only read var(--…). Use: @use '…/styles/typography' as type; @include type.caption;
+// Only the styles already used; the full scale comes in its own ticket.
+
+@mixin body-s {
+	font-size: var(--font-size-body-s);
+	line-height: var(--line-height-body-s);
+}
+
+@mixin caption {
+	font-size: var(--font-size-caption);
+	line-height: var(--line-height-caption);
+}
+
+@mixin logo {
+	font-family: var(--font-display);
+	font-size: var(--font-size-logo);
+	letter-spacing: var(--letter-spacing-logo);
+}

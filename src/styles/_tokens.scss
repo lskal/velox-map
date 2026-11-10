@@ -1,4 +1,7 @@
-// Design tokens - DESIGN.md chapter 2 (Interface colours) and chapter 3 (font stacks).
+@use 'breakpoints' as bp;
+
+// Design tokens - DESIGN.md chapter 2 (Interface colours), chapter 3 (fonts, type scale)
+// and chapter 4 (spacing, radius, touch targets).
 // The only file with colour values. Dark is the default; light via <html data-theme="light">.
 
 :root {
@@ -49,4 +52,40 @@
 	--color-notice-text: #92400e;
 	--color-notice-bg: #fffbeb;
 	--color-notice-border: #fcd34d;
+}
+
+// Sizes - the same in both themes. Only the values used so far (VXM-002 spec → Decisions).
+:root {
+	// Type scale (mobile first; desktop values below). Font sizes in rem so they follow the
+	// user's browser font-size setting (px value in the comment); line heights are unitless.
+	// Everything else is in px (decided 2026-11-09).
+	--font-size-body: 0.9375rem; // 15px
+	--line-height-body: 1.6; // 24px
+	--font-size-body-s: 0.875rem; // 14px
+	--line-height-body-s: 1.5; // 21px
+	--font-size-caption: 0.75rem; // 12px
+	--line-height-caption: 1.4167; // 17px
+	--font-size-logo: 1.1875rem; // 19px
+	--letter-spacing-logo: 0.04em;
+
+	// Spacing - the number is the multiple of the 4px base.
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-6: 24px;
+	--space-8: 32px;
+
+	// Radius and touch targets
+	--radius-control: 8px;
+	--radius-pill: 9999px;
+	--touch-target: 44px;
+	--size-logo-icon: 26px;
+
+	@include bp.up(md) {
+		--font-size-body: 1rem; // 16px
+		--line-height-body: 1.625; // 26px
+		--font-size-logo: 1.375rem; // 22px
+		--size-logo-icon: 30px;
+	}
 }
