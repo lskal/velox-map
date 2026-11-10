@@ -18,6 +18,7 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
 - One task at a time. Don't add anything that isn't in the spec.
 - If the spec is unclear, ask - don't guess.
 - Simple over clever: smallest solution that works, no abstractions "for later".
+- Exported TypeScript types and interfaces live in `src/types/` (one file per area), never inside components.
 
 ## Design
 
@@ -36,7 +37,7 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
 - Commit footer: `Refs: VXM-NNN-TN #N` (ticket + task from `tasks.md` + GitHub issue),
   e.g. `git commit -m "feat(styles): …" -m "Refs: VXM-001-T3 #1"`.
   Commits that aren't a task: `Refs: VXM-NNN #N`.
-- VXM number = GitHub issue number, for every issue (bugs too).
+- VXM numbers follow the work order (no gaps); the GitHub issue number goes after `#` in the footer. Issues and PRs share one counter, so issue numbers skip (e.g. VXM-007 is issue #9).
 - Never commit to `main`. PRs into `develop` with "Closes #N".
 
 ## Never
@@ -52,6 +53,6 @@ Decisions are already written - check before proposing something new:
 
 - `velox-map-design/docs/plan.md` - all decisions: scope, stack, data flow, data shape (types), UI, tests
 - `velox-map-design/docs/data-sources.md` - every source: endpoint, fields, gotchas, normaliser examples
-- `velox-map-design/docs/ui-implementation-process.md` - UI steps and checklist per step
+- `velox-map-design/docs/implementation-process.md` - current tickets, backlog, long-term order, definition of done
 - `velox-map-design/docs/handoff.md` - current status and how we work
   If a spec contradicts a doc, ask which one is right.

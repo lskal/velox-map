@@ -1,12 +1,11 @@
 @use 'sass:map';
 
-// Breakpoints in px (1rem = 16px, the browser default):
-// sm 576px, md 768px, lg 1024px
+// Breakpoints in px (decided 2026-11-10: px everywhere)
 
 $breakpoints: (
-	sm: 36rem,
-	md: 48rem,
-	lg: 64rem,
+	sm: 576px,
+	md: 768px,
+	lg: 1024px,
 );
 
 @mixin up($name) {

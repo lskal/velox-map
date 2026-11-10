@@ -1,3 +1,4 @@
+import Text from '@/components/Text/Text';
 import styles from './Footer.module.scss';
 
 // Page footer - DESIGN.md chapter 5 "Every page" and chapter 6 "Notice pill".
@@ -8,7 +9,7 @@ export default function Footer() {
 			<p className={styles.notice}>
 				Information only - not for use while driving
 			</p>
-			<p className={styles.attribution}>Data sources: coming soon</p>
+			<Text variant="caption">Data sources: coming soon</Text>
 		</footer>
 	);
 }

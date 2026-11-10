@@ -1,19 +1,116 @@
-// Type styles - DESIGN.md chapter 3, as mixins. Values live in _tokens.scss:
-// mixins only read var(--…). Use: @use '…/styles/typography' as type; @include type.caption;
-// Only the styles already used; the full scale comes in its own ticket.
+// Type styles - DESIGN.md chapter 3, one mixin per style (VXM-003 spec → Decisions).
+// Values live in _tokens.scss: mixins only read var(--…), plus fixed weights and transforms.
+// No colour here: colour belongs to where the text sits (Text variants, components).
+// Everyday use in components: <Text variant="…"> (VXM-003). Directly only for components with
+// their own look built on a text style: @use '../../styles/typography' as type; @include type.body-s;
+
+// Headings - H1 / H2 in the pixel font, uppercase via CSS (DESIGN.md chapter 3)
+@mixin h1 {
+	font-family: var(--font-display);
+	font-size: var(--font-size-h1);
+	line-height: var(--line-height-h1);
+	font-weight: 400;
+	letter-spacing: var(--letter-spacing-h1);
+	text-transform: uppercase;
+}
+
+@mixin h2 {
+	font-family: var(--font-display);
+	font-size: var(--font-size-h2);
+	line-height: var(--line-height-h2);
+	font-weight: 400;
+	letter-spacing: var(--letter-spacing-h2);
+	text-transform: uppercase;
+}
+
+@mixin h3 {
+	font-family: var(--font-body);
+	font-size: var(--font-size-h3);
+	line-height: var(--line-height-h3);
+	font-weight: 600;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
+@mixin h4 {
+	font-family: var(--font-body);
+	font-size: var(--font-size-h4);
+	line-height: var(--line-height-h4);
+	font-weight: 600;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
+@mixin h5 {
+	font-family: var(--font-body);
+	font-size: var(--font-size-h5);
+	line-height: var(--line-height-h5);
+	font-weight: 600;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
+// Panel labels ("Legend", "Choose a country")
+@mixin h6 {
+	font-family: var(--font-body);
+	font-size: var(--font-size-h6);
+	line-height: var(--line-height-h6);
+	font-weight: 600;
+	letter-spacing: var(--letter-spacing-h6);
+	text-transform: uppercase;
+}
+
+// Text
+@mixin body {
+	font-family: var(--font-body);
+	font-size: var(--font-size-body);
+	line-height: var(--line-height-body);
+	font-weight: 400;
+	letter-spacing: normal;
+	text-transform: none;
+}
 
 @mixin body-s {
+	font-family: var(--font-body);
 	font-size: var(--font-size-body-s);
 	line-height: var(--line-height-body-s);
+	font-weight: 400;
+	letter-spacing: normal;
+	text-transform: none;
 }
 
 @mixin caption {
+	font-family: var(--font-body);
 	font-size: var(--font-size-caption);
 	line-height: var(--line-height-caption);
+	font-weight: 400;
+	letter-spacing: normal;
+	text-transform: none;
 }
 
+// Pixel-font styles
+// DESIGN.md gives the Logo no line height: 1 keeps the wordmark tight next to the icon.
 @mixin logo {
 	font-family: var(--font-display);
 	font-size: var(--font-size-logo);
+	line-height: 1;
+	font-weight: 400;
 	letter-spacing: var(--letter-spacing-logo);
+	text-transform: uppercase;
+}
+
+@mixin country {
+	font-family: var(--font-display);
+	font-size: var(--font-size-country);
+	line-height: var(--line-height-country);
+	font-weight: 400;
+	letter-spacing: var(--letter-spacing-country);
+	text-transform: uppercase;
+}
+
+// Counts, table numbers, dates: size and line height come from the surrounding text
+@mixin numbers {
+	font-family: var(--font-body);
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
 }

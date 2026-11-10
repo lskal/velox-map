@@ -97,7 +97,7 @@ Each marker has its **own shape** (WCAG 1.4.1: never colour alone) and a halo (d
 | light `notice-text` on `notice-bg`       | 6.8:1         | 4.5   |
 | `map-country-border` on dark / light sea | 4.0:1 / 3.8:1 | 3     |
 
-Re-check every pair in the accessibility pass (step 9 of `ui-implementation-process.md`).
+Re-check every pair in the accessibility pass (accessibility pass in `implementation-process.md` → Backlog).
 
 ---
 
@@ -151,7 +151,7 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 | Country | Tiny5 Duo   | 18/22                     | 18/22   | 400     | country names in lists and the mobile sheet                        |
 | Numbers | Roboto Flex | inherit                   | inherit | 600     | counts, table numbers, dates: `font-variant-numeric: tabular-nums` |
 
-- Visual style and HTML tag are separate: a `<h2>` can look like H3 if the outline needs it (`<Text variant as>` in `ui-implementation-process.md`).
+- Visual style and HTML tag are separate: a `<h2>` can look like H3 if the outline needs it (`<Text variant as>`, `src/components/Text/`).
 - Heading order is never skipped. Map pages have an `h1` ("Speed cameras in Italy"), visually hidden on desktop.
 
 ---
@@ -179,7 +179,7 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 | 768px and up | **desktop**: desktop type sizes, landing = country list + Europe map, full map header   |
 
 - **Mobile first:** base styles are the mobile ones; desktop styles go inside `@media (min-width: 768px)`. The value lives only in `src/styles/_breakpoints.scss`; components use the variable or mixin, never a hard-coded number.
-- **Tablets (768-1023px)** get the desktop layout, not designed on the canvas. Check them in the browser when building the pages (step 8 of `ui-implementation-process.md`); if something looks cramped (e.g. the Europe map next to the list), add a second breakpoint then, only for that component.
+- **Tablets (768-1023px)** get the desktop layout. Not designed and not checked for now (decided 2026-11-10); a tablet pass comes later, as its own ticket if needed.
 
 ### Every page
 

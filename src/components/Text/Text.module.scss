@@ -1,0 +1,55 @@
+@use '../../styles/typography' as type;
+
+// One class per variant, each from its mixin (VXM-003 plan D5).
+// Default colours from DESIGN.md chapter 3 live here, not in the mixins.
+
+.h1 {
+	@include type.h1;
+}
+
+.h2 {
+	@include type.h2;
+}
+
+.h3 {
+	@include type.h3;
+}
+
+.h4 {
+	@include type.h4;
+}
+
+.h5 {
+	@include type.h5;
+}
+
+.h6 {
+	@include type.h6;
+	color: var(--color-text-2);
+}
+
+.body {
+	@include type.body;
+	color: var(--color-text-body);
+}
+
+.body-s {
+	@include type.body-s;
+}
+
+.caption {
+	@include type.caption;
+	color: var(--color-text-2);
+}
+
+.logo {
+	@include type.logo;
+}
+
+.country {
+	@include type.country;
+}
+
+.numbers {
+	@include type.numbers;
+}

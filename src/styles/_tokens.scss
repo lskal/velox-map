@@ -54,19 +54,38 @@
 	--color-notice-border: #fcd34d;
 }
 
-// Sizes - the same in both themes. Only the values used so far (VXM-002 spec → Decisions).
+// Sizes - the same in both themes. Type scale complete (VXM-003); spacing and radius
+// only the values used so far.
 :root {
-	// Type scale (mobile first; desktop values below). Font sizes in rem so they follow the
-	// user's browser font-size setting (px value in the comment); line heights are unitless.
-	// Everything else is in px (decided 2026-11-09).
-	--font-size-body: 0.9375rem; // 15px
-	--line-height-body: 1.6; // 24px
-	--font-size-body-s: 0.875rem; // 14px
-	--line-height-body-s: 1.5; // 21px
-	--font-size-caption: 0.75rem; // 12px
-	--line-height-caption: 1.4167; // 17px
-	--font-size-logo: 1.1875rem; // 19px
-	--letter-spacing-logo: 0.04em;
+	// Type scale - DESIGN.md chapter 3 (mobile first; desktop values below). Everything in px
+	// (decided 2026-11-10): letter-spacing = the design's em value × the font size, so it gets
+	// its own desktop value where the font size changes.
+	--font-size-h1: 26px;
+	--line-height-h1: 30px;
+	--letter-spacing-h1: 0.52px;
+	--font-size-h2: 20px;
+	--line-height-h2: 24px;
+	--letter-spacing-h2: 0.4px;
+	--font-size-h3: 17px;
+	--line-height-h3: 24px;
+	--font-size-h4: 16px;
+	--line-height-h4: 24px;
+	--font-size-h5: 14px;
+	--line-height-h5: 20px;
+	--font-size-h6: 12px;
+	--line-height-h6: 16px;
+	--letter-spacing-h6: 0.96px;
+	--font-size-body: 15px;
+	--line-height-body: 24px;
+	--font-size-body-s: 14px;
+	--line-height-body-s: 21px;
+	--font-size-caption: 12px;
+	--line-height-caption: 17px;
+	--font-size-logo: 19px;
+	--letter-spacing-logo: 0.76px;
+	--font-size-country: 18px;
+	--line-height-country: 22px;
+	--letter-spacing-country: 0.72px;
 
 	// Spacing - the number is the multiple of the 4px base.
 	--space-1: 4px;
@@ -83,9 +102,18 @@
 	--size-logo-icon: 26px;
 
 	@include bp.up(md) {
-		--font-size-body: 1rem; // 16px
-		--line-height-body: 1.625; // 26px
-		--font-size-logo: 1.375rem; // 22px
+		--font-size-h1: 36px;
+		--line-height-h1: 40px;
+		--letter-spacing-h1: 0.72px;
+		--font-size-h2: 24px;
+		--line-height-h2: 29px;
+		--letter-spacing-h2: 0.48px;
+		--font-size-h3: 18px;
+		--line-height-h3: 26px;
+		--font-size-body: 16px;
+		--line-height-body: 26px;
+		--font-size-logo: 22px;
+		--letter-spacing-logo: 0.88px;
 		--size-logo-icon: 30px;
 	}
 }
