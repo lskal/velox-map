@@ -1,0 +1,19 @@
+// Map marker colours - DESIGN.md chapter 2 → Map markers. Dark is the default;
+// light via <html data-theme="light">, like _tokens.scss.
+// MapLibre can't read var(--…): the map code reads these with getComputedStyle (VXM-006).
+
+:root {
+	--color-marker-speed: #facc15;
+	--color-marker-red-light: #f43f5e;
+	--color-marker-level-crossing: #a855f7;
+	--color-marker-section: #f97316;
+	--color-marker-halo: #0b0f14; // keeps every marker ≥ 3:1 against the map
+}
+
+[data-theme='light'] {
+	--color-marker-speed: #a16207;
+	--color-marker-red-light: #e11d48;
+	--color-marker-level-crossing: #9333ea;
+	--color-marker-section: #ea580c;
+	--color-marker-halo: #ffffff;
+}
