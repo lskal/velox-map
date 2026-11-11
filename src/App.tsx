@@ -14,7 +14,6 @@ export default function App() {
 		<>
 			<Header />
 			<main className={styles.app}>
-				<h1>Velox Map</h1>
 				{TypeCheck && location.hash === '#type' && (
 					<Suspense>
 						<TypeCheck />
