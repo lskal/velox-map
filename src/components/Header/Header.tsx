@@ -12,7 +12,9 @@ export default function Header() {
 			<div className={styles.inner}>
 				<a href="/" className={styles.logo}>
 					<LogoIcon />
-					<Text variant="logo">Velox Map</Text>
+					<Text variant="logo" as="h1">
+						Velox Map
+					</Text>
 				</a>
 
 				{/* Desktop (768px and up): language + theme */}

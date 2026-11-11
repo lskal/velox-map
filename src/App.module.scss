@@ -1,9 +1,13 @@
-@use './styles/breakpoints' as bp;
+// Full-height page: header, map, footer (VXM-004 plan D4).
+// 100dvh = the height you can actually see on mobile, without the browser bars.
+.layout {
+	display: flex;
+	flex-direction: column;
+	min-height: 100dvh;
+}
 
-.app {
-	padding: var(--space-4);
-
-	@include bp.up(md) {
-		padding: var(--space-8);
-	}
+.main {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
 }
