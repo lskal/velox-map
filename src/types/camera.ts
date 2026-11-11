@@ -2,11 +2,7 @@
 // returns Camera objects; the map only reads the map fields, `details` is for the card.
 
 export type CameraType =
-	| 'speed'
-	| 'section'
-	| 'red_light'
-	| 'level_crossing'
-	| 'other';
+	'speed' | 'section' | 'red_light' | 'level_crossing' | 'other';
 
 // [lng, lat] - longitude first, as GeoJSON and MapLibre expect.
 export type LngLat = [number, number];

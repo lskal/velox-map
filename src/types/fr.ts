@@ -1,3 +1,5 @@
+import type { Camera } from '@/types/camera';
+
 // France source - data.gouv.fr (data-sources.md → France). Only the fields we read.
 
 // GET https://www.data.gouv.fr/api/1/datasets/liste-des-radars-fixes-en-france/
@@ -32,4 +34,21 @@ export interface TrimmedFR {
 	VMA?: number | null;
 	Latitude?: string | number;
 	Longitude?: string | number;
+}
+
+// A row normalizeFR() couldn't turn into a camera, and why.
+export interface SkippedFR {
+	radarNumber?: string;
+	reason: string;
+	row: TrimmedFR;
+}
+
+// What fetchFR() returns (VXM-005 plan D6).
+export interface FetchFRResult {
+	resource: { id: string; title: string; lastModified: string };
+	dataAsOf: string;
+	total: number; // rows the API says the file has
+	rowsFetched: number; // rows that actually arrived
+	cameras: Camera[];
+	skipped: SkippedFR[];
 }

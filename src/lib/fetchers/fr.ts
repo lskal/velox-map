@@ -1,9 +1,14 @@
+import type { Camera, CameraType } from '@/types/camera';
 import type {
 	DataGouvDataset,
 	DataGouvResource,
+	FetchFRResult,
 	RawFR,
+	SkippedFR,
 	TabularPage,
+	TrimmedFR,
 } from '@/types/fr';
+import { toNumber, trimKeys } from './helpers';
 
 // France - fixed radars from data.gouv.fr (data-sources.md → France).
 // Fetched from the browser for now (VXM-005); the daily job will reuse this later.
@@ -64,9 +69,73 @@ async function fetchAllRows(resourceId: string) {
 	return { total, rows };
 }
 
-export async function fetchFR() {
+// French radar type codes → our camera type. Meanings from the dataset description on
+// data.gouv.fr (data-sources.md → France → Type codes):
+//   ETF  - classic fixed speed radar                                        → speed
+//   ETD  - "discriminant" speed radar: tells trucks and cars apart          → speed
+//   ETT  - new-generation "tower" radar: speed, can also catch red lights   → speed
+//   ETU  - new-generation urban radar: speed, can also catch red lights     → speed
+//   ETVM - average speed between two points (one point per row in the file) → section
+//   ETFR - red light ("franchissement de feu rouge")                        → red_light
+//   ETPN - level crossing ("passage à niveau")                              → level_crossing
+// Any other code → speed.
+const FR_TYPE: Record<string, CameraType> = {
+	ETVM: 'section',
+	ETFR: 'red_light',
+	ETPN: 'level_crossing',
+};
+
+// One row → one Camera, or the reason it was left out (D4, spec R3-R5).
+export function normalizeFR(raw: RawFR): Camera | SkippedFR {
+	const row = trimKeys<TrimmedFR>(raw);
+	const radarNumber = String(row['Numéro de radar'] ?? '').trim();
+	const lat = toNumber(row.Latitude);
+	const lng = toNumber(row.Longitude);
+
+	if (!radarNumber) {
+		return { reason: 'no radar number', row };
+	}
+	if (Number.isNaN(lat) || Number.isNaN(lng)) {
+		return {
+			radarNumber,
+			reason: 'latitude or longitude is not a number',
+			row,
+		};
+	}
+
+	const code = String(row['Type de radar'] ?? '').trim();
+	const date = row['Date de mise en service'];
+
+	return {
+		id: `FR-${radarNumber}`,
+		origin: 'official',
+		type: FR_TYPE[code] ?? 'speed',
+		position: [lng, lat],
+		precision: 'exact',
+		details: {
+			country: 'FR',
+			radarType: code,
+			limitKph: typeof row.VMA === 'number' ? row.VMA : undefined,
+			commissionedAt:
+				typeof date === 'string' ? date.slice(0, 10) : undefined,
+		},
+	};
+}
+
+export async function fetchFR(): Promise<FetchFRResult> {
 	const file = await findNewestFile();
 	const { total, rows } = await fetchAllRows(file.id);
+
+	const cameras: Camera[] = [];
+	const skipped: SkippedFR[] = [];
+	for (const row of rows) {
+		const result = normalizeFR(row);
+		if ('reason' in result) {
+			skipped.push(result);
+		} else {
+			cameras.push(result);
+		}
+	}
 
 	return {
 		resource: {
@@ -77,6 +146,7 @@ export async function fetchFR() {
 		dataAsOf: file.last_modified,
 		total,
 		rowsFetched: rows.length,
-		rows,
+		cameras,
+		skipped,
 	};
 }
