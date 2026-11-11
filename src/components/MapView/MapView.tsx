@@ -5,6 +5,8 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import { FRANCE_BOUNDS, MAP_STYLE_URLS } from '@/config/map';
 import { useTheme } from '@/hooks/useTheme';
 import { getTheme } from '@/lib/theme';
+import type { CameraFeatureCollection } from '@/types/markers';
+import { addMarkers, NO_CAMERAS } from './markers';
 import styles from './MapView.module.scss';
 
 // MapLibre v6 with a bundler: tell it where Vite put its worker, once, before any map.
@@ -18,6 +20,7 @@ export default function MapView() {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const styleUrlRef = useRef(''); // the style the map has now
+	const camerasRef = useRef<CameraFeatureCollection>(NO_CAMERAS); // kept for re-adding after a theme switch
 	const theme = useTheme();
 
 	// Create the map once, with the basemap for the current theme.
@@ -33,6 +36,9 @@ export default function MapView() {
 			// Always expanded: the OSM / ODbL licence requires visible attribution.
 			attributionControl: { compact: false },
 		});
+
+		// Markers on every style load: the first one and each theme switch (VXM-006 D6).
+		map.on('style.load', () => addMarkers(map, camerasRef.current));
 
 		mapRef.current = map;
 		styleUrlRef.current = styleUrl;
