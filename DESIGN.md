@@ -152,7 +152,7 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 | Numbers | Roboto Flex | inherit                   | inherit | 600     | counts, table numbers, dates: `font-variant-numeric: tabular-nums` |
 
 - Visual style and HTML tag are separate: a `<h2>` can look like H3 if the outline needs it (`<Text variant as>`, `src/components/Text/`).
-- Heading order is never skipped. Map pages have an `h1` ("Speed cameras in Italy"), visually hidden on desktop.
+- Heading order is never skipped. Until the router ticket the header wordmark is the page's only `h1` (decided 2026-11-10, VXM-004); per-page `h1`s are decided there (idea: the visible country line on map pages), without visually hidden headings.
 
 ---
 
