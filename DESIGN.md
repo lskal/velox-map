@@ -188,7 +188,7 @@ Size/line-height in px. "Mobile" = below 768px (see chapter 5).
 - **Header (mobile, decided 2026-11-02):** landing and about = logo + wordmark + **burger** (right); language and theme move into the side menu. Map = logo icon + country selector + burger. The side menu itself is not designed yet (TODO).
 - **Footer:** the notice pill + links. Exact content per page below.
 - **Notice pill:** "Information only - not for use while driving", `notice-*` colours, pill shape. Its **(i)** is a link to the Disclaimer section of `/about` (`/about#disclaimer`): a pop-up would be too long to read.
-- **Theme toggle:** sun / moon icon button ("Switch to light mode"). Default from `prefers-color-scheme`, user choice in `localStorage`.
+- **Theme toggle:** sun / moon icon button ("Switch to light mode"). Default: dark (decided 2026-11-11; the system setting is not used), user choice in `localStorage`.
 - **Language:** EN / IT.
 
 ### Landing `/`
