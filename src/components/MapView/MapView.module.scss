@@ -1,0 +1,5 @@
+// Fills the space <main> gives it (VXM-004 plan D4). MapLibre needs a real height.
+.map {
+	flex: 1;
+	min-height: 0;
+}
