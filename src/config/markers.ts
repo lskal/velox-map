@@ -1,5 +1,4 @@
-import type { CameraType } from '@/types/camera';
-import type { MarkerShapes } from '@/types/markers';
+import type { MarkerKind, MarkerShapes } from '@/types/markers';
 
 // Marker shapes - DESIGN.md chapter 2 → Map markers; paths copied from the canvas
 // (Tokens board), so the map draws exactly what was designed. Only the types France
@@ -37,16 +36,29 @@ export const MARKER_SHAPES: MarkerShapes = {
 		draw: 'line',
 		colourVar: '--color-marker-section',
 	},
+	// several devices at one spot: the OSM report's dashed ring, r 8, in its grey;
+	// the count is the layer's text (VXM-007 D3)
+	several: {
+		width: 22,
+		height: 22,
+		path: 'M3 11 A8 8 0 1 0 19 11 A8 8 0 1 0 3 11 Z',
+		draw: 'ring',
+		dash: [2.4, 2],
+		colourVar: '--color-marker-several',
+	},
 };
 
 export const MARKER_HALO_VAR = '--color-marker-halo';
 export const MARKER_HALO_WIDTH = 2.5; // px, DESIGN.md
 export const MARKER_LINE_WIDTH = 3; // px, the section line
+export const MARKER_RING_WIDTH = 1.8; // px, the 'several' ring
 
-// Map layers bottom → top: rarer and more critical types on top (VXM-006 D3).
-export const MARKER_LAYER_ORDER: CameraType[] = [
+// Map layers bottom → top: rarer and more critical types on top (VXM-006 D3);
+// 'several' last - it stands for more than one camera.
+export const MARKER_LAYER_ORDER: MarkerKind[] = [
 	'speed',
 	'section',
 	'level_crossing',
 	'red_light',
+	'several',
 ];

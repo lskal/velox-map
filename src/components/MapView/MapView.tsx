@@ -6,11 +6,18 @@ import {
 } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-import { FRANCE_BOUNDS, MAP_STYLE_URLS } from '@/config/map';
+import { COUNTRY_MAP, MAP_STYLE_URLS } from '@/config/map';
 import { useTheme } from '@/hooks/useTheme';
+import { toCameraFeatures } from '@/lib/cameraFeatures';
 import { getTheme } from '@/lib/theme';
+import type { Camera } from '@/types/camera';
 import type { CameraFeatureCollection } from '@/types/markers';
-import { addMarkers, CAMERA_SOURCE, NO_CAMERAS } from './markers';
+import {
+	addClusterClicks,
+	addMarkers,
+	CAMERA_SOURCE,
+	NO_CAMERAS,
+} from './markers';
 import styles from './MapView.module.scss';
 
 // MapLibre v6 with a bundler: tell it where Vite put its worker, once, before any map.
@@ -20,7 +27,7 @@ setWorkerUrl(workerUrl);
 // nothing hides JavaScript's built-in Map.
 // No zoom buttons yet: MapLibre's are 29px (below our 44px touch target); our own come later.
 // Zoom with pinch, scroll, double-click or the keyboard (+ / -, arrows to pan).
-export default function MapView() {
+export default function MapView({ cameras }: { cameras: Camera[] }) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const styleUrlRef = useRef(''); // the style the map has now
@@ -35,29 +42,21 @@ export default function MapView() {
 		const map = new MapLibreMap({
 			container: containerRef.current,
 			style: styleUrl,
-			bounds: FRANCE_BOUNDS,
+			bounds: COUNTRY_MAP.FR.bounds,
 			fitBoundsOptions: { padding: 16 },
-			// Always expanded: the OSM / ODbL licence requires visible attribution.
-			attributionControl: { compact: false },
+			// No attribution box on the map: the footer, always visible right below it,
+			// carries the full credit (OSM guidelines allow "adjacent to the map").
+			attributionControl: false,
 		});
 
 		// Markers on every style load: the first one and each theme switch (VXM-006 D6).
-		map.on('style.load', () => addMarkers(map, camerasRef.current));
+		map.on('style.load', () =>
+			addMarkers(map, camerasRef.current, COUNTRY_MAP.FR),
+		);
+		addClusterClicks(map, COUNTRY_MAP.FR);
 
 		mapRef.current = map;
 		styleUrlRef.current = styleUrl;
-
-		// Dev only: four test cameras, one per type (VXM-006). The build drops this
-		// block and the file it imports; VXM-007 puts the real data in the same source.
-		if (import.meta.env.DEV) {
-			void import('@/dev/testMarkers').then(({ TEST_CAMERAS }) => {
-				if (mapRef.current !== map) return; // map already removed (StrictMode)
-				camerasRef.current = TEST_CAMERAS;
-				map.getSource<GeoJSONSource>(CAMERA_SOURCE)?.setData(
-					TEST_CAMERAS,
-				);
-			});
-		}
 
 		// React StrictMode runs this effect twice in dev: removing the first map
 		// here leaves exactly one.
@@ -75,6 +74,31 @@ export default function MapView() {
 		mapRef.current.setStyle(styleUrl);
 		styleUrlRef.current = styleUrl;
 	}, [theme]);
+
+	// The cameras into the map's source - now, and kept in the ref for the next style load.
+	useEffect(() => {
+		const { features, ...counts } = toCameraFeatures(cameras);
+		if (counts.cameras > 0) {
+			console.info(
+				`Map: ${counts.cameras} cameras on ${counts.spots} spots - ${counts.sharedSpots} spots hold more than one camera, ${counts.mixedSpots} of them mix types`,
+			);
+			// Where they are, to look them up (lng / lat on any map, ids in the official file).
+			if (counts.shared.length > 0) {
+				console.table(
+					counts.shared.map(spot => ({
+						lng: spot.position[0],
+						lat: spot.position[1],
+						ids: spot.ids.join(', '),
+						types: spot.types.join(', '),
+					})),
+				);
+			}
+		}
+		camerasRef.current = features;
+		mapRef.current
+			?.getSource<GeoJSONSource>(CAMERA_SOURCE)
+			?.setData(features);
+	}, [cameras]);
 
 	return <div ref={containerRef} className={styles.map} />;
 }

@@ -1,14 +1,27 @@
 @use '../../styles/typography' as type;
 
-// VXM-002 plan D7
+// VXM-002 plan D7; data date + attribution VXM-007 plan D9
 
+// Notice + date on the left, attribution on the right; they wrap on mobile.
 .footer {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
-	gap: var(--space-2);
+	justify-content: space-between;
+	gap: var(--space-2) var(--space-4);
 	padding: var(--space-4);
 	border-top: 1px solid var(--color-border-subtle);
+
+	a {
+		color: var(--color-accent-text);
+	}
+}
+
+.group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2) var(--space-3);
 }
 
 // Notice pill - UI design: Body S, weight 500
