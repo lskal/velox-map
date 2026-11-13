@@ -4,7 +4,7 @@ import type { FooterProps } from '@/types/footer';
 import styles from './Footer.module.scss';
 import { LICENCES_LINKS } from '@/config/map';
 
-// "30 Dec 2025" - short, the same for every reader until i18n.
+// "30 dic 2025" - it-IT for now (Max, 2026-11-13); follows the language once i18n exists.
 function formatDate(iso: string): string {
 	return new Date(iso).toLocaleDateString('it-IT', {
 		day: 'numeric',
