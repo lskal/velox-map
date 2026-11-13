@@ -38,7 +38,7 @@ export default function App() {
 					</>
 				)}
 			</main>
-			<Footer />
+			<Footer status={france.status} dataAsOf={france.dataAsOf} />
 		</div>
 	);
 }

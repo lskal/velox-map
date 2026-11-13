@@ -27,3 +27,11 @@ export const COUNTRY_MAP: Record<CountryCode, CountryMapSettings> = {
 		],
 	},
 };
+
+export const LICENCES_LINKS = {
+	osm: 'https://www.openstreetmap.org/copyright',
+	openFreeMap: 'https://openfreemap.org',
+	openMapTiles: 'https://openmaptiles.org',
+	source: 'https://www.data.gouv.fr/datasets/liste-des-radars-fixes-en-france/',
+	licence: 'https://www.etalab.gouv.fr/licence-ouverte-open-licence/',
+};

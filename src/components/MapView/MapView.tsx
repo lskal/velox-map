@@ -44,8 +44,9 @@ export default function MapView({ cameras }: { cameras: Camera[] }) {
 			style: styleUrl,
 			bounds: COUNTRY_MAP.FR.bounds,
 			fitBoundsOptions: { padding: 16 },
-			// Always expanded: the OSM / ODbL licence requires visible attribution.
-			attributionControl: { compact: false },
+			// No attribution box on the map: the footer, always visible right below it,
+			// carries the full credit (OSM guidelines allow "adjacent to the map").
+			attributionControl: false,
 		});
 
 		// Markers on every style load: the first one and each theme switch (VXM-006 D6).
