@@ -3,7 +3,7 @@ import type { CameraFeature, CameraFeaturesResult } from '@/types/markers';
 
 // Cameras → what the map's source holds (plan.md → lean GeoJSON: no details in the map).
 // Cameras with exactly the same coordinates become one point (DESIGN.md → Same position):
-// same type → that type; different types → 'several' (VXM-007 D2, D3).
+// one camera → its type; two or more, same type or not → 'several' (VXM-007 D2, D3).
 export function toCameraFeatures(cameras: Camera[]): CameraFeaturesResult {
 	const spots = new Map<string, Camera[]>(); // "lng,lat" → the cameras there
 
@@ -40,7 +40,7 @@ export function toCameraFeatures(cameras: Camera[]): CameraFeaturesResult {
 			geometry: { type: 'Point', coordinates: first.position },
 			properties: {
 				id: first.id,
-				type: mixed ? 'several' : first.type,
+				type: here.length > 1 ? 'several' : first.type,
 				count: here.length,
 			},
 		});

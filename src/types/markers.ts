@@ -5,12 +5,13 @@ export interface MarkerShape {
 	width: number; // px, at 1×
 	height: number;
 	path: string; // SVG path data, in the same px coordinates
-	draw: 'fill' | 'line'; // filled shape, or a line (the section icon)
+	draw: 'fill' | 'line' | 'ring'; // filled shape, a line (section), or a dashed ring (several)
+	dash?: number[]; // the ring's dash pattern, px
 	colourVar: string; // CSS variable in _map.scss
 }
 
-// What one marker stands for: a camera type, or 'several' - one spot with cameras of
-// different types (VXM-007, the grey dashed ring with the count).
+// What one marker stands for: a camera type, or 'several' - one spot with two or more
+// cameras, same type or not (VXM-007, the grey dashed ring with the count).
 export type MarkerKind = CameraType | 'several';
 
 export type MarkerShapes = Partial<Record<MarkerKind, MarkerShape>>;

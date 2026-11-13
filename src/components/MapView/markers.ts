@@ -8,6 +8,7 @@ import {
 	MARKER_HALO_WIDTH,
 	MARKER_LAYER_ORDER,
 	MARKER_LINE_WIDTH,
+	MARKER_RING_WIDTH,
 	MARKER_SHAPES,
 } from '@/config/markers';
 import type { CountryMapSettings } from '@/types/map';
@@ -55,6 +56,16 @@ function drawMarker(shape: MarkerShape): ImageData {
 		context.strokeStyle = halo;
 		context.lineWidth = MARKER_HALO_WIDTH;
 		context.stroke(path);
+	} else if (shape.draw === 'ring') {
+		// Hollow dashed ring (the 'several' icon): filled with the halo colour so the
+		// count stays readable, the dashed ring on top - as on the canvas board.
+		context.fillStyle = halo;
+		context.fill(path);
+		context.strokeStyle = colour;
+		context.lineWidth = MARKER_RING_WIDTH;
+		context.lineCap = 'butt';
+		context.setLineDash(shape.dash ?? []);
+		context.stroke(path);
 	} else {
 		// A line (the section icon): a wide halo line first, the coloured line on top.
 		context.strokeStyle = halo;
@@ -69,6 +80,14 @@ function drawMarker(shape: MarkerShape): ImageData {
 }
 
 const CLUSTER_LAYERS = ['clusters', 'singles'];
+
+// The device count inside the 'several' ring (canvas: 11 px, bold, the ring's grey).
+const SEVERAL_COUNT = {
+	'text-field': ['to-string', ['get', 'count']] as ExpressionSpecification,
+	'text-font': ['Noto Sans Bold'],
+	'text-size': 11,
+	'text-allow-overlap': true,
+};
 const NOT_CLUSTERED: ExpressionSpecification = ['!', ['has', 'point_count']];
 
 // A grey circle with a number (DESIGN.md → Cluster: 34 px, 4 px soft ring, white bold
@@ -169,7 +188,12 @@ export function addMarkers(
 			layout: {
 				'icon-image': type,
 				'icon-allow-overlap': true,
+				...(type === 'several' ? SEVERAL_COUNT : {}),
 			},
+			paint:
+				type === 'several'
+					? { 'text-color': cssColour('--color-marker-several') }
+					: {},
 		});
 	}
 }
