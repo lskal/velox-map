@@ -68,7 +68,23 @@ export default function MapView({ cameras }: { cameras: Camera[] }) {
 
 	// The cameras into the map's source - now, and kept in the ref for the next style load.
 	useEffect(() => {
-		const features = toCameraFeatures(cameras);
+		const { features, ...counts } = toCameraFeatures(cameras);
+		if (counts.cameras > 0) {
+			console.info(
+				`Map: ${counts.cameras} cameras on ${counts.spots} spots - ${counts.sharedSpots} spots hold more than one camera, ${counts.mixedSpots} of them mix types`,
+			);
+			// Where they are, to look them up (lng / lat on any map, ids in the official file).
+			if (counts.shared.length > 0) {
+				console.table(
+					counts.shared.map(spot => ({
+						lng: spot.position[0],
+						lat: spot.position[1],
+						ids: spot.ids.join(', '),
+						types: spot.types.join(', '),
+					})),
+				);
+			}
+		}
 		camerasRef.current = features;
 		mapRef.current
 			?.getSource<GeoJSONSource>(CAMERA_SOURCE)
