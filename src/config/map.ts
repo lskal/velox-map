@@ -19,7 +19,11 @@ export const COUNTRY_MAP: Record<CountryCode, CountryMapSettings> = {
 			[9.6, 51.1],
 		],
 		clustered: true,
-		markerMinZoom: 9, // or your tuned value
-		clusterRadius: 50, // to tune on the real map
+		markerMinZoom: 8, // single markers from here (tuned 2026-11-13)
+		clusterRadius: 50, // to tune again on the real map (tuned 2026-11-13)
+		iconSize: [
+			[8, 0.5], // region zoom: half size
+			[14, 1.2], // zoomed in close: a bit above the designed size
+		],
 	},
 };

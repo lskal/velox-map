@@ -85,9 +85,9 @@ const CLUSTER_LAYERS = ['clusters', 'singles'];
 const SEVERAL_COUNT = {
 	'text-field': ['to-string', ['get', 'count']] as ExpressionSpecification,
 	'text-font': ['Noto Sans Bold'],
-	'text-size': 11,
 	'text-allow-overlap': true,
 };
+const SEVERAL_TEXT_SIZE = 11; // px at icon scale 1
 const NOT_CLUSTERED: ExpressionSpecification = ['!', ['has', 'point_count']];
 
 // A grey circle with a number (DESIGN.md → Cluster: 34 px, 4 px soft ring, white bold
@@ -177,6 +177,25 @@ export function addMarkers(
 		);
 	}
 
+	// Icons grow with the zoom (R5): 'interpolate' goes smoothly from one [zoom, scale]
+	// pair to the next, and keeps the first / last scale outside them.
+	const iconSize: ExpressionSpecification = [
+		'interpolate',
+		['linear'],
+		['zoom'],
+		...settings.iconSize.flat(),
+	];
+	// The count inside the 'several' ring grows with it: 11 px × the same scale.
+	const countSize: ExpressionSpecification = [
+		'interpolate',
+		['linear'],
+		['zoom'],
+		...settings.iconSize.flatMap(([zoom, scale]) => [
+			zoom,
+			SEVERAL_TEXT_SIZE * scale,
+		]),
+	];
+
 	// One layer per type, bottom → top (plan D3), from the marker zoom when clustered.
 	for (const type of MARKER_LAYER_ORDER) {
 		map.addLayer({
@@ -187,8 +206,11 @@ export function addMarkers(
 			filter: ['all', NOT_CLUSTERED, ['==', ['get', 'type'], type]],
 			layout: {
 				'icon-image': type,
+				'icon-size': iconSize,
 				'icon-allow-overlap': true,
-				...(type === 'several' ? SEVERAL_COUNT : {}),
+				...(type === 'several'
+					? { ...SEVERAL_COUNT, 'text-size': countSize }
+					: {}),
 			},
 			paint:
 				type === 'several'

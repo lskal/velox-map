@@ -7,6 +7,7 @@ export interface CountryMapSettings {
 	clustered: boolean; // false = every camera as a marker (users' switch, later)
 	markerMinZoom: number; // single markers from this zoom; below it, only clusters
 	clusterRadius: number; // px: how close points must be to join a cluster
+	iconSize: [zoom: number, scale: number][]; // icon scale by zoom, in between it grows smoothly
 }
 
 export type CountryCode = 'FR';
