@@ -32,6 +32,11 @@
 	--color-notice-text: #fbbf24;
 	--color-notice-bg: rgba(245, 158, 11, 0.1);
 	--color-notice-border: rgba(245, 158, 11, 0.3);
+
+	// Floating cards and the dimmed map (DESIGN.md chapter 4, VXM-007)
+	--shadow-card:
+		0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+	--color-map-dim: rgba(11, 15, 20, 0.55);
 }
 
 [data-theme='light'] {
@@ -52,6 +57,11 @@
 	--color-notice-text: #92400e;
 	--color-notice-bg: #fffbeb;
 	--color-notice-border: #fcd34d;
+
+	--shadow-card:
+		0 10px 25px -5px rgba(15, 23, 42, 0.15),
+		0 8px 10px -6px rgba(15, 23, 42, 0.1);
+	--color-map-dim: rgba(248, 250, 252, 0.6);
 }
 
 // Sizes - the same in both themes. Type scale complete (VXM-003); spacing and radius
@@ -97,6 +107,7 @@
 
 	// Radius and touch targets
 	--radius-control: 8px;
+	--radius-card: 12px;
 	--radius-pill: 9999px;
 	--touch-target: 44px;
 	--size-logo-icon: 26px;

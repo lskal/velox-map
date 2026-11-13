@@ -7,6 +7,7 @@
 }
 
 .main {
+	position: relative; // MapStatus covers the map
 	display: flex;
 	flex: 1;
 	flex-direction: column;

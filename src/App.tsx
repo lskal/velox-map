@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import Footer from '@/components/Footer/Footer';
 import Header from '@/components/Header/Header';
+import MapStatus from '@/components/MapStatus/MapStatus';
 import MapView from '@/components/MapView/MapView';
 import { useFranceData } from '@/hooks/useFranceData';
 import styles from './App.module.scss';
@@ -19,13 +20,22 @@ export default function App() {
 	return (
 		<div className={styles.layout}>
 			<Header />
-			<main className={styles.main}>
+			<main
+				className={styles.main}
+				aria-busy={france.status === 'loading'}
+			>
 				{showTypeCheck ? (
 					<Suspense>
 						<TypeCheck />
 					</Suspense>
 				) : (
-					<MapView cameras={france.cameras} />
+					<>
+						<MapView cameras={france.cameras} />
+						<MapStatus
+							status={france.status}
+							onRetry={france.retry}
+						/>
+					</>
 				)}
 			</main>
 			<Footer />
