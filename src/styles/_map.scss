@@ -8,6 +8,11 @@
 	--color-marker-level-crossing: #a855f7;
 	--color-marker-section: #f97316;
 	--color-marker-halo: #0b0f14; // keeps every marker ≥ 3:1 against the map
+
+	// Cluster - the same in both themes (DESIGN.md → Map markers → Cluster)
+	--color-cluster: #475569;
+	--color-cluster-ring: rgba(100, 116, 139, 0.25);
+	--color-cluster-text: #ffffff;
 }
 
 [data-theme='light'] {

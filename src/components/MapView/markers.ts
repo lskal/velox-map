@@ -1,4 +1,8 @@
-import type { Map as MapLibreMap } from 'maplibre-gl';
+import type {
+	ExpressionSpecification,
+	GeoJSONSource,
+	Map as MapLibreMap,
+} from 'maplibre-gl';
 import {
 	MARKER_HALO_VAR,
 	MARKER_HALO_WIDTH,
@@ -6,6 +10,7 @@ import {
 	MARKER_LINE_WIDTH,
 	MARKER_SHAPES,
 } from '@/config/markers';
+import type { CountryMapSettings } from '@/types/map';
 import type { CameraFeatureCollection, MarkerShape } from '@/types/markers';
 
 // Camera markers on the map (VXM-006): icons drawn from the designed shapes, one
@@ -63,9 +68,54 @@ function drawMarker(shape: MarkerShape): ImageData {
 	return context.getImageData(0, 0, canvas.width, canvas.height);
 }
 
+const CLUSTER_LAYERS = ['clusters', 'singles'];
+const NOT_CLUSTERED: ExpressionSpecification = ['!', ['has', 'point_count']];
+
+// A grey circle with a number (DESIGN.md → Cluster: 34 px, 4 px soft ring, white bold
+// text) - for clusters, and for lone cameras below the marker zoom (plan D5).
+function addCircleWithCount(
+	map: MapLibreMap,
+	id: string,
+	filter: ExpressionSpecification,
+	count: ExpressionSpecification,
+	maxzoom?: number,
+) {
+	map.addLayer({
+		id,
+		type: 'circle',
+		source: CAMERA_SOURCE,
+		filter,
+		...(maxzoom ? { maxzoom } : {}),
+		paint: {
+			'circle-color': cssColour('--color-cluster'),
+			'circle-radius': 17,
+			'circle-stroke-width': 4,
+			'circle-stroke-color': cssColour('--color-cluster-ring'),
+		},
+	});
+	map.addLayer({
+		id: `${id}-count`,
+		type: 'symbol',
+		source: CAMERA_SOURCE,
+		filter,
+		...(maxzoom ? { maxzoom } : {}),
+		layout: {
+			'text-field': ['to-string', count],
+			'text-font': ['Noto Sans Bold'], // a font the OpenFreeMap styles provide
+			'text-size': 12,
+			'text-allow-overlap': true,
+		},
+		paint: { 'text-color': cssColour('--color-cluster-text') },
+	});
+}
+
 // Icons, source and layers. Called on every 'style.load' - the first style and each
 // theme switch, because setStyle() throws away everything we added (plan D6).
-export function addMarkers(map: MapLibreMap, cameras: CameraFeatureCollection) {
+export function addMarkers(
+	map: MapLibreMap,
+	cameras: CameraFeatureCollection,
+	settings: CountryMapSettings,
+) {
 	for (const [type, shape] of Object.entries(MARKER_SHAPES)) {
 		if (!shape) continue;
 		const image = drawMarker(shape);
@@ -76,23 +126,82 @@ export function addMarkers(map: MapLibreMap, cameras: CameraFeatureCollection) {
 		}
 	}
 
-	if (!map.getSource(CAMERA_SOURCE)) {
-		map.addSource(CAMERA_SOURCE, { type: 'geojson', data: cameras });
+	if (map.getSource(CAMERA_SOURCE)) return; // already there for this style
+
+	map.addSource(CAMERA_SOURCE, {
+		type: 'geojson',
+		data: cameras,
+		cluster: settings.clustered,
+		clusterMaxZoom: settings.markerMinZoom - 1,
+		clusterRadius: settings.clusterRadius,
+		// A cluster shows how many cameras it holds, not how many points: a grouped
+		// spot (2 cameras) counts as 2 (plan → Risks).
+		clusterProperties: { devices: ['+', ['get', 'count']] },
+	});
+
+	if (settings.clustered) {
+		// Clusters, at every zoom up to the marker zoom.
+		addCircleWithCount(
+			map,
+			'clusters',
+			['has', 'point_count'],
+			['get', 'devices'],
+		);
+		// Lone cameras below the marker zoom: a circle too, so the country view shows
+		// groups only and no camera disappears (DESIGN.md → Zoom rule, plan D5).
+		addCircleWithCount(
+			map,
+			'singles',
+			NOT_CLUSTERED,
+			['get', 'count'],
+			settings.markerMinZoom,
+		);
 	}
 
-	// One layer per type, bottom → top (plan D3).
+	// One layer per type, bottom → top (plan D3), from the marker zoom when clustered.
 	for (const type of MARKER_LAYER_ORDER) {
-		const id = `cameras-${type}`;
-		if (map.getLayer(id)) continue;
 		map.addLayer({
-			id,
+			id: `cameras-${type}`,
 			type: 'symbol',
 			source: CAMERA_SOURCE,
-			filter: ['==', ['get', 'type'], type],
+			minzoom: settings.clustered ? settings.markerMinZoom : 0,
+			filter: ['all', NOT_CLUSTERED, ['==', ['get', 'type'], type]],
 			layout: {
 				'icon-image': type,
-				'icon-allow-overlap': true, // clusters handle overlap in VXM-007
+				'icon-allow-overlap': true,
 			},
+		});
+	}
+}
+
+// Click a grey circle → zoom in: a cluster until it splits, a lone camera to the
+// marker zoom (plan D6). Registered once per map - layer events survive style switches.
+export function addClusterClicks(
+	map: MapLibreMap,
+	settings: CountryMapSettings,
+) {
+	for (const layer of CLUSTER_LAYERS) {
+		map.on('click', layer, async event => {
+			const feature = event.features?.[0];
+			if (!feature || feature.geometry.type !== 'Point') return;
+			const center = feature.geometry.coordinates as [number, number];
+			const clusterId = feature.properties?.cluster_id as
+				| number
+				| undefined;
+
+			const zoom =
+				clusterId === undefined
+					? settings.markerMinZoom
+					: await map
+							.getSource<GeoJSONSource>(CAMERA_SOURCE)
+							?.getClusterExpansionZoom(clusterId);
+			map.easeTo({ center, zoom: zoom ?? settings.markerMinZoom });
+		});
+		map.on('mouseenter', layer, () => {
+			map.getCanvas().style.cursor = 'pointer';
+		});
+		map.on('mouseleave', layer, () => {
+			map.getCanvas().style.cursor = '';
 		});
 	}
 }

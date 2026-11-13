@@ -6,13 +6,18 @@ import {
 } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
-import { FRANCE_BOUNDS, MAP_STYLE_URLS } from '@/config/map';
+import { COUNTRY_MAP, MAP_STYLE_URLS } from '@/config/map';
 import { useTheme } from '@/hooks/useTheme';
 import { toCameraFeatures } from '@/lib/cameraFeatures';
 import { getTheme } from '@/lib/theme';
 import type { Camera } from '@/types/camera';
 import type { CameraFeatureCollection } from '@/types/markers';
-import { addMarkers, CAMERA_SOURCE, NO_CAMERAS } from './markers';
+import {
+	addClusterClicks,
+	addMarkers,
+	CAMERA_SOURCE,
+	NO_CAMERAS,
+} from './markers';
 import styles from './MapView.module.scss';
 
 // MapLibre v6 with a bundler: tell it where Vite put its worker, once, before any map.
@@ -37,14 +42,17 @@ export default function MapView({ cameras }: { cameras: Camera[] }) {
 		const map = new MapLibreMap({
 			container: containerRef.current,
 			style: styleUrl,
-			bounds: FRANCE_BOUNDS,
+			bounds: COUNTRY_MAP.FR.bounds,
 			fitBoundsOptions: { padding: 16 },
 			// Always expanded: the OSM / ODbL licence requires visible attribution.
 			attributionControl: { compact: false },
 		});
 
 		// Markers on every style load: the first one and each theme switch (VXM-006 D6).
-		map.on('style.load', () => addMarkers(map, camerasRef.current));
+		map.on('style.load', () =>
+			addMarkers(map, camerasRef.current, COUNTRY_MAP.FR),
+		);
+		addClusterClicks(map, COUNTRY_MAP.FR);
 
 		mapRef.current = map;
 		styleUrlRef.current = styleUrl;
