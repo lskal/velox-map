@@ -2,7 +2,7 @@ import type { CameraType, LngLat } from '@/types/camera';
 
 // One marker icon, drawn on a canvas from an SVG path (VXM-006).
 export interface MarkerShape {
-	width: number; // px, at 1×
+	width: number; // px, at 1x
 	height: number;
 	path: string; // SVG path data, in the same px coordinates
 	draw: 'fill' | 'line' | 'ring'; // filled shape, a line (section), or a dashed ring (several)

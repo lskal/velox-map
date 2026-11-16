@@ -68,7 +68,7 @@
 // only the values used so far.
 :root {
 	// Type scale - DESIGN.md chapter 3 (mobile first; desktop values below). Everything in px
-	// (decided 2026-11-10): letter-spacing = the design's em value × the font size, so it gets
+	// (decided 2026-11-10): letter-spacing = the design's em value x the font size, so it gets
 	// its own desktop value where the font size changes.
 	--font-size-h1: 26px;
 	--line-height-h1: 30px;
