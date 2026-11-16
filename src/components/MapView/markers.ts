@@ -18,7 +18,7 @@ import type { CameraFeatureCollection, MarkerShape } from '@/types/markers';
 // source with the cameras, one layer per camera type.
 
 export const CAMERA_SOURCE = 'cameras';
-const PIXEL_RATIO = 2; // drawn at 2×: sharp on retina screens
+const PIXEL_RATIO = 2; // drawn at 2x: sharp on retina screens
 
 export const NO_CAMERAS: CameraFeatureCollection = {
 	type: 'FeatureCollection',
@@ -185,7 +185,7 @@ export function addMarkers(
 		['zoom'],
 		...settings.iconSize.flat(),
 	];
-	// The count inside the 'several' ring grows with it: 11 px × the same scale.
+	// The count inside the 'several' ring grows with it: 11 px x the same scale.
 	const countSize: ExpressionSpecification = [
 		'interpolate',
 		['linear'],
