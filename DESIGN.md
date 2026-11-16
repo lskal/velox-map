@@ -268,7 +268,7 @@ All components with their states: canvas board "Components - dark (desktop + mob
 - **Table filter** (future): the removable filter chip on the components board ("Comune: Milano") is a later feature, not v1.
 - **Settings page** (future): suggested country on/off, language, theme, "Forget your choices" (the modal example). Would replace the v1 rule "settings live in header and footer".
 - Detail card and region view on **mobile** and in **light** theme; the "may not be active" marker on a real map (NO, SE, ES).
-- Search / filter inputs, checkboxes; light version of the components board.
+- Search / filter inputs; light version of the components board
 
 Design them on the canvas first, then add them here.
 
