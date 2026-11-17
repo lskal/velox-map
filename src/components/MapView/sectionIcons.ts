@@ -143,20 +143,31 @@ function iconAngle(position: LngLat, lines: LngLat[][]): number | null {
 }
 
 // Reads the angle of every section in view that doesn't have one yet. Called on 'idle':
-// the tiles in view are loaded then. Each angle is read once and kept (D1).
+// the tiles in view are loaded then. A found angle is kept for good (D1).
+// No road found → the icon is shown horizontal for now, and `noRoadAt` keeps the zoom
+// of that try: low-zoom tiles simplify or leave out smaller roads, so the angle is read
+// again once the map is `retryZoomStep` further in (VXM-010 T10). Those few icons turn
+// once - the only exception to "no icon moving after it appears".
 export function readRoadAngles(
 	map: MapLibreMap,
 	sections: SectionIcon[],
 	angles: Map<string, number>,
+	noRoadAt: Map<string, number>,
 	settings: CountryMapSettings,
 ): { found: number; noRoad: number } {
 	const result = { found: 0, noRoad: 0 };
-	if (map.getZoom() < settings.markerMinZoom) return result;
+	const zoom = map.getZoom();
+	if (zoom < settings.markerMinZoom) return result;
 
 	const bounds = map.getBounds();
-	const waiting = sections.filter(
-		section => !angles.has(section.id) && bounds.contains(section.position),
-	);
+	const waiting = sections.filter(({ id, position }) => {
+		if (!bounds.contains(position)) return false;
+		const triedAt = noRoadAt.get(id);
+		if (triedAt !== undefined) {
+			return zoom >= triedAt + BASEMAP_ROADS.retryZoomStep;
+		}
+		return !angles.has(id);
+	});
 	if (waiting.length === 0) return result;
 
 	const lines = loadedRoadLines(map);
@@ -164,7 +175,12 @@ export function readRoadAngles(
 		const angle = iconAngle(section.position, lines);
 		angles.set(section.id, angle ?? 0);
 		result.found++;
-		if (angle === null) result.noRoad++;
+		if (angle === null) {
+			noRoadAt.set(section.id, zoom);
+			result.noRoad++;
+		} else {
+			noRoadAt.delete(section.id);
+		}
 	}
 	return result;
 }

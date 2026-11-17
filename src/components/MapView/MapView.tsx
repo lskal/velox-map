@@ -59,6 +59,7 @@ export default function MapView({
 	const camerasRef = useRef<CameraFeatureCollection>(NO_CAMERAS); // kept for re-adding after a theme switch
 	const sectionsRef = useRef<SectionIcon[]>([]); // one-point sections (VXM-010 D1)
 	const anglesRef = useRef(new Map<string, number>()); // section id → icon angle, read once
+	const noRoadAtRef = useRef(new Map<string, number>()); // section id → zoom where no road was found (read again further in)
 	const linesRef = useRef<SectionLineCollection>(NO_SECTION_LINES); // sections drawn along the road (VXM-010 D8)
 	const drawnAsLinesRef = useRef(new Set<string>()); // their ids: no one-point icon for them
 	const theme = useTheme();
@@ -102,11 +103,12 @@ export default function MapView({
 				map,
 				sectionsRef.current,
 				anglesRef.current,
+				noRoadAtRef.current,
 				COUNTRY_MAP.FR,
 			);
 			if (found === 0) return;
 			console.info(
-				`Map: road angle read for ${found} sections at zoom ${map.getZoom().toFixed(1)} - ${noRoad} with no road within 30 m (horizontal)`,
+				`Map: road angle read for ${found} sections at zoom ${map.getZoom().toFixed(1)} - ${noRoad} with no road within 30 m (horizontal for now)`,
 			);
 			updateSectionIcons(
 				map,
