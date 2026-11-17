@@ -2,11 +2,12 @@ import LogoIcon from '@/assets/icons/LogoIcon/LogoIcon';
 import MenuIcon from '@/assets/icons/MenuIcon/MenuIcon';
 import MoonIcon from '@/assets/icons/MoonIcon/MoonIcon';
 import Text from '@/components/Text/Text';
+import type { HeaderProps } from '@/types/header';
 import styles from './Header.module.scss';
 
 // Page header - DESIGN.md chapter 5 "Every page".
 // Controls are static for now (VXM-002): real, accessible elements without behaviour.
-export default function Header() {
+export default function Header({ children }: HeaderProps) {
 	return (
 		<header className={styles.header}>
 			<div className={styles.inner}>
@@ -17,8 +18,9 @@ export default function Header() {
 					</Text>
 				</a>
 
-				{/* Desktop (768px and up): language + theme */}
+				{/* Desktop (768px and up): page controls (OSM switch), language + theme */}
 				<div className={styles.controls}>
+					{children}
 					<select
 						className={styles.select}
 						name="language"

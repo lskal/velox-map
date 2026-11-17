@@ -8,11 +8,10 @@ export const COUNTRY_OSM: Partial<Record<CountryCode, OsmSettings>> = {
 	FR: {
 		mode: 'extras',
 		label: 'OSM extras',
+		// Desktop tooltip, the mobile (i) card and the card that opens the first time the
+		// switch is turned on (Max, 2026-11-17: one card, no separate notice)
 		tooltip:
 			'Directions and section paths mapped by OpenStreetMap volunteers. Not official and possibly wrong. The official data is not changed.',
-		noticeTitle: 'OSM extras are on',
-		noticeText:
-			"Directions and section paths from OpenStreetMap volunteers are now shown. They're community data, not official, and may be wrong.",
 		fileUrl: '/data/osm-fr.json',
 		cameraMatchMetres: 50,
 		sectionMatchMetres: 300,
@@ -22,4 +21,11 @@ export const COUNTRY_OSM: Partial<Record<CountryCode, OsmSettings>> = {
 		// harmless: only those within the match distance of a French camera count.
 		overpassBox: [41.3, -5.2, 51.1, 9.6],
 	},
+};
+
+// The same in every country (VXM-010 D7).
+export const OSM_TEXTS = {
+	legalLink: { href: '/about#disclaimer', label: 'More in About → Legal' },
+	errorText:
+		"OSM extras couldn't be loaded. The official data is still on the map - try again later.",
 };

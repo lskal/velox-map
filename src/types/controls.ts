@@ -15,6 +15,7 @@ export interface SwitchProps {
 export interface TooltipProps {
 	text: string;
 	align?: 'start' | 'end'; // which edge of the trigger the card lines up with; default 'end'
+	disabled?: boolean; // never opens, e.g. while another card explains the same thing
 	// The trigger. Gets the tooltip's id, to put in its aria-describedby.
 	children: (tooltipId: string) => ReactNode;
 	className?: string;

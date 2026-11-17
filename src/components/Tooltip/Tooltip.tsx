@@ -14,6 +14,7 @@ const CLOSE_DELAY_MS = 150; // time to move from the trigger onto the card
 export default function Tooltip({
 	text,
 	align = 'end',
+	disabled = false,
 	children,
 	className,
 }: TooltipProps) {
@@ -66,7 +67,7 @@ export default function Tooltip({
 			<span
 				id={id}
 				role="tooltip"
-				hidden={!open}
+				hidden={!open || disabled}
 				className={`${styles.card} ${styles[align]}`}
 			>
 				{text}

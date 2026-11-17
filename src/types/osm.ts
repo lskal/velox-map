@@ -1,4 +1,5 @@
 import type { CameraType, LngLat } from '@/types/camera';
+import type { CountryCode } from '@/types/map';
 
 // OpenStreetMap extras (VXM-010): what the Overpass API returns, the per-country
 // settings and the file the matching writes.
@@ -50,9 +51,7 @@ export interface OverpassResponse {
 export interface OsmSettings {
 	mode: 'extras' | 'reports'; // extras: adds to official devices only; reports: also OSM-only cameras (Italy)
 	label: string; // the switch, e.g. "OSM extras"
-	tooltip: string; // desktop tooltip and the mobile (i) text
-	noticeTitle: string; // first-use notice
-	noticeText: string;
+	tooltip: string; // tooltip, (i) card and first-use card
 	fileUrl: string; // where the app loads the OSM file
 	cameraMatchMetres: number; // OSM camera ↔ official camera
 	sectionMatchMetres: number; // official section point ↔ the OSM relation's nearest camera / from / to
@@ -89,4 +88,27 @@ export interface OsmExtrasFile {
 	directions: Record<string, OsmDirection>; // official camera id → direction
 	sections: Record<string, { path: LngLat[] }>; // official section id → path, `from` → `to`
 	missingTiles?: string[]; // only in a partial local file: the Overpass tiles that failed
+}
+
+// --- The switch in the app (VXM-010 D5, D7) ---
+
+// off → loading → on; a failed load goes back to off with the error message.
+export type OsmStatus = 'off' | 'loading' | 'on';
+// What the card under the switch shows by itself: the explanation the first time the
+// switch is turned on, or the error.
+export type OsmNotice = 'first-use' | 'error';
+
+export interface OsmExtrasState {
+	status: OsmStatus;
+	notice: OsmNotice | null;
+	toggle: (on: boolean) => void;
+	closeNotice: () => void;
+}
+
+export interface OsmSwitchProps {
+	country: CountryCode;
+	settings: OsmSettings;
+	placement: 'header' | 'pill'; // desktop header / floating pill on the mobile map
+	state: OsmExtrasState;
+	disabled?: boolean; // e.g. while the country's data loads
 }
