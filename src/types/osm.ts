@@ -57,6 +57,9 @@ export interface OsmSettings {
 	cameraMatchMetres: number; // OSM camera ↔ official camera
 	sectionMatchMetres: number; // official section point ↔ the OSM relation's nearest camera / from / to
 	directionTypes: CameraType[]; // official types that get an OSM direction
+	// Where to ask Overpass: a box [south, west, north, east], asked in tiles - much
+	// lighter than a country area (gis-basics.md ch. 11)
+	overpassBox: [number, number, number, number];
 }
 
 // --- The OSM file (VXM-010 D4) ---
@@ -85,4 +88,5 @@ export interface OsmExtrasFile {
 	counts: { cameras: OsmCameraCounts; sections: OsmSectionCounts };
 	directions: Record<string, OsmDirection>; // official camera id → direction
 	sections: Record<string, { path: LngLat[] }>; // official section id → path, `from` → `to`
+	missingTiles?: string[]; // only in a partial local file: the Overpass tiles that failed
 }

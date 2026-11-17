@@ -1,6 +1,7 @@
 import { FR_SOURCE, fetchFRSource } from '@/lib/fetchers/fr';
 import type { RawFR } from '@/types/fr';
 import type { ReadyFile } from '@/types/readyFile';
+import { runScript } from './runScript';
 import { writeDataFile } from './writeDataFile';
 
 // npm run data:fr - fetches the official French data and writes public/data/fr.json,
@@ -30,22 +31,4 @@ async function main() {
 	);
 }
 
-// If Node runs out of work while main() is still waiting, say so instead of ending
-// silently (exit code 13 = "unfinished top-level work").
-let finished = false;
-process.on('exit', code => {
-	if (!finished && code === 0) {
-		console.error('France: stopped before finishing, nothing written');
-		process.exitCode = 1;
-	}
-});
-
-main()
-	.then(() => {
-		finished = true;
-	})
-	.catch((error: unknown) => {
-		finished = true;
-		console.error('France: failed, nothing written -', error);
-		process.exitCode = 1;
-	});
+runScript('France', main);

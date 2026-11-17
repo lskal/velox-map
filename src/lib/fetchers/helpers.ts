@@ -27,17 +27,32 @@ const RETRY_WAITS_MS = [2_000, 5_000]; // plan.md → Data flow: up to 2 retries
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// GET + JSON with the retry rule of plan.md → Data flow (2026-11-13): a timeout, a network
-// error or a 5xx is tried again up to 2 times; a 4xx is not. Used by the app and the
-// scripts now, by the scheduled jobs later (VXM-012).
-export async function fetchJSON<T>(url: string): Promise<T> {
+// Optional request settings: a POST body (Overpass), headers, a longer timeout.
+export interface FetchJSONOptions {
+	method?: 'GET' | 'POST';
+	body?: string | URLSearchParams;
+	headers?: Record<string, string>;
+	timeoutMs?: number; // default 20 s
+}
+
+// A request + JSON with the retry rule of plan.md → Data flow (2026-11-13): a timeout, a
+// network error or a 5xx is tried again up to 2 times; a 4xx is not. Used by the app and
+// the scripts now, by the scheduled jobs later (VXM-012).
+export async function fetchJSON<T>(
+	url: string,
+	options: FetchJSONOptions = {},
+): Promise<T> {
+	const { timeoutMs = TIMEOUT_MS, ...init } = options;
 	for (let attempt = 0; ; attempt++) {
 		// Our own timer, not AbortSignal.timeout(): that one doesn't keep Node running,
 		// so a script waiting on a stuck request could end silently (2026-11-17).
 		const controller = new AbortController();
-		const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+		const timer = setTimeout(() => controller.abort(), timeoutMs);
 		try {
-			const response = await fetch(url, { signal: controller.signal });
+			const response = await fetch(url, {
+				...init,
+				signal: controller.signal,
+			});
 			if (!response.ok) {
 				throw new HttpError(
 					response.status,

@@ -13,7 +13,8 @@
 		"preview": "vite preview",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
-		"data:fr": "tsx --tsconfig tsconfig.scripts.json scripts/data-fr.ts"
+		"data:fr": "tsx --tsconfig tsconfig.scripts.json scripts/data-fr.ts",
+		"osm:fr": "tsx --tsconfig tsconfig.scripts.json scripts/osm-extras-fr.ts"
 	},
 	"dependencies": {
 		"@fontsource-variable/roboto-flex": "^5.3.0",

@@ -58,12 +58,30 @@ export function parseOsmDirection(
 // Two values about 180° apart (± 20°).
 function isOpposite(degrees: number[]): boolean {
 	if (degrees.length !== 2) return false;
-	const diff = Math.abs(degrees[0] - degrees[1]) % 360;
-	return Math.abs(diff - 180) <= 20;
+	return angleBetween(degrees[0], degrees[1]) >= 180 - SAME_DIRECTION_DEGREES;
+}
+
+// Values less than 20° apart are the same direction (e.g. 344 and 343 from two OSM
+// cameras at one spot, seen 2026-11-17); the first one is kept.
+const SAME_DIRECTION_DEGREES = 20;
+
+function angleBetween(a: number, b: number): number {
+	const diff = Math.abs(a - b) % 360;
+	return Math.min(diff, 360 - diff);
 }
 
 function unique(degrees: number[]): number[] {
-	return [...new Set(degrees.map(value => Math.round(value)))];
+	const kept: number[] = [];
+	for (const value of degrees.map(Math.round)) {
+		if (
+			kept.every(
+				other => angleBetween(other, value) >= SAME_DIRECTION_DEGREES,
+			)
+		) {
+			kept.push(value);
+		}
+	}
+	return kept;
 }
 
 // Bearing of a road way at one of its nodes: the segment leaving the node (or arriving,

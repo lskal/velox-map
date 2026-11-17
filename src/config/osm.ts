@@ -17,5 +17,9 @@ export const COUNTRY_OSM: Partial<Record<CountryCode, OsmSettings>> = {
 		cameraMatchMetres: 50,
 		sectionMatchMetres: 300,
 		directionTypes: ['speed', 'section'],
+		// Metropolitan France + Corsica, like COUNTRY_MAP.FR.bounds; the overseas
+		// departments get no OSM extras for now. Neighbours' cameras in the box are
+		// harmless: only those within the match distance of a French camera count.
+		overpassBox: [41.3, -5.2, 51.1, 9.6],
 	},
 };
