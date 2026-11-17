@@ -37,6 +37,10 @@
 	@include type.body-s;
 }
 
+.body-xs {
+	@include type.body-xs;
+}
+
 .caption {
 	@include type.caption;
 	color: var(--color-text-2);

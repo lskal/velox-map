@@ -1,0 +1,59 @@
+@use '../../styles/typography' as type;
+
+// DESIGN.md chapter 6 → Switch: track 36 x 20, off `elevated` + `border`, on `accent`;
+// 16 px white thumb; 44 px touch area; disabled while loading.
+
+.switch {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2);
+	min-height: var(--touch-target);
+	padding: 0 var(--space-1);
+	border: 0;
+	border-radius: var(--radius-control);
+	background: none;
+	color: var(--color-text);
+	cursor: pointer;
+
+	&:disabled {
+		cursor: default;
+		opacity: 0.5;
+	}
+}
+
+.label {
+	@include type.body-s;
+}
+
+.track {
+	position: relative;
+	flex: none;
+	width: 36px;
+	height: 20px;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-pill);
+	background: var(--color-elevated);
+	transition: background-color 150ms ease;
+
+	[aria-checked='true'] & {
+		border-color: var(--color-accent);
+		background: var(--color-accent);
+	}
+}
+
+// 16 px thumb in a 20 px track with a 1 px border: 1 px gap each side.
+.thumb {
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: #fff;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	transition: transform 150ms ease;
+
+	[aria-checked='true'] & {
+		transform: translateX(16px);
+	}
+}

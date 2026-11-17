@@ -11,9 +11,14 @@ import styles from './App.module.scss';
 const TypeCheck = import.meta.env.DEV
 	? lazy(() => import('@/dev/TypeCheck/TypeCheck'))
 	: null;
+// Dev-only controls check at /#ui (VXM-010 T5), same pattern.
+const UiCheck = import.meta.env.DEV
+	? lazy(() => import('@/dev/UiCheck/UiCheck'))
+	: null;
 
 export default function App() {
 	const showTypeCheck = TypeCheck && location.hash === '#type';
+	const showUiCheck = UiCheck && location.hash === '#ui';
 	// Until the landing page and the router exist, / is the France map (VXM-007).
 	const france = useFranceData();
 
@@ -27,6 +32,10 @@ export default function App() {
 				{showTypeCheck ? (
 					<Suspense>
 						<TypeCheck />
+					</Suspense>
+				) : showUiCheck ? (
+					<Suspense>
+						<UiCheck />
 					</Suspense>
 				) : (
 					<>

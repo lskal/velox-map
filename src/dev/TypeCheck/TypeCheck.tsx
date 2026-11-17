@@ -13,6 +13,7 @@ const variants: TextVariant[] = [
 	'h6',
 	'body',
 	'body-s',
+	'body-xs',
 	'caption',
 	'logo',
 	'country',
