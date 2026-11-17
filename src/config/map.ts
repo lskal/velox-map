@@ -8,6 +8,23 @@ export const MAP_STYLE_URLS: Record<Theme, string> = {
 	light: 'https://tiles.openfreemap.org/styles/positron',
 };
 
+// The basemap's road lines, read to turn the one-point section icons to the road
+// (VXM-010 D1). Names from the OpenMapTiles schema, used by both OpenFreeMap styles.
+export const BASEMAP_ROADS = {
+	source: 'openmaptiles',
+	layer: 'transportation',
+	classes: new Set([
+		'motorway',
+		'trunk',
+		'primary',
+		'secondary',
+		'tertiary',
+		'minor',
+		'service',
+	]),
+	searchMetres: 30, // a road further away than this → the icon stays horizontal
+};
+
 // Per-country map settings (VXM-007). Zoom numbers are tuned on the real map, then
 // written into DESIGN.md.
 export const COUNTRY_MAP: Record<CountryCode, CountryMapSettings> = {

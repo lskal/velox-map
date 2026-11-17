@@ -128,6 +128,14 @@ function addCircleWithCount(
 	});
 }
 
+// Icons grow with the zoom (VXM-007 R5): 'interpolate' goes smoothly from one
+// [zoom, scale] pair to the next, and keeps the first / last scale outside them.
+export function iconSizeExpression(
+	settings: CountryMapSettings,
+): ExpressionSpecification {
+	return ['interpolate', ['linear'], ['zoom'], ...settings.iconSize.flat()];
+}
+
 // Icons, source and layers. Called on every 'style.load' - the first style and each
 // theme switch, because setStyle() throws away everything we added (plan D6).
 export function addMarkers(
@@ -177,14 +185,7 @@ export function addMarkers(
 		);
 	}
 
-	// Icons grow with the zoom (R5): 'interpolate' goes smoothly from one [zoom, scale]
-	// pair to the next, and keeps the first / last scale outside them.
-	const iconSize: ExpressionSpecification = [
-		'interpolate',
-		['linear'],
-		['zoom'],
-		...settings.iconSize.flat(),
-	];
+	const iconSize = iconSizeExpression(settings);
 	// The count inside the 'several' ring grows with it: 11 px x the same scale.
 	const countSize: ExpressionSpecification = [
 		'interpolate',
@@ -198,6 +199,9 @@ export function addMarkers(
 
 	// One layer per type, bottom → top (plan D3), from the marker zoom when clustered.
 	for (const type of MARKER_LAYER_ORDER) {
+		// One-point sections are drawn from their own source, turned to the road
+		// (sectionIcons.ts, VXM-010 D1); they stay in this source for the clusters.
+		if (type === 'section') continue;
 		map.addLayer({
 			id: `cameras-${type}`,
 			type: 'symbol',

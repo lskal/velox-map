@@ -43,3 +43,18 @@ export type CameraFeaturesResult = {
 	mixedSpots: number; // of those, spots with different types
 	shared: { position: LngLat; ids: string[]; types: CameraType[] }[]; // spots with more than one camera
 };
+
+// A one-point section (France) with its own source, so each icon can carry the angle of
+// the road under it (VXM-010 D1). No angle yet → not shown.
+export type SectionIcon = { id: string; position: LngLat };
+
+export type SectionIconFeature = {
+	type: 'Feature';
+	geometry: { type: 'Point'; coordinates: LngLat };
+	properties: { id: string; angle?: number }; // icon rotation in degrees, 0-180
+};
+
+export type SectionIconCollection = {
+	type: 'FeatureCollection';
+	features: SectionIconFeature[];
+};
