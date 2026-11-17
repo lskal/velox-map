@@ -5,8 +5,11 @@ export interface MarkerShape {
 	width: number; // px, at 1x
 	height: number;
 	path: string; // SVG path data, in the same px coordinates
-	draw: 'fill' | 'line' | 'ring'; // filled shape, a line (section), or a dashed ring (several)
+	// filled shape, a line with its halo (section), a dashed ring (several), or a plain
+	// thin line with no halo (the chevrons on a section line)
+	draw: 'fill' | 'line' | 'ring' | 'stroke';
 	dash?: number[]; // the ring's dash pattern, px
+	lineWidth?: number; // 'stroke' only, px
 	colourVar: string; // CSS variable in _map.scss
 }
 
@@ -42,4 +45,48 @@ export type CameraFeaturesResult = {
 	sharedSpots: number; // spots with more than one camera
 	mixedSpots: number; // of those, spots with different types
 	shared: { position: LngLat; ids: string[]; types: CameraType[] }[]; // spots with more than one camera
+};
+
+// A one-point section (France) with its own source, so each icon can carry the angle of
+// the road under it (VXM-010 D1). No angle yet → not shown.
+export type SectionIcon = { id: string; position: LngLat };
+
+export type SectionIconFeature = {
+	type: 'Feature';
+	geometry: { type: 'Point'; coordinates: LngLat };
+	properties: { id: string; angle?: number }; // icon rotation in degrees, 0-180
+};
+
+export type SectionIconCollection = {
+	type: 'FeatureCollection';
+	features: SectionIconFeature[];
+};
+
+// A section drawn as a line along the road (VXM-010 D8): from the official data (a path
+// in the source) or from OSM (France, OSM extras on).
+export type SectionLine = {
+	id: string;
+	path: LngLat[]; // in the direction it applies to, when `direction` is true
+	direction: boolean; // known → two chevrons along the line
+	community: boolean; // drawn from OSM → the wider line
+};
+
+// The section-lines source: the lines, and the bars and chevrons as rotated icons.
+export type SectionLineIcon = 'section-bar' | 'section-chevron';
+
+export type SectionLineFeature =
+	| {
+			type: 'Feature';
+			geometry: { type: 'LineString'; coordinates: LngLat[] };
+			properties: { id: string; width: number };
+	  }
+	| {
+			type: 'Feature';
+			geometry: { type: 'Point'; coordinates: LngLat };
+			properties: { id: string; icon: SectionLineIcon; angle: number };
+	  };
+
+export type SectionLineCollection = {
+	type: 'FeatureCollection';
+	features: SectionLineFeature[];
 };

@@ -79,6 +79,15 @@
 	text-transform: none;
 }
 
+@mixin body-xs {
+	font-family: var(--font-body);
+	font-size: var(--font-size-body-xs);
+	line-height: var(--line-height-body-xs);
+	font-weight: 400;
+	letter-spacing: normal;
+	text-transform: none;
+}
+
 @mixin caption {
 	font-family: var(--font-body);
 	font-size: var(--font-size-caption);

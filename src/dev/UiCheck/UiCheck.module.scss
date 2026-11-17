@@ -1,0 +1,13 @@
+.uiCheck {
+	display: grid;
+	align-content: start;
+	gap: var(--space-4);
+	padding: var(--space-8) var(--space-4);
+}
+
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-6);
+	align-items: center;
+}

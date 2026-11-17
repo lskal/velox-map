@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { fetchFR } from '@/lib/fetchers/fr';
+import { loadFR } from '@/lib/fetchers/fr';
 import type { CountryData } from '@/types/data';
 
-// The French cameras for the page (VXM-007 plan D1): fetched once on load, again on
-// retry(). App passes the result down - map, status card and footer.
+// The French cameras for the page (VXM-007 plan D1): loaded once, again on retry() -
+// from the ready file if there is one, else from data.gouv.fr (VXM-010 R3b). App passes the result down - map, status card and footer.
 export function useFranceData(): CountryData & { retry: () => void } {
 	const [data, setData] = useState<CountryData>({
 		status: 'loading',
@@ -16,7 +16,7 @@ export function useFranceData(): CountryData & { retry: () => void } {
 		// StrictMode runs this twice in dev: the first run is cancelled, its result ignored.
 		let cancelled = false;
 
-		fetchFR()
+		loadFR()
 			.then(result => {
 				if (cancelled) return;
 				if (result.skipped.length > 0) {
