@@ -1,4 +1,9 @@
-import type { MarkerKind, MarkerShapes } from '@/types/markers';
+import type {
+	MarkerKind,
+	MarkerShape,
+	MarkerShapes,
+	SectionLineIcon,
+} from '@/types/markers';
 
 // Marker shapes - DESIGN.md chapter 2 → Map markers; paths copied from the canvas
 // (Tokens board), so the map draws exactly what was designed. Only the types France
@@ -62,3 +67,36 @@ export const MARKER_LAYER_ORDER: MarkerKind[] = [
 	'red_light',
 	'several',
 ];
+
+// A section drawn along the road (DESIGN.md → Average-speed section; VXM-010 D8):
+// 3 px line, 4 px when drawn from OSM, a bar across each end, and two small chevrons at
+// 35 % and 70 % of the length when the direction is known. Never an arrowhead.
+export const SECTION_LINE = {
+	width: MARKER_LINE_WIDTH, // px, official path
+	communityWidth: 4, // px, path drawn from OSM
+	chevronsAt: [0.35, 0.7], // share of the length, from the start
+};
+
+// The bar and the chevron as icons, drawn for a line going east (left → right); each one
+// is turned to the line's bearing on the map.
+export const SECTION_LINE_ICONS: Record<SectionLineIcon, MarkerShape> = {
+	// the same bar as the one-point section icon: 10 px across the line
+	'section-bar': {
+		width: 10,
+		height: 18,
+		path: 'M5 4 V14',
+		draw: 'line',
+		colourVar: '--color-marker-section',
+	},
+	// a small ">" on the line, pointing the way the section applies
+	'section-chevron': {
+		width: 10,
+		height: 10,
+		path: 'M3.5 2.5 L6 5 L3.5 7.5',
+		draw: 'stroke',
+		lineWidth: 2,
+		// the halo colour: dark on the dark map, white on the light one - the same
+		// contrast rule as every marker's outline (Max, 2026-11-17)
+		colourVar: MARKER_HALO_VAR,
+	},
+};

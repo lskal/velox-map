@@ -34,20 +34,25 @@ export function toSectionIcons(
 		}));
 }
 
+// `drawnAsLines`: sections shown as a line right now (VXM-010 R10) - their icon is
+// left out, and comes back when the line goes.
 export function toSectionIconCollection(
 	sections: SectionIcon[],
 	angles: Map<string, number>,
+	drawnAsLines: Set<string>,
 ): SectionIconCollection {
 	return {
 		type: 'FeatureCollection',
-		features: sections.map(({ id, position }) => {
-			const angle = angles.get(id);
-			return {
-				type: 'Feature',
-				geometry: { type: 'Point', coordinates: position },
-				properties: angle === undefined ? { id } : { id, angle },
-			};
-		}),
+		features: sections
+			.filter(({ id }) => !drawnAsLines.has(id))
+			.map(({ id, position }) => {
+				const angle = angles.get(id);
+				return {
+					type: 'Feature',
+					geometry: { type: 'Point', coordinates: position },
+					properties: angle === undefined ? { id } : { id, angle },
+				};
+			}),
 	};
 }
 

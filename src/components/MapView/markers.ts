@@ -27,7 +27,7 @@ export const NO_CAMERAS: CameraFeatureCollection = {
 
 // The current value of a CSS variable from _map.scss - light or dark, whatever
 // <html data-theme> says right now. MapLibre can't read var(--…) itself.
-function cssColour(name: string): string {
+export function cssColour(name: string): string {
 	return getComputedStyle(document.documentElement)
 		.getPropertyValue(name)
 		.trim();
@@ -66,6 +66,11 @@ function drawMarker(shape: MarkerShape): ImageData {
 		context.lineCap = 'butt';
 		context.setLineDash(shape.dash ?? []);
 		context.stroke(path);
+	} else if (shape.draw === 'stroke') {
+		// A thin line, no halo (the chevrons sit on the section line).
+		context.strokeStyle = colour;
+		context.lineWidth = shape.lineWidth ?? 1;
+		context.stroke(path);
 	} else {
 		// A line (the section icon): a wide halo line first, the coloured line on top.
 		context.strokeStyle = halo;
@@ -77,6 +82,20 @@ function drawMarker(shape: MarkerShape): ImageData {
 	}
 
 	return context.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+// Adds an icon to the map's style, or redraws it (theme switch: new colours).
+export function addShapeImage(
+	map: MapLibreMap,
+	name: string,
+	shape: MarkerShape,
+) {
+	const image = drawMarker(shape);
+	if (map.hasImage(name)) {
+		map.updateImage(name, image);
+	} else {
+		map.addImage(name, image, { pixelRatio: PIXEL_RATIO });
+	}
 }
 
 const CLUSTER_LAYERS = ['clusters', 'singles'];
@@ -144,13 +163,7 @@ export function addMarkers(
 	settings: CountryMapSettings,
 ) {
 	for (const [type, shape] of Object.entries(MARKER_SHAPES)) {
-		if (!shape) continue;
-		const image = drawMarker(shape);
-		if (map.hasImage(type)) {
-			map.updateImage(type, image);
-		} else {
-			map.addImage(type, image, { pixelRatio: PIXEL_RATIO });
-		}
+		if (shape) addShapeImage(map, type, shape);
 	}
 
 	if (map.getSource(CAMERA_SOURCE)) return; // already there for this style

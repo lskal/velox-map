@@ -58,7 +58,7 @@ export default function App() {
 					</Suspense>
 				) : (
 					<>
-						<MapView cameras={france.cameras} />
+						<MapView cameras={france.cameras} osm={osm.extras} />
 						{!desktop && osmSwitch}
 						<MapStatus
 							status={france.status}
