@@ -15,6 +15,11 @@ export function toLocalMetres(point: LngLat, origin: LngLat): [number, number] {
 	];
 }
 
+// Distance in metres between two points.
+export function distance(a: LngLat, b: LngLat): number {
+	return Math.hypot(...toLocalMetres(b, a));
+}
+
 // Distance in metres from `point` to the segment a - b.
 export function distanceToSegment(point: LngLat, a: LngLat, b: LngLat): number {
 	const [ax, ay] = toLocalMetres(a, point);
