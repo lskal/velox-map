@@ -43,9 +43,16 @@ export interface SkippedFR {
 	row: TrimmedFR;
 }
 
-// What fetchFR() returns (VXM-005 plan D6).
+// What fetchFRSource() returns: the rows as they are, before normalising (VXM-010 D2).
+export interface FRSource {
+	fileTitle: string; // the yearly file's title on data.gouv.fr
+	dataAsOf: string; // its last_modified date
+	total: number; // rows the API says the file has
+	rows: RawFR[];
+}
+
+// What fetchFR() / loadFR() return (VXM-005 plan D6).
 export interface FetchFRResult {
-	resource: { id: string; title: string; lastModified: string };
 	dataAsOf: string;
 	total: number; // rows the API says the file has
 	rowsFetched: number; // rows that actually arrived
