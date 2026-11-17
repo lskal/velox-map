@@ -27,8 +27,8 @@ export default function App() {
 	// Until the landing page and the router exist, / is the France map (VXM-007).
 	const france = useFranceData();
 	const desktop = useMediaQuery(MEDIA_DESKTOP);
-	const osm = useOsmExtras();
 	const osmSettings = COUNTRY_OSM.FR;
+	const osm = useOsmExtras(osmSettings, france.cameras);
 	// One OSM switch, in the header on desktop, on the map on mobile (VXM-010 D7).
 	// Disabled while the country's data loads (DESIGN.md).
 	const osmSwitch = osmSettings && (

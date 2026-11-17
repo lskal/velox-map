@@ -98,9 +98,21 @@ export type OsmStatus = 'off' | 'loading' | 'on';
 // switch is turned on, or the error.
 export type OsmNotice = 'first-use' | 'error';
 
+// The OSM file joined to the official cameras (D5, R11) - what the map and the card read.
+export interface OsmSectionPath {
+	id: string; // official section id
+	path: LngLat[]; // `from` → `to`, so the path order is the direction
+}
+
+export interface OsmExtras {
+	directions: Record<string, OsmDirection>; // official camera id → direction
+	sectionPaths: OsmSectionPath[]; // official sections that get a line
+}
+
 export interface OsmExtrasState {
 	status: OsmStatus;
 	notice: OsmNotice | null;
+	extras: OsmExtras | null; // only while the switch is on
 	toggle: (on: boolean) => void;
 	closeNotice: () => void;
 }
