@@ -24,6 +24,11 @@ export const PRECISION_WORDS: Record<Camera['precision'], string> = {
 	town: 'Town only',
 };
 
+// A row every country shows even when its source gives no value (Max, 2026-11-18).
+export const CARD_TEXTS = {
+	notIndicated: 'Not indicated',
+};
+
 export const DIRECTION_TEXTS = {
 	none: 'No direction indicated',
 	towards: 'Towards',

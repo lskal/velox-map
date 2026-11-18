@@ -77,6 +77,7 @@
 
 .row {
 	display: grid;
+	align-content: start; // label and value stay together when the next cell is taller
 	gap: 2px;
 }
 

@@ -1,4 +1,5 @@
 import {
+	CARD_TEXTS,
 	COUNTRY_CARD_TEXTS,
 	DIRECTION_TEXTS,
 	PRECISION_WORDS,
@@ -34,9 +35,13 @@ function rowsFR(camera: Camera): CardRow[] {
 	const { details } = camera;
 	const meaning = TEXTS_FR.radarTypes?.[details.radarType];
 	const rows: (CardRow | null)[] = [
-		details.limitKph
-			? { label: 'Speed limit', value: `${details.limitKph} km/h` }
-			: null,
+		// always shown, "Not indicated" when the file gives none (Max, 2026-11-18)
+		{
+			label: 'Speed limit',
+			value: details.limitKph
+				? `${details.limitKph} km/h`
+				: CARD_TEXTS.notIndicated,
+		},
 		details.radarType
 			? {
 					label: 'Radar type',
