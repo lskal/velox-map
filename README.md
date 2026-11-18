@@ -8,7 +8,10 @@ A free web map of **official** speed-camera open data in six European countries:
 
 Velox Map is a personal, non-commercial learning project. It shows the speed-enforcement devices that public administrations publish themselves, fetched from the official sources and displayed on a map, one country at a time.
 
-It uses **official data only**. Italy is the one exception: the official registry has no positions, so the map also shows community-mapped points from OpenStreetMap, always marked as **not official**.
+It uses **official data first**. Community data from OpenStreetMap is optional, off by default and always marked as **not official**:
+
+- **Italy:** the official registry has no positions, so the map can also show OpenStreetMap camera points where no official device matches (planned).
+- **France - "OSM extras":** directions and average-speed section paths mapped by OpenStreetMap volunteers, added to official cameras only. OpenStreetMap never adds cameras of its own in France, and never changes an official value.
 
 ## Disclaimer
 
@@ -28,6 +31,7 @@ It uses **official data only**. Italy is the one exception: the official registr
 | 🇵🇱 Poland                          | GITD - CANARD device map ([canard.gitd.gov.pl](https://www.canard.gitd.gov.pl/cms/o-nas/mapa-urzadzen)); fallback: GITD dataset on [dane.gov.pl](https://dane.gov.pl/pl/dataset/4364) | CC BY 4.0; dane.gov.pl: CC0 1.0 |
 | 🇪🇸 Spain                           | DGT - National Access Point ([nap.dgt.es](https://nap.dgt.es/en/dataset/radares-fijos-dgt))                                                                                           | CC BY                           |
 | 🇮🇹 Italy (community layer)         | © OpenStreetMap contributors                                                                                                                                                          | ODbL 1.0                        |
+| 🇫🇷 France (OSM extras)             | © OpenStreetMap contributors                                                                                                                                                          | ODbL 1.0                        |
 | Base map                           | [OpenFreeMap](https://openfreemap.org), © OpenStreetMap contributors                                                                                                                  | ODbL 1.0                        |
 | Italian municipalities (reference) | ISTAT - administrative boundaries                                                                                                                                                     | CC BY                           |
 
@@ -47,8 +51,21 @@ The licence covers the code only. The **data** shown by the app belongs to its p
 
 - No cookies, no analytics, no third-party scripts, no login.
 - Your country is estimated from the request's IP address only to suggest a country and a language. Nothing is stored.
-- Your choices (country, language) are saved in your own browser (`localStorage`).
+- Your choices (theme, language, country, and whether you've seen the OpenStreetMap explanation) are saved in your own browser (`localStorage`).
 - Like any hosting service, Vercel keeps short-lived request logs that include IP addresses.
+
+## Run it locally
+
+Node 24 (see `.nvmrc`).
+
+```
+npm install
+npm run data:fr   # optional: the French data into public/data/fr.json
+npm run osm:fr    # optional: the French OSM extras into public/data/osm-fr.json
+npm run dev
+```
+
+Without the files in `public/data/` the app fetches the French data from data.gouv.fr directly; the OSM extras need `osm-fr.json`. `npm run build` runs the linter and the type check first.
 
 ## Contact
 
