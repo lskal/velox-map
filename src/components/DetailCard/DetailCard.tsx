@@ -5,7 +5,12 @@ import MarkerIcon from '@/components/MarkerIcon/MarkerIcon';
 import Text from '@/components/Text/Text';
 import { DIRECTION_TEXTS } from '@/config/card';
 import { formatDate } from '@/lib/format';
-import type { CardDevice, DetailCardProps } from '@/types/card';
+import type {
+	CardDevice,
+	CardDirection,
+	CardRow,
+	DetailCardProps,
+} from '@/types/card';
 import styles from './DetailCard.module.scss';
 
 // The detail card (VXM-011 D5; DESIGN.md chapter 6 → Detail card, board 19). Shared by
@@ -20,7 +25,6 @@ export default function DetailCard({
 	const titleId = useId();
 	const cardRef = useRef<HTMLElement>(null);
 	const spot = content.devices.map(device => device.id).join(',');
-	const several = content.devices.length > 1;
 	const { source } = content;
 
 	useEffect(() => {
@@ -51,6 +55,9 @@ export default function DetailCard({
 							{content.title}
 						</Text>
 					</div>
+					<Text variant="body-s" className={styles.place}>
+						{content.numbers}
+					</Text>
 					{content.place && (
 						<Text variant="body-s" className={styles.place}>
 							{content.place}
@@ -67,9 +74,25 @@ export default function DetailCard({
 				</button>
 			</header>
 
-			{content.devices.map(device => (
-				<Device key={device.id} device={device} labelled={several} />
-			))}
+			<div className={styles.device}>
+				<Rows rows={content.rows} />
+				<Direction
+					shared={content.direction}
+					devices={content.devices}
+				/>
+			</div>
+
+			{/* Same spot: only what differs between the devices (VXM-011 T5). */}
+			{content.devices
+				.filter(device => device.rows.length > 0)
+				.map(device => (
+					<div key={device.id} className={styles.device}>
+						<Text variant="h6" as="h3">
+							{device.label}
+						</Text>
+						<Rows rows={device.rows} />
+					</div>
+				))}
 
 			<footer className={styles.footer}>
 				{content.statusNote && (
@@ -95,51 +118,61 @@ export default function DetailCard({
 	);
 }
 
-// One device: its rows, then the Direction block (always shown - R7).
-function Device({
-	device,
-	labelled,
-}: {
-	device: CardDevice;
-	labelled: boolean; // same-spot card: a small label per device
-}) {
-	const { direction } = device;
+function Rows({ rows }: { rows: CardRow[] }) {
+	if (rows.length === 0) return null;
 	return (
-		<div className={styles.device}>
-			{labelled && (
-				<Text variant="h6" as="h3">
-					{device.label}
-				</Text>
-			)}
-			{device.rows.length > 0 && (
-				<dl className={styles.rows}>
-					{device.rows.map(row => (
-						<div key={row.label} className={styles.row}>
-							<dt className={styles.label}>{row.label}</dt>
-							<dd className={styles.value}>{row.value}</dd>
-						</div>
-					))}
-				</dl>
-			)}
-			<dl className={styles.direction}>
-				<dt className={styles.label}>Direction</dt>
-				<dd className={styles.directionValue}>
-					<span className={styles.value}>{direction.text}</span>
+		<dl className={styles.rows}>
+			{rows.map(row => (
+				<div key={row.label} className={styles.row}>
+					<dt className={styles.label}>{row.label}</dt>
+					<dd className={styles.value}>{row.value}</dd>
+				</div>
+			))}
+		</dl>
+	);
+}
+
+// The Direction block, always shown (R7): once when every device has the same
+// direction, else one line per device ("Radar 5115 · Towards north").
+function Direction({
+	shared,
+	devices,
+}: {
+	shared: CardDirection | null;
+	devices: CardDevice[];
+}) {
+	const lines = shared
+		? [{ id: 'shared', prefix: '', direction: shared }]
+		: devices.map(device => ({
+				id: device.id,
+				prefix: `${device.label} · `,
+				direction: device.direction,
+			}));
+	const all = lines.map(line => line.direction);
+	return (
+		<dl className={styles.direction}>
+			<dt className={styles.label}>Direction</dt>
+			{lines.map(({ id, prefix, direction }) => (
+				<dd key={id} className={styles.directionValue}>
+					<span className={styles.value}>
+						{prefix}
+						{direction.text}
+					</span>
 					{direction.fromOsm && (
 						<Chip look="community">{DIRECTION_TEXTS.osmChip}</Chip>
 					)}
 				</dd>
-				{direction.fromOsm && direction.oneWay && (
-					<dd className={styles.directionNote}>
-						{DIRECTION_TEXTS.otherWay}
-					</dd>
-				)}
-				{direction.pathNote && (
-					<dd className={styles.directionNote}>
-						{DIRECTION_TEXTS.osmPath}
-					</dd>
-				)}
-			</dl>
-		</div>
+			))}
+			{all.some(direction => direction.fromOsm && direction.oneWay) && (
+				<dd className={styles.directionNote}>
+					{DIRECTION_TEXTS.otherWay}
+				</dd>
+			)}
+			{all.some(direction => direction.pathNote) && (
+				<dd className={styles.directionNote}>
+					{DIRECTION_TEXTS.osmPath}
+				</dd>
+			)}
+		</dl>
 	);
 }

@@ -29,7 +29,8 @@ export const DIRECTION_TEXTS = {
 	towards: 'Towards',
 	both: 'Both directions',
 	and: 'and',
-	otherWay: 'May also check the other direction.',
+	otherWay:
+		'OSM indicates one direction. The camera may also check the other.',
 	osmChip: 'OSM data',
 	osmPath: 'Path drawn from OpenStreetMap: community data, not official.',
 };
@@ -51,6 +52,7 @@ export const COMPASS_WORDS = [
 export const COUNTRY_CARD_TEXTS: Record<CountryCode, CountryCardTexts> = {
 	// France: board 19; type meanings shortened from data-sources.md → France → Type codes
 	FR: {
+		device: { one: 'Radar ID', many: 'Radar IDs' },
 		badge: 'Official · fixed radar',
 		statusNote:
 			'Fixed radar listed as in service. The official list is updated once a year, so a radar removed since then may still appear.',

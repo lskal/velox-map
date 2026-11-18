@@ -45,7 +45,11 @@ export type CameraFeaturesResult = {
 	sharedSpots: number; // spots with more than one camera
 	mixedSpots: number; // of those, spots with different types
 	shared: { position: LngLat; ids: string[]; types: CameraType[] }[]; // spots with more than one camera
+	spotOf: Map<string, CameraSpot>; // any camera id → its spot
 };
+
+// One spot on the map (VXM-011 T5): where its marker is and the cameras it holds.
+export type CameraSpot = { position: LngLat; ids: string[] };
 
 // A one-point section (France) with its own source, so each icon can carry the angle of
 // the road under it (VXM-010 D1). No angle yet → not shown.
@@ -93,7 +97,7 @@ export type SectionLineCollection = {
 
 // The spot whose detail card is open (VXM-011 D6): the clicked marker's camera id (the
 // first one at a shared spot) and the official position - where the selected ring goes.
-export type SelectedSpot = { id: string; position: LngLat };
+export type SelectedSpot = { id: string; position: LngLat; ids: string[] };
 
 // How the selected spot is outlined (VXM-011 D6): a ring for a round marker, the
 // section's own shape for a one-point section (turned like its icon), or a band along

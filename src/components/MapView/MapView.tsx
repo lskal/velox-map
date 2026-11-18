@@ -13,6 +13,7 @@ import { getTheme } from '@/lib/theme';
 import type { Camera } from '@/types/camera';
 import type {
 	CameraFeatureCollection,
+	CameraSpot,
 	SectionIcon,
 	SectionLineCollection,
 	SelectedSpot,
@@ -70,6 +71,7 @@ export default function MapView({
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const styleUrlRef = useRef(''); // the style the map has now
 	const camerasRef = useRef<CameraFeatureCollection>(NO_CAMERAS); // kept for re-adding after a theme switch
+	const spotsRef = useRef(new Map<string, CameraSpot>()); // camera id → its spot (VXM-011 T5)
 	const sectionsRef = useRef<SectionIcon[]>([]); // one-point sections (VXM-010 D1)
 	const anglesRef = useRef(new Map<string, number>()); // section id → icon angle, read once
 	const noRoadAtRef = useRef(new Map<string, number>()); // section id → zoom where no road was found (read again further in)
@@ -122,10 +124,7 @@ export default function MapView({
 		addSelectClicks(
 			map,
 			spot => onSelectRef.current?.(spot),
-			id =>
-				camerasRef.current.features.find(
-					feature => feature.properties.id === id,
-				)?.geometry.coordinates,
+			id => spotsRef.current.get(id),
 		);
 
 		// Section icons get the angle of the road under them once the tiles in view have
@@ -184,7 +183,7 @@ export default function MapView({
 
 	// The cameras into the map's source - now, and kept in the ref for the next style load.
 	useEffect(() => {
-		const { features, ...counts } = toCameraFeatures(cameras);
+		const { features, spotOf, ...counts } = toCameraFeatures(cameras);
 		if (counts.cameras > 0) {
 			console.info(
 				`Map: ${counts.cameras} cameras on ${counts.spots} spots - ${counts.sharedSpots} spots hold more than one camera, ${counts.mixedSpots} of them mix types`,
@@ -202,6 +201,7 @@ export default function MapView({
 			}
 		}
 		camerasRef.current = features;
+		spotsRef.current = spotOf;
 		sectionsRef.current = toSectionIcons(features);
 		const map = mapRef.current;
 		if (!map) return;

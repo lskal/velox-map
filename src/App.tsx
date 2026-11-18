@@ -37,18 +37,11 @@ export default function App() {
 	// the "MapPage + a small store" ticket (Backlog).
 	const [selected, setSelected] = useState<SelectedSpot | null>(null);
 	const closeCard = useCallback(() => setSelected(null), []);
-	// The cameras at that spot: the same position, the same rule as the map's grouping.
-	const spotCameras = useMemo(
-		() =>
-			selected
-				? france.cameras.filter(
-						({ position }) =>
-							position[0] === selected.position[0] &&
-							position[1] === selected.position[1],
-					)
-				: [],
-		[selected, france.cameras],
-	);
+	// The cameras at that spot - the map tells which (VXM-011 T5).
+	const spotCameras = useMemo(() => {
+		const ids = new Set(selected?.ids);
+		return france.cameras.filter(({ id }) => ids.has(id));
+	}, [selected, france.cameras]);
 	// Built again when the OSM switch changes, so an open card gets the direction.
 	const card =
 		desktop && spotCameras.length > 0

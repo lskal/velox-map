@@ -28,6 +28,11 @@ export const BASEMAP_ROADS = {
 	retryZoomStep: 1,
 };
 
+// Cameras closer than this are one spot: one marker, one card (VXM-011 T5). The French
+// file spreads some radars ~0.7 m apart (one per lane on the A86, data-sources.md);
+// separate radar sites are hundreds of metres apart at least.
+export const SAME_SPOT_METRES = 10;
+
 // Per-country map settings (VXM-007). Zoom numbers are tuned on the real map, then
 // written into DESIGN.md.
 export const COUNTRY_MAP: Record<CountryCode, CountryMapSettings> = {

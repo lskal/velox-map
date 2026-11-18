@@ -11,9 +11,9 @@ import {
 	SELECTED_SECTION_ICON,
 	SELECTED_SECTION_EXTRA,
 } from '@/config/markers';
-import type { LngLat } from '@/types/camera';
 import type { CountryMapSettings } from '@/types/map';
 import type {
+	CameraSpot,
 	SectionIcon,
 	SelectedSpot,
 	SelectionShape,
@@ -195,12 +195,13 @@ export function updateSelection(
 
 // Clicks → the selected spot, or null for a click on the empty map. Clusters keep their
 // own click (zoom in, VXM-007) and don't clear the selection. Registered once per map:
-// layer events survive style switches. `positionOf` gives the official position of a
-// camera id - a section line's own coordinates aren't where its marker was.
+// layer events survive style switches. `spotOf` gives a camera id's spot: its official
+// position (a section line's own coordinates aren't where its marker was) and every
+// camera there (VXM-011 T5).
 export function addSelectClicks(
 	map: MapLibreMap,
 	onSelect: (spot: SelectedSpot | null) => void,
-	positionOf: (id: string) => LngLat | undefined,
+	spotOf: (id: string) => CameraSpot | undefined,
 ) {
 	map.on('click', event => {
 		const layers = [...SELECTABLE_LAYERS, ...CLUSTER_LAYERS].filter(id =>
@@ -213,8 +214,8 @@ export function addSelectClicks(
 		if (feature && isClusterLayer(feature.layer.id)) return;
 
 		const id = feature?.properties?.id as string | undefined;
-		const position = id ? positionOf(id) : undefined;
-		onSelect(id && position ? { id, position } : null);
+		const spot = id ? spotOf(id) : undefined;
+		onSelect(id && spot ? { id, ...spot } : null);
 	});
 
 	for (const layer of SELECTABLE_LAYERS) {

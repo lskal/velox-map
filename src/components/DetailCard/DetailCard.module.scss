@@ -59,12 +59,13 @@
 	}
 }
 
-// One device: rows + Direction, a line above each.
+// One device: rows + Direction, a line above each. The lines use `border` (as on board
+// 19): `border-subtle` is almost the card's own colour in dark (Max, 2026-11-18).
 .device {
 	display: grid;
 	gap: var(--space-3);
 	padding: var(--space-3) var(--space-4);
-	border-top: 1px solid var(--color-border-subtle);
+	border-top: 1px solid var(--color-border);
 }
 
 // The rows: two columns, label above value.
@@ -96,7 +97,7 @@
 	display: grid;
 	gap: 2px;
 	padding-top: var(--space-3);
-	border-top: 1px solid var(--color-border-subtle);
+	border-top: 1px solid var(--color-border);
 }
 
 .directionValue {
@@ -115,7 +116,7 @@
 	display: grid;
 	gap: var(--space-2);
 	padding: var(--space-3) var(--space-4) var(--space-4);
-	border-top: 1px solid var(--color-border-subtle);
+	border-top: 1px solid var(--color-border);
 }
 
 .note {
