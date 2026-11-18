@@ -24,7 +24,8 @@ export function buildCard(
 		badge: country.badge,
 		title,
 		place: country.place?.(first),
-		kind: cameras.length === 1 ? first.type : 'several',
+		// the same marker rule as VXM-009: one type → its shape, mixed → the grey ring
+		kind: sameType ? first.type : 'several',
 		devices: cameras.map(camera => ({
 			id: camera.id,
 			label: country.label(camera),
