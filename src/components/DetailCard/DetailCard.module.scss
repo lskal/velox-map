@@ -1,10 +1,10 @@
 @use '../../styles/typography' as type;
 
 // DESIGN.md chapter 6 → Detail card, board 19: 360 px, elevated, radius 12, card shadow.
-// Where it sits (top-right of the map) is the parent's job, through `className`.
+// Where it sits (top-right of the map) and how tall it may get are the parent's job,
+// through `className`; taller than that, it scrolls inside itself.
 .card {
 	width: 360px;
-	max-height: 100%;
 	overflow-y: auto;
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius-card);

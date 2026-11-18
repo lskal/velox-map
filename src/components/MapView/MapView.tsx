@@ -257,6 +257,9 @@ export default function MapView({
 
 	// The ring around the selected marker (VXM-011 R2).
 	useEffect(() => {
+		// The card just closed (close button, Esc): focus back to the map (VXM-011 R3).
+		if (selectedRef.current && !selected)
+			mapRef.current?.getCanvas().focus();
 		selectedRef.current = selected;
 		if (mapRef.current)
 			updateSelection(
