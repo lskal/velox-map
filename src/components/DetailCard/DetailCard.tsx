@@ -5,12 +5,7 @@ import MarkerIcon from '@/components/MarkerIcon/MarkerIcon';
 import Text from '@/components/Text/Text';
 import { DIRECTION_TEXTS } from '@/config/card';
 import { formatDate } from '@/lib/format';
-import type {
-	CardDevice,
-	CardDirection,
-	CardRow,
-	DetailCardProps,
-} from '@/types/card';
+import type { CardDirection, CardRow, DetailCardProps } from '@/types/card';
 import styles from './DetailCard.module.scss';
 
 // The detail card (VXM-011 D5; DESIGN.md chapter 6 → Detail card, board 19). Shared by
@@ -74,23 +69,29 @@ export default function DetailCard({
 				</button>
 			</header>
 
-			<div className={styles.device}>
-				<Rows rows={content.rows} />
-				<Direction
-					shared={content.direction}
-					devices={content.devices}
-				/>
-			</div>
+			{/* What every device shares - nothing left when all of it differs. */}
+			{(content.rows.length > 0 || content.direction) && (
+				<div className={styles.device}>
+					<Rows rows={content.rows} />
+					{content.direction && (
+						<Direction direction={content.direction} />
+					)}
+				</div>
+			)}
 
-			{/* Same spot: only what differs between the devices (VXM-011 T5). */}
+			{/* Same spot: each device's own block with only what differs from the others -
+			    its rows, and its Direction when the devices don't share one (VXM-011 T5). */}
 			{content.devices
-				.filter(device => device.rows.length > 0)
+				.filter(device => device.rows.length > 0 || !content.direction)
 				.map(device => (
 					<div key={device.id} className={styles.device}>
 						<Text variant="h6" as="h3">
 							{device.label}
 						</Text>
 						<Rows rows={device.rows} />
+						{!content.direction && (
+							<Direction direction={device.direction} />
+						)}
 					</div>
 				))}
 
@@ -132,43 +133,24 @@ function Rows({ rows }: { rows: CardRow[] }) {
 	);
 }
 
-// The Direction block, always shown (R7): once when every device has the same
-// direction, else one line per device ("Radar 5115 · Towards north").
-function Direction({
-	shared,
-	devices,
-}: {
-	shared: CardDirection | null;
-	devices: CardDevice[];
-}) {
-	const lines = shared
-		? [{ id: 'shared', prefix: '', direction: shared }]
-		: devices.map(device => ({
-				id: device.id,
-				prefix: `${device.label} · `,
-				direction: device.direction,
-			}));
-	const all = lines.map(line => line.direction);
+// The Direction block (R7): on the card when every device shares it, else in each
+// device's own block - so the chip and the note always sit with their direction.
+function Direction({ direction }: { direction: CardDirection }) {
 	return (
 		<dl className={styles.direction}>
 			<dt className={styles.label}>Direction</dt>
-			{lines.map(({ id, prefix, direction }) => (
-				<dd key={id} className={styles.directionValue}>
-					<span className={styles.value}>
-						{prefix}
-						{direction.text}
-					</span>
-					{direction.fromOsm && (
-						<Chip look="community">{DIRECTION_TEXTS.osmChip}</Chip>
-					)}
-				</dd>
-			))}
-			{all.some(direction => direction.fromOsm && direction.oneWay) && (
+			<dd className={styles.directionValue}>
+				<span className={styles.value}>{direction.text}</span>
+				{direction.fromOsm && (
+					<Chip look="community">{DIRECTION_TEXTS.osmChip}</Chip>
+				)}
+			</dd>
+			{direction.fromOsm && direction.oneWay && (
 				<dd className={styles.directionNote}>
 					{DIRECTION_TEXTS.otherWay}
 				</dd>
 			)}
-			{all.some(direction => direction.pathNote) && (
+			{direction.pathNote && (
 				<dd className={styles.directionNote}>
 					{DIRECTION_TEXTS.osmPath}
 				</dd>

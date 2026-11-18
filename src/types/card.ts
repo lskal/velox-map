@@ -43,7 +43,7 @@ export interface CardContent {
 	place?: string; // optional place line - France has none (R5)
 	kind: MarkerKind; // the header icon
 	rows: CardRow[]; // the rows every device shares (all of them for one device)
-	direction: CardDirection | null; // the shared direction; null → one line per device
+	direction: CardDirection | null; // the shared direction; null → in each device's block
 	devices: CardDevice[];
 	statusNote?: string; // what a record means for this country
 	source: CardSource;
