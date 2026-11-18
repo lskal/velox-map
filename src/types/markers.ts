@@ -90,3 +90,20 @@ export type SectionLineCollection = {
 	type: 'FeatureCollection';
 	features: SectionLineFeature[];
 };
+
+// The spot whose detail card is open (VXM-011 D6): the clicked marker's camera id (the
+// first one at a shared spot) and the official position - where the selected ring goes.
+export type SelectedSpot = { id: string; position: LngLat };
+
+// How the selected spot is outlined (VXM-011 D6): a ring for a round marker, the
+// section's own shape for a one-point section (turned like its icon), or a band along
+// a section line.
+export type SelectionShape =
+	| { kind: 'ring'; position: LngLat }
+	| { kind: 'section'; position: LngLat; angle: number }
+	| { kind: 'line'; id: string };
+
+// Map layer ids that other modules look for (VXM-011): the grey circles a click zooms
+// into, and the section line layers a click can select.
+export type ClusterLayer = 'clusters' | 'singles';
+export type SectionLineLayer = 'section-lines' | 'section-lines-icons';

@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import Footer from '@/components/Footer/Footer';
 import Header from '@/components/Header/Header';
 import MapStatus from '@/components/MapStatus/MapStatus';
@@ -9,6 +9,7 @@ import { COUNTRY_OSM } from '@/config/osm';
 import { useFranceData } from '@/hooks/useFranceData';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOsmExtras } from '@/hooks/useOsmExtras';
+import type { SelectedSpot } from '@/types/markers';
 import styles from './App.module.scss';
 
 // Dev-only type check at /#type (VXM-003). In the build import.meta.env.DEV is false,
@@ -29,6 +30,8 @@ export default function App() {
 	const desktop = useMediaQuery(MEDIA_DESKTOP);
 	const osmSettings = COUNTRY_OSM.FR;
 	const osm = useOsmExtras(osmSettings, france.cameras);
+	// The clicked marker (VXM-011 D7) - desktop only; its card comes in T4.
+	const [selected, setSelected] = useState<SelectedSpot | null>(null);
 	// One OSM switch, in the header on desktop, on the map on mobile (VXM-010 D7).
 	// Disabled while the country's data loads (DESIGN.md).
 	const osmSwitch = osmSettings && (
@@ -58,7 +61,12 @@ export default function App() {
 					</Suspense>
 				) : (
 					<>
-						<MapView cameras={france.cameras} osm={osm.extras} />
+						<MapView
+							cameras={france.cameras}
+							osm={osm.extras}
+							onSelect={desktop ? setSelected : undefined}
+							selected={desktop ? selected : null}
+						/>
 						{!desktop && osmSwitch}
 						<MapStatus
 							status={france.status}

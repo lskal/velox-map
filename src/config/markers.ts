@@ -100,3 +100,28 @@ export const SECTION_LINE_ICONS: Record<SectionLineIcon, MarkerShape> = {
 		colourVar: MARKER_HALO_VAR,
 	},
 };
+
+// The selected marker's ring (DESIGN.md → Detail card: "a 2.5-3.5 px accent outline"):
+// radius at icon scale 1, grows with the icons by zoom (VXM-011 D6).
+export const SELECTED_RING = {
+	radius: 12, // px, just outside a 16 px marker with its halo
+	width: 3, // px
+	colourVar: '--color-accent',
+};
+
+// A selected section isn't round, so it gets its own outline instead of the ring
+// (Max, 2026-11-18): the same shape in the accent colour, 3 px wider than its halo on
+// each side, drawn under it. One-point icon: this shape, turned like the icon (the
+// section path moved 7 px in a bigger box, so the wide stroke isn't cut). Line: the
+// same band along the whole line (selection.ts).
+// added to a section's line width: its halo + the accent band, both sides (11 px)
+export const SELECTED_SECTION_EXTRA =
+	2 * MARKER_HALO_WIDTH + 2 * SELECTED_RING.width;
+export const SELECTED_SECTION_ICON: MarkerShape = {
+	width: 44,
+	height: 32,
+	path: 'M12 16 H32 M12 11 V21 M32 11 V21',
+	draw: 'stroke',
+	lineWidth: MARKER_LINE_WIDTH + SELECTED_SECTION_EXTRA, // 14 px
+	colourVar: SELECTED_RING.colourVar,
+};
