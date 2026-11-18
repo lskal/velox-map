@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import DetailCard from '@/components/DetailCard/DetailCard';
 import Footer from '@/components/Footer/Footer';
 import Header from '@/components/Header/Header';
 import MapStatus from '@/components/MapStatus/MapStatus';
@@ -9,6 +10,9 @@ import { COUNTRY_OSM } from '@/config/osm';
 import { useFranceData } from '@/hooks/useFranceData';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOsmExtras } from '@/hooks/useOsmExtras';
+import { buildCard } from '@/lib/card/buildCard';
+import { COUNTRY_CARD } from '@/lib/card/countryCards';
+import type { SelectedSpot } from '@/types/markers';
 import styles from './App.module.scss';
 
 // Dev-only type check at /#type (VXM-003). In the build import.meta.env.DEV is false,
@@ -29,6 +33,25 @@ export default function App() {
 	const desktop = useMediaQuery(MEDIA_DESKTOP);
 	const osmSettings = COUNTRY_OSM.FR;
 	const osm = useOsmExtras(osmSettings, france.cameras);
+	// The clicked marker and its card (VXM-011 D7) - desktop only. Moves to MapPage with
+	// the "MapPage + a small store" ticket (Backlog).
+	const [selected, setSelected] = useState<SelectedSpot | null>(null);
+	const closeCard = useCallback(() => setSelected(null), []);
+	// The cameras at that spot - the map tells which (VXM-011 T5).
+	const spotCameras = useMemo(() => {
+		const ids = new Set(selected?.ids);
+		return france.cameras.filter(({ id }) => ids.has(id));
+	}, [selected, france.cameras]);
+	// Built again when the OSM switch changes, so an open card gets the direction.
+	const card =
+		desktop && spotCameras.length > 0
+			? buildCard(
+					spotCameras,
+					osm.extras,
+					france.dataAsOf,
+					COUNTRY_CARD.FR,
+				)
+			: null;
 	// One OSM switch, in the header on desktop, on the map on mobile (VXM-010 D7).
 	// Disabled while the country's data loads (DESIGN.md).
 	const osmSwitch = osmSettings && (
@@ -58,7 +81,19 @@ export default function App() {
 					</Suspense>
 				) : (
 					<>
-						<MapView cameras={france.cameras} osm={osm.extras} />
+						<MapView
+							cameras={france.cameras}
+							osm={osm.extras}
+							onSelect={desktop ? setSelected : undefined}
+							selected={desktop ? selected : null}
+						/>
+						{card && (
+							<DetailCard
+								content={card}
+								onClose={closeCard}
+								className={styles.card}
+							/>
+						)}
 						{!desktop && osmSwitch}
 						<MapStatus
 							status={france.status}

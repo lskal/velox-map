@@ -12,7 +12,11 @@ import {
 	MARKER_SHAPES,
 } from '@/config/markers';
 import type { CountryMapSettings } from '@/types/map';
-import type { CameraFeatureCollection, MarkerShape } from '@/types/markers';
+import type {
+	CameraFeatureCollection,
+	ClusterLayer,
+	MarkerShape,
+} from '@/types/markers';
 
 // Camera markers on the map (VXM-006): icons drawn from the designed shapes, one
 // source with the cameras, one layer per camera type.
@@ -98,7 +102,12 @@ export function addShapeImage(
 	}
 }
 
-const CLUSTER_LAYERS = ['clusters', 'singles'];
+export const CLUSTER_LAYERS: readonly ClusterLayer[] = ['clusters', 'singles'];
+
+// A layer id from a map event is a plain string: this tells whether it's a cluster one.
+export function isClusterLayer(id: string): id is ClusterLayer {
+	return (CLUSTER_LAYERS as readonly string[]).includes(id);
+}
 
 // The device count inside the 'several' ring (canvas: 11 px, bold, the ring's grey).
 const SEVERAL_COUNT = {

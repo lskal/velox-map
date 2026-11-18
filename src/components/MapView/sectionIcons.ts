@@ -19,7 +19,7 @@ import { iconSizeExpression } from './markers';
 // so nothing appears horizontal and then turns (R2b).
 
 export const SECTION_ICON_SOURCE = 'section-icons';
-const SECTION_ICON_LAYER = 'section-icons';
+export const SECTION_ICON_LAYER = 'section-icons';
 const NEAR_DEGREES = 0.001; // ~100 m: segments further than this are skipped quickly
 
 // The single 'section' markers of the camera source (a grouped spot stays 'several').

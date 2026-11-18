@@ -23,6 +23,7 @@ export default function Text({
 	variant = 'body',
 	as,
 	className,
+	id,
 	children,
 }: TextProps) {
 	const Tag = as ?? defaultTag[variant];
@@ -30,5 +31,9 @@ export default function Text({
 		? `${styles[variant]} ${className}`
 		: styles[variant];
 
-	return <Tag className={classes}>{children}</Tag>;
+	return (
+		<Tag id={id} className={classes}>
+			{children}
+		</Tag>
+	);
 }

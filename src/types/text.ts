@@ -26,5 +26,6 @@ export interface TextProps {
 	as?: TextTag;
 	// Layout from the parent (margins, grid placement), never type styles.
 	className?: string;
+	id?: string; // e.g. a card title named by aria-labelledby (VXM-011)
 	children: ReactNode;
 }

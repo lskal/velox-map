@@ -33,6 +33,12 @@
 	--color-notice-bg: rgba(245, 158, 11, 0.1);
 	--color-notice-border: rgba(245, 158, 11, 0.3);
 
+	// "Official" badge in the detail card - the comune indicator's green (DESIGN.md
+	// chapter 2, VXM-011)
+	--color-official-border: #10b981;
+	--color-official-text: #6ee7b7;
+	--color-official-bg: rgba(16, 185, 129, 0.14);
+
 	// Floating cards and the dimmed map (DESIGN.md chapter 4, VXM-007)
 	--shadow-card:
 		0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
@@ -57,6 +63,10 @@
 	--color-notice-text: #92400e;
 	--color-notice-bg: #fffbeb;
 	--color-notice-border: #fcd34d;
+
+	--color-official-border: #059669;
+	--color-official-text: #047857;
+	--color-official-bg: #ecfdf5;
 
 	--shadow-card:
 		0 10px 25px -5px rgba(15, 23, 42, 0.15),

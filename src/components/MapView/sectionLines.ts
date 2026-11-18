@@ -18,6 +18,7 @@ import type {
 	SectionLineCollection,
 	SectionLineFeature,
 	SectionLineIcon,
+	SectionLineLayer,
 } from '@/types/markers';
 import { addShapeImage, cssColour } from './markers';
 
@@ -29,9 +30,14 @@ import { addShapeImage, cssColour } from './markers';
 // pass their official paths.
 
 export const SECTION_LINE_SOURCE = 'section-lines';
-const HALO_LAYER = 'section-lines-halo';
-const LINE_LAYER = 'section-lines';
-const ICON_LAYER = 'section-lines-icons';
+export const HALO_LAYER = 'section-lines-halo';
+const LINE_LAYER: SectionLineLayer = 'section-lines';
+const ICON_LAYER: SectionLineLayer = 'section-lines-icons';
+// The layers a click can land on (VXM-011 D6): the line and its bars / chevrons.
+export const SECTION_LINE_LAYERS: readonly SectionLineLayer[] = [
+	LINE_LAYER,
+	ICON_LAYER,
+];
 
 export const NO_SECTION_LINES: SectionLineCollection = {
 	type: 'FeatureCollection',

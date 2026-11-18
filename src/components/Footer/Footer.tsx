@@ -3,15 +3,7 @@ import Text from '@/components/Text/Text';
 import type { FooterProps } from '@/types/footer';
 import styles from './Footer.module.scss';
 import { LICENCES_LINKS } from '@/config/map';
-
-// "30 dic 2025" - it-IT for now (Max, 2026-11-13); follows the language once i18n exists.
-function formatDate(iso: string): string {
-	return new Date(iso).toLocaleDateString('it-IT', {
-		day: 'numeric',
-		month: 'short',
-		year: 'numeric',
-	});
-}
+import { formatDate } from '@/lib/format';
 
 // Page footer - DESIGN.md chapter 5 (Map: notice · last update · attribution) and
 // chapter 6 "Notice pill". The notice is always visible (CLAUDE.md "Never").
