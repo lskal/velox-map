@@ -1,0 +1,26 @@
+{
+	"compilerOptions": {
+		"tsBuildInfoFile": "../node_modules/.tmp/tsconfig.api.tsbuildinfo",
+		"target": "es2023",
+		"lib": ["ES2023", "DOM"],
+		"types": ["node"],
+		"skipLibCheck": true,
+
+		/* The Vercel functions (VXM-012). ES modules like the rest of the project; imports
+		   between files in api/ end in .js. The paths are only for type-checking the src/
+		   types - Vercel itself doesn't resolve @/ */
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"verbatimModuleSyntax": true,
+		"moduleDetection": "force",
+		"noEmit": true,
+		"paths": { "@/*": ["../src/*"] },
+
+		/* Linting */
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"erasableSyntaxOnly": true,
+		"noFallthroughCasesInSwitch": true
+	},
+	"include": ["."]
+}

@@ -1,4 +1,4 @@
-import { distance } from '@/lib/geo';
+import { distance } from '../geo.js';
 import type { Camera, LngLat } from '@/types/camera';
 import type {
 	OsmCameraCounts,
@@ -8,7 +8,11 @@ import type {
 	OverpassNode,
 	OverpassWay,
 } from '@/types/osm';
-import { mergeDirections, parseOsmDirection, wayBearingAt } from './direction';
+import {
+	mergeDirections,
+	parseOsmDirection,
+	wayBearingAt,
+} from './direction.js';
 
 // Official speed cameras ← the direction of OSM speed cameras nearby (VXM-010 D3, R4).
 // Plain function: official cameras + the Overpass answer in, directions + counts out.
