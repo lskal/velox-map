@@ -1,0 +1,313 @@
+# Velox Map - Design system
+
+Final design as of **2026-10-30**. Source: the Claude design canvas "Velox Map - UI design" (tokens, landing, map, about; desktop 1440 px + mobile 390 px; dark + light) and its "Map interactions" row (region views, detail cards, loading, error - dark desktop). This file is the spec the code is built from. Change it first, then the code.
+
+---
+
+## 1. Principles
+
+- **Calm, not alarmist.** A reference viewer for official open data, not a radar warner. No sirens, flashes, warning triangles, speedometers or "danger" reds as brand colours.
+- **Information only.** No user position, no navigation, no alerts. The notice "Information only - not for use while driving" is visible on every page.
+- **Dark first, light equal.** Dark is the default look. Light is a full theme, not an afterthought. Both pass WCAG AA.
+- **Flat and precise.** Tonal layers + 1 px borders instead of shadows. Only floating cards get a shadow.
+- **Two fonts with strict roles.** A pixel font for identity, a variable sans for everything you read.
+
+---
+
+## 2. Colour tokens
+
+Named by **role**, not by value. In CSS: custom properties on `:root` (dark) and `[data-theme="light"]`.
+
+### Interface
+
+| Token (`--color-…`) | Dark                    | Light     | Use                                             |
+| ------------------- | ----------------------- | --------- | ----------------------------------------------- |
+| `canvas`            | `#0B0F14`               | `#F8FAFC` | page background, map sea (dark)                 |
+| `bg`                | `#101419`               | `#F8FAFC` | page sections, marker panel                     |
+| `panel`             | `#141B24`               | `#FFFFFF` | header, footer, panels                          |
+| `elevated`          | `#1C2533`               | `#F1F5F9` | cards, dropdowns, hover rows                    |
+| `active`            | `#263344`               | `#F0F9FF` | selected / hovered control                      |
+| `border`            | `#233041`               | `#CBD5E1` | all 1 px borders                                |
+| `border-subtle`     | `#1A2430`               | `#E2E8F0` | table row dividers                              |
+| `text`              | `#F1F5F9`               | `#0F172A` | headings, primary text                          |
+| `text-body`         | `#CBD5E1`               | `#334155` | running text (About paragraphs)                 |
+| `text-2`            | `#94A3B8`               | `#475569` | secondary text, labels, captions                |
+| `accent`            | `#38BDF8`               | `#0284C7` | focus ring, icons, borders of selected controls |
+| `accent-text`       | `#7DD3FC`               | `#0369A1` | links and accent-coloured **text**              |
+| `notice-text`       | `#FBBF24`               | `#92400E` | disclaimer pill text                            |
+| `notice-bg`         | `rgba(245,158,11,0.10)` | `#FFFBEB` | disclaimer pill background                      |
+| `notice-border`     | `rgba(245,158,11,0.30)` | `#FCD34D` | disclaimer pill border                          |
+
+- ⚠️ **Light mode: `accent` (`#0284C7`) is for icons and borders only.** On white it is 4.1:1, below 4.5:1 for normal text → text uses `accent-text` (`#0369A1`, 5.9:1).
+- Dark `accent-text` (`#7DD3FC`) on `panel`: 10.4:1.
+
+### Landing Europe map (SVG)
+
+| Token (`--color-…`)  | Dark                    | Light                                                                | Use                                                 |
+| -------------------- | ----------------------- | -------------------------------------------------------------------- | --------------------------------------------------- |
+| `map-sea`            | `#0B0F14`               | `#DCE6EF`                                                            | sea                                                 |
+| `map-country`        | `#1C2533`               | `#FFFFFF`                                                            | the six supported countries                         |
+| `map-country-border` | `#64748B`               | `#64748B`                                                            | border of supported countries (3:1 against the sea) |
+| `map-country-off`    | `#131A22`               | `#EEF2F6`                                                            | all other countries (not focusable)                 |
+| `map-spotlight`      | `rgba(56,189,248,0.18)` | `rgba(2,132,199,0.12)` (not on the canvas yet - tune in the browser) | hover glow, clipped to the country shape            |
+
+### Map markers
+
+Each marker has its **own shape** (WCAG 1.4.1: never colour alone) and a halo (dark `#0B0F14`, light `#FFFFFF`, 2.5 px) so it keeps **≥ 3:1** against the map in both themes.
+
+| Marker                                                                              | Shape                                                                                                                                                                                                                                                                                                                             | Dark                                                         | Light                                          |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------- |
+| Speed camera                                                                        | circle, 16 px                                                                                                                                                                                                                                                                                                                     | `#FACC15`                                                    | `#A16207`                                      |
+| Red light                                                                           | rounded square 14 px, radius 4                                                                                                                                                                                                                                                                                                    | `#F43F5E`                                                    | `#E11D48`                                      |
+| Level crossing                                                                      | diamond 14 px                                                                                                                                                                                                                                                                                                                     | `#A855F7`                                                    | `#9333EA`                                      |
+| Average-speed section                                                               | 3 px line along the road (4 px when drawn from OSM), perpendicular bar at both ends; **two small chevrons** on the line (halo colour: `#0B0F14` dark, white light; 1.8 px, at 35 % and 70 % of the length) show the direction it applies to - official (e.g. Italy Tutor "DIR NORD") or the OSM path (France). Never an arrowhead | `#F97316`                                                    | `#EA580C`                                      |
+| Average-speed section, one point only (FR)                                          | the section shape as a fixed-size icon (bar - line - bar, ~24 px wide), centred on the official point (a section camera - the end, for the 10 checked), **turned to the road angle** read from the basemap roads from zoom 8, if a road is within 30 m; else horizontal. No direction or length implied (2026-11-11, VXM-010)     | `#F97316`                                                    | `#EA580C`                                      |
+| OpenStreetMap report (not official)                                                 | hollow dashed ring (`2.4 2`) with "?"                                                                                                                                                                                                                                                                                             | `#E2E8F0` on `#0B0F14`                                       | `#334155` on `#FFFFFF`                         |
+| Same spot, one type                                                                 | the type's own shape a bit larger (circle r 9.5, square 19, diamond 25) with the **device count** inside (11 px bold); count `#0B0F14` on dark, `#FFFFFF` on light (2026-11-16)                                                                                                                                                   | marker colour                                                | marker colour                                  |
+| Same spot, mixed types                                                              | **solid** ring (r 8, 1.8 px) with the device count inside (11 px bold). Solid = official; dashed stays for "not official" (OSM) (2026-11-16)                                                                                                                                                                                      | `#E2E8F0` on `#0B0F14`                                       | `#334155` on `#FFFFFF`                         |
+| Comune indicator (Italy)                                                            | pill 22 px high, building icon + count                                                                                                                                                                                                                                                                                            | border `#10B981`, text `#6EE7B7`, bg `rgba(16,185,129,0.14)` | border `#059669`, text `#047857`, bg `#ECFDF5` |
+| **Approximate position** (Italy: derived from road + km, address or motorway exits) | the type's own shape + a **dashed halo** (points: ring r 15, 1.5 px, dash `3 2.5`, fill 12%; sections: 14 px band at 22% under the line)                                                                                                                                                                                          | halo in the marker's colour                                  | same                                           |
+| **May not be active** (NO, SE, ES: installation site or cabin)                      | the type's own shape + a **grey dotted ring** (r 14, 2 px, dash `1 3`, round caps, no fill) - different pattern and colour from the approximate halo                                                                                                                                                                              | ring `#94A3B8`                                               | ring `#64748B`                                 |
+| Cluster                                                                             | circle 34 px + 4 px soft ring, count inside                                                                                                                                                                                                                                                                                       | `#475569`, text `#FFFFFF`                                    | `#475569`, text `#FFFFFF`                      |
+
+- **Speed = yellow (decided 2026-10-30).** It used to share the accent cyan, so a speed camera looked like a selected control. Yellow has the highest contrast of the coloured candidates checked (yellow, lime, blue, indigo, pink): at least 10.1:1 on the dark map and 3.9:1 on the light map (`#A16207`, worst case on the light sea). Under colour-blindness simulation it stays apart from the accent; it gets closest to the orange section line, which has a different shape.
+- The notice pill is also amber/yellow, but it is text in the footer, never on the map, so the two don't compete.
+- **Italy, final state:** derived positions (approximate halo) + comune indicators for devices with no position + unmatched OSM reports; Polizia Stradale mobile units are listed in a chip, never on the map. The card of a derived device always says "Approximate position", how it was computed and the original note.
+- **Card fields are dynamic:** each country passes its own detail rows (speed limit, direction, bearing, road, km…). Empty fields are **hidden**, never shown as "Not given" - except the **speed limit**, shown as "Not indicated" when the source gives none (2026-11-18, VXM-011). Sweden has no device type → every point is a speed camera. **Exception: the Direction row is always shown** (2026-11-16, see chapter 6 → Detail card).
+- **Same position:** devices **within 10 m** of each other (identical coordinates until VXM-011 - the French file spreads some radars ~0.7 m apart, one per lane) are grouped in code before they reach the map: one marker - the type's own shape with the count when all devices share a type, the solid grey ring with the count when the types differ (VXM-009, 2026-11-16); the card lists all of them.
+- **Direction is never on the marker** (decided 2026-11-16): at scale 0.5 a wedge is ~4 px, one / both / none can't be told apart, and a wedge reads like "pointing at you". Direction lives in the detail card; sections show it with chevrons on the line (above).
+- **Legend = legend + filter** (2026-11-16): one checkbox per marker type the country has (untick to hide; Italy also comune indicators, and OSM reports tied to the OSM switch), rows for same-spot markers and groups without a checkbox, and a **"Turn off clustering"** switch at the bottom ("every camera on its own, at every zoom"). The filter works on the data, so clusters recount.
+- **Later (not designed yet):** PL/ES sections known by start + end only (path not known); areas not covered by a source (ES: Catalonia, Basque Country). See `plan.md` → UI → Later.
+- **Map labels - spec to check and test (2026-11-02):** keep the map clean, show only place names, by zoom band. Names come from the basemap (OpenFreeMap `place` layer), never drawn by us.
+    | Zoom band                       | Show                            | Filter idea (OpenMapTiles `place`)        |
+    | ------------------------------- | ------------------------------- | ----------------------------------------- |
+    | Country (fitted to the country) | region names + national capital | `class = state` or `capital = 2`          |
+    | Region                          | main cities (province capitals) | `class = city` (+ `capital` where tagged) |
+    | Local                           | smaller towns, later villages   | `class = town` (`village` later)          |
+    - Hide all other basemap labels: road numbers, POIs, neighbourhoods. MapLibre drops overlapping labels by itself (most important first).
+    - **Same zoom bands for every country** by default (European countries have similar sizes). Keep a small **per-country override** possible (e.g. NO/SE fit at a lower zoom; region tagging may differ per country) - one config entry, applied with `setLayerZoomRange` when the country loads. Add an override only if a test shows it's needed.
+    - **Test per country** with the real tiles (Maputnik first, then the app): are regions tagged `state`? Is the capital tagged `capital = 2`? Do the bands fall right at the fitted zoom?
+- **Zoom rule:** at country zoom only **clusters** are shown. Comune indicators and OSM reports appear from **region zoom**. A hint line says so ("Country view: groups only · zoom in to a region for comuni and OSM reports").
+    - **Zoom numbers are settings per country** (`src/config/map.ts` → `COUNTRY_MAP`). France (VXM-007): single markers from **zoom 8** (below it a lone camera is a cluster circle with "1"), cluster radius **50 px**, icons scaled **0.5 at zoom 8 → 1.2 at zoom 14**; the "several devices" ring and its count scale with them. With more countries: defaults for most + exceptions per country.
+
+### Contrast checks (WCAG AA)
+
+| Pair                                     | Ratio         | Needs |
+| ---------------------------------------- | ------------- | ----- |
+| dark `text` on `canvas`                  | 17.5:1        | 4.5   |
+| dark `text-2` on `panel`                 | 6.8:1         | 4.5   |
+| light `text` on `panel`                  | 17.9:1        | 4.5   |
+| light `text-2` on `panel`                | 7.6:1         | 4.5   |
+| light `accent-text` on `panel`           | 5.9:1         | 4.5   |
+| light `accent` on `panel` (icons only)   | 4.1:1         | 3     |
+| light `notice-text` on `notice-bg`       | 6.8:1         | 4.5   |
+| `map-country-border` on dark / light sea | 4.0:1 / 3.8:1 | 3     |
+
+Re-check every pair in the accessibility pass (accessibility pass in `implementation-process.md` → Backlog).
+
+---
+
+## 3. Typography
+
+### Fonts
+
+| Font                       | Role                                                                                                            | Loading                                                         |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| **Tiny5 Duo** (pixel, 400) | logo, H1, H2, country names. Fixed UI text only, **uppercase via CSS**. Never for data, numbers, body or inputs | self-hosted, `font-display: swap`                               |
+| **Roboto Flex** (variable) | everything else: H3-H6, body, controls, tables, captions                                                        | self-hosted, `font-display: swap`, Latin Extended (PL, NO, SV…) |
+
+Fallback stacks (if a web font fails or before it arrives):
+
+```scss
+$font-display:
+	'Tiny5 Duo', ui-monospace, 'SF Mono', Menlo, 'Cascadia Mono', Consolas,
+	'Roboto Mono', 'DejaVu Sans Mono', 'Liberation Mono', 'Courier New',
+	monospace;
+$font-body:
+	'Roboto Flex',
+	Roboto,
+	system-ui,
+	-apple-system,
+	BlinkMacSystemFont,
+	'Segoe UI',
+	'Helvetica Neue',
+	Arial,
+	'Noto Sans',
+	sans-serif;
+```
+
+No system font looks like a pixel font: a monospace font is the closest fallback.
+
+### Type scale
+
+Size/line-height in px. "Mobile" = below 768px (see chapter 5).
+
+| Style   | Font        | Desktop                   | Mobile  | Weight  | Use                                                                |
+| ------- | ----------- | ------------------------- | ------- | ------- | ------------------------------------------------------------------ |
+| H1      | Tiny5 Duo   | 36/40                     | 26/30   | 400     | one per page: landing title, About, country name on the map page   |
+| H2      | Tiny5 Duo   | 24/29                     | 20/24   | 400     | page sections (About, Privacy…)                                    |
+| H3      | Roboto Flex | 18/26                     | 17/24   | 600     | sub-sections, card titles                                          |
+| H4      | Roboto Flex | 16/24                     | 16/24   | 600     | groups inside a card or panel (not used yet)                       |
+| H5      | Roboto Flex | 14/20                     | 14/20   | 600     | small block titles (not used yet)                                  |
+| H6      | Roboto Flex | 12/16, +0.08em, uppercase | same    | 600     | panel labels ("Legend", "Choose a country"), colour `text-2`       |
+| Body    | Roboto Flex | 16/26                     | 15/24   | 400     | running text, subtitles, About paragraphs, colour `text-body`      |
+| Body S  | Roboto Flex | 14/21                     | 14/21   | 400     | lists, cards, controls, table cells                                |
+| Body XS | Roboto Flex | 13/19                     | 13/19   | 400     | tooltip, OSM card link, status note (2026-11-16)                   |
+| Caption | Roboto Flex | 12/17                     | 12/17   | 400-500 | attribution, dates, footer notice, colour `text-2`                 |
+| Logo    | Tiny5 Duo   | 22                        | 19      | 400     | header wordmark (32 for large use)                                 |
+| Country | Tiny5 Duo   | 18/22                     | 18/22   | 400     | country names in lists and the mobile sheet                        |
+| Numbers | Roboto Flex | inherit                   | inherit | 600     | counts, table numbers, dates: `font-variant-numeric: tabular-nums` |
+
+- Visual style and HTML tag are separate: a `<h2>` can look like H3 if the outline needs it (`<Text variant as>`, `src/components/Text/`).
+- Heading order is never skipped. **Map pages:** a visually hidden `h1` "Speed cameras in <country>" (desktop and mobile) and `<title>` "Speed cameras in <country> · Velox Map"; the header wordmark is a link, not a heading. Landing, About and 404 keep their visible `h1`. Decided 2026-11-16 (VXM-009), replaces "the wordmark is the only `h1`" (2026-11-10). No counts in the `h1` or `<title>`.
+
+---
+
+## 4. Shape, spacing, depth
+
+- **Radius:** 8 px controls · 12 px cards · 16 px sheets (top corners) · pill (`9999px`) for badges, the notice and clusters.
+- **Spacing:** 4 px base - 4, 8, 12, 16, 24, 32, 48.
+- **Touch targets:** ≥ 44 x 44 px for every button, toggle and link in a list.
+- **Focus ring:** `2px solid accent`, `2px` offset, on every focusable element.
+- **Depth:** canvas → panel → elevated, each with a 1 px `border`. Shadow only on floating cards: `0 10px 25px -5px rgba(0,0,0,0.6), 0 8px 10px -6px rgba(0,0,0,0.4)` (dark); lighter in light mode.
+- **Motion:** short, functional (hover, spotlight, sheet). Under `prefers-reduced-motion: reduce` → no animation, instant states (spotlight becomes a flat `elevated` fill). **Logo hat tip** (2026-11-16): the body leans 14° on its pole, the hat lifts 3 px and tips 22°, holds, returns - CSS `transform` only; header once on hover / keyboard focus (0.9 s, on click once the router exists), loading card in a loop (2.4 s). Off under reduced motion.
+
+---
+
+## 5. Layout and pages
+
+### Breakpoints
+
+**One breakpoint for now: 768px** (decided 2026-10-30). The canvas designs two widths, mobile 390 px and desktop 1440 px; 768 is where one switches to the other.
+
+| Width        | Layout                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------- |
+| below 768px  | **mobile**: mobile type sizes, landing = country list only, map header = Settings sheet |
+| 768px and up | **desktop**: desktop type sizes, landing = country list + Europe map, full map header   |
+
+- **Mobile first:** base styles are the mobile ones; desktop styles go inside `@media (min-width: 768px)`. The value lives only in `src/styles/_breakpoints.scss`; components use the variable or mixin, never a hard-coded number.
+- **Tablets (768-1023px)** get the desktop layout. Not designed and not checked for now (decided 2026-11-10); a tablet pass comes later, as its own ticket if needed.
+
+### Every page
+
+- **Header (desktop):** logo (icon + "VELOX MAP" wordmark → `/`) + settings. **Settings live in the header and footer**: no settings page. The logo does the hat tip on hover and keyboard focus (chapter 4).
+- **Header (mobile, decided 2026-11-02):** landing and about = logo + wordmark + **burger** (right); language and theme move into the side menu. Map = logo icon + country selector + burger. The side menu itself is not designed yet (TODO).
+- **Footer:** the notice pill + links. Exact content per page below.
+- **Notice pill:** "Information only - not for use while driving", `notice-*` colours, pill shape. Its **(i)** is a link to the Disclaimer section of `/about` (`/about#disclaimer`): a pop-up would be too long to read.
+- **Theme toggle:** sun / moon icon button ("Switch to light mode"). Default: dark (decided 2026-11-11; the system setting is not used), user choice in `localStorage`.
+- **Language:** EN / IT.
+
+### Landing `/`
+
+- Eyebrow "Official open data · 6 countries", H1 "SPEED CAMERAS, FROM THE SOURCE", one-line intro.
+- **Desktop:** country list (name in the Country style, device count, source) next to the **Europe SVG map** (the larger part of the width). Supported countries are links with a spotlight hover clipped to their shape; hover shows "<country> · <count> · click to open the map". Other countries are dimmed and not focusable. "Loading map…" placeholder while the SVG loads.
+- **Mobile:** no Europe map. The country list is the main UI; the suggested country has a "Suggested" badge.
+- Footer: notice · "Open source · AGPL-3.0" · "About, data sources and privacy" · GitHub.
+
+### Map `/:country`
+
+- **Header (desktop):** logo + country selector (shows "Italy · 4,143") + **OSM switch** + Legend + language + theme toggle. The OSM switch is likely in every country, off by default, labelled "OSM" + one word saying what OSM adds there: **Italy "OSM reports"** (unofficial cameras), **France "OSM extras"** (directions and section paths). Never "precision", "more precise", "exact" or "corrected" (2026-11-16).
+- **Header (mobile):** logo + country selector + **burger** ("Open menu") → today a sheet with OSM reports, legend, language, light mode (to be merged with the side menu). OSM switch on mobile - **two options kept, to decide later** (2026-11-02): A) compact "OSM" switch in the header between selector and burger; B) floating "OSM reports" pill at the top right of the map (Italy only). Both are boards on the canvas. Both now have an **(i)** button (44 px) next to the switch; in the settings menu the switch gets a one-line caption under it instead. Option A or B is picked with the mobile map design (still open, 2026-11-16).
+- **OSM switch explanation** (2026-11-16): desktop = tooltip on hover **and** keyboard focus (`aria-describedby`, stays while hovered, Esc closes), 300 px, `elevated` card, 13/19 `body-text`; mobile = the (i) opens the same text in the OSM card (chapter 6) with "More in About → Legal". Texts: Italy "Speed cameras mapped by OpenStreetMap volunteers. Not official and possibly out of date. Shown only where they don't match an official device." France "Directions and section paths mapped by OpenStreetMap volunteers. Not official and possibly wrong. The official data is not changed."
+- **First-use OSM card** (2026-11-16, changed 2026-11-17 in VXM-010: no separate notice, no bottom sheet): the first time the switch is turned on in a browser and the OSM file has loaded, **the same card as the (i)** opens by itself under the switch - desktop under the header switch, mobile under the pill - with the explanation text and "More in About → Legal". It closes with a click or tap outside, Esc or the (i); no OK button. If the file can't load, the switch goes back to off and the same card says "OSM extras couldn't be loaded. The official data is still on the map - try again later." (no link). The full liability text stays in About → Legal.
+- **Country line:** country name (H1 style on mobile) + "4,143 devices · last update: 21 Oct 2026".
+- **Country note** when needed (Italy: "Positions per comune only. The official registry has no coordinates."). **Stale data** (2026-11-16): when a country file is older than a few days, a calm line under the header - clock icon, `panel` bg, `body-text`, no red, no close button: "Official source not reachable since <date> · showing the last available data, from <date>" (mobile: "Source not reachable since <date> · showing data from <date>").
+- **Map:** full width, markers and zoom rule from chapter 2.
+- **Bottom table:** "Device table" panel; for now the empty state "The table is coming soon - it will list every device of the selected country, as the keyboard and screen-reader alternative to the map."
+- **Region view** (zoomed in): top-left a "Whole of <country>" button + a hint line ("Region view · select a marker for details"); Italy adds a chip "Not on the map: 416 Polizia Stradale mobile devices, usable anywhere in Italy". Legend + filter panel bottom-left (chapter 2), map controls bottom-right.
+- **Map controls:** vertical group bottom-right, 44 px buttons: zoom in, zoom out, show the whole country.
+- **Detail card:** see chapter 6.
+- **Loading state:** basemap dimmed, centred card "Loading <country>…" with an indeterminate bar and "can take up to 10 seconds the first time"; country selector shows "<country> · …", OSM switch disabled, table bar as a grey placeholder. `role="status"`, `aria-busy` on the map. Card: 360 px (max full width - 32 px), padding 16, title H4, the logo in a hat-tip loop above it, caption in Caption 12/17 (2026-11-16). **Light and mobile have no board**: same card on `elevated` with the light card shadow `0 10px 25px -5px rgba(15,23,42,0.15), 0 8px 10px -6px rgba(15,23,42,0.1)` (a proposal), page dim `rgba(248,250,252,0.6)`; mobile = full width - 32 px.
+- **Source not answering:** basemap dimmed, centred card "<Country>'s data couldn't be loaded" + "the other countries still work"; buttons **Try again** and **Choose another country**, link to the official source. No red, no alarm icon. `role="alert"`. Card: 400 px, padding 16, caption in Caption 12/17; light and mobile as the loading card. (Built in VXM-007 without "Choose another country" - it comes with the router.)
+- **Footer:** notice · "Last update: <date>" (from `dataAsOf`; `it-IT` short date for now, e.g. "30 dic 2025" - follows the language once i18n exists) · attribution "© OpenStreetMap contributors · OpenFreeMap © OpenMapTiles · Data: <source> (<licence>)" (+ ISTAT for Italy). **This is the map's only attribution** (decided 2026-11-13): no attribution box on the map, so the footer must stay visible next to every map (OSM guidelines: "adjacent to the map"); a layout that hides it brings the box back.
+
+### About `/about`
+
+- Header: logo + language + "Back to the map".
+- H1 "ABOUT VELOX MAP", in-page navigation, four sections (H2) in this order (2026-11-16): **About**, **Data sources and licences**, **Privacy**, **Legal** (`#disclaimer`).
+- **About** opens with the project, slightly larger (18/1.6 desktop, 16 mobile, `text`): official open data only, OSM only when switched on and always marked as not official, no tracking, no location, never while driving. **Legal**: the amber "Information only. Do not use while driving." box, then the global disclaimer (official data and OSM, every country; no value as proof; no liability as far as the law allows) - text to check against a template or a lawyer before publishing.
+- Data sources: table per country (country, publisher + dataset link, licence, what a point means) → cards on mobile; then maps, reference data and fonts with their licences; NLOD text, ES coverage note, IT/PL reuse requests; "AGPL covers the code only"; corrections via GitHub issues.
+- Footer: "Open source · AGPL-3.0 · GitHub" · "Last updated <month year>".
+
+### 404 (2026-11-16)
+
+- Header and footer as on About (footer: "Open source · AGPL-3.0 · GitHub · About"). Centred, desktop and mobile: the logo in its hat-tip pose (96 / 80 px), "ERROR 404" (H6 style), H1 "PAGE NOT FOUND", one line "This page doesn't exist, or it has moved. The map and the data are still where you left them.", one button **Go to home** (accent border, `active` bg, 44 / 48 px). `<title>` "Page not found · Velox Map". Calm, no illustration of errors or warnings. Replaces the "small modal with Go to home".
+
+---
+
+## 6. Components
+
+| Component                                      | Spec                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Button**                                     | `elevated` bg, 1 px `border`, `text`; hover `active` bg + `accent` border; radius 8; height 44                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Icon button**                                | 44 x 44 target, 20 px icon in `text-2`, hover `accent`; always an `aria-label`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Selected chip / segmented option**           | `active` bg, 1 px `accent` border, `accent-text` text                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **Switch** (OSM switch, "Turn off clustering") | native `<button role="switch">`, no Radix (VXM-010); track 36 x 20, off `elevated` + `border`, on `accent`; 16 px white thumb; 44 px touch area; disabled while the country loads                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Select** (country, language)                 | like Button + chevron; options list on `elevated`, 12 radius                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **Notice pill**                                | see chapter 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| **Legend + filter**                            | panel with H6 "LEGEND" + "untick to hide"; one row per marker type: checkbox (18 px, `accent`) + shape + label; then rows without checkbox (same-spot markers, groups); "Turn off clustering" switch at the bottom. Desktop: overlay panel (region view) or the Legend popover (country view); mobile: the Legend block of the settings menu, 44 px rows                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **Country row** (landing)                      | Country-style name, count in Numbers style, source in Caption; whole row is the link                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Detail card** (designed 2026-10-30)          | floating `elevated` card, 1 px `border`, radius 12, card shadow; **desktop: 360-380 px, top-right of the map** (never covers the clicked marker), mobile: not designed yet. Header: badge ("Official · <source>" in comune green, or dashed "Not official · OpenStreetMap"), marker icon + title in H3, place line in `text-2`, close button 44 px. Body: dynamic rows in a 2-column `dl` (label Caption `text-2`, value 14/600 `tabular-nums`), empty rows hidden. Approximate positions add a dashed yellow box "Approximate position" + how it was computed + the original note quoted. Footer: source link · licence · "data as of <date>". The selected marker gets a 2.5-3.5 px `accent` outline. **Direction row** (2026-11-16): own block under the rows, always shown - "No direction indicated" / "Towards <one of 8 compass words>" (north, north-east…; from degrees, letters or OSM values; never bare degrees) / "Both directions (north and south)"; from OSM it gets an **"OSM data"** chip (dashed `text-2` border = not official) and, for one direction, "OSM indicates one direction. The camera may also check the other."; a section drawn from OSM adds "Path drawn from OpenStreetMap: community data, not official." Official values have no chip |
+| **Comune card** (Italy)                        | same shell; total "N registered devices without a position", 3 boxes Fixed / Mobile / Fixed or mobile, "+N more on the map at an approximate position", first 3 devices, "See all in the table", OSM note in a dashed box when OSM reports remain                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Modal / bottom sheet** (designed 2026-11-02) | Radix Dialog. Desktop: centred, 420 px, `elevated`, radius 12, page dimmed (`rgba(5,8,12,0.72)`), title H3 + close, text, actions right (secondary, then primary). Below 768 px: bottom sheet, radius 16 top, grab handle, full-width buttons, primary first. Focus trapped, Esc closes, focus returns. Only short confirmations                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **Device table** (designed 2026-11-02)         | in the map's bottom sheet (40% height). Toolbar: title + removable filter chip ("Comune: Milano") + "18 of 4,143". Real `<table>`, sticky header, sortable columns (`aria-sort`, active in `accent-text`), rows 48 px, `border-subtle` dividers, hover `elevated`, selected (= open card) `active`; columns dynamic per country; position badge (Approximate / Comune); "show on map" icon button per row; `tabular-nums` dates. Long lists virtualised (Virtuoso), no pagination. Mobile: list of rows (icon · title · place · meta · map button), sort in a chip                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| **Empty state**                                | inside a table or list: dashed border, icon, title, one line, optional action ("Clear filter")                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| **Overlay panel**                              | legend, hint chips, "Whole of <country>", hover tooltip, open select list: translucent `panel` (92%) on the map, card shadow when floating over content                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Tooltip** (2026-11-16)                       | `elevated` card, 1 px `border`, radius 8, card shadow, 300 px, padding 10 / 12, 13/19 `body-text`; on hover **and** keyboard focus, `aria-describedby`, stays while hovered (WCAG 1.4.13)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| **OSM card** (2026-11-16, one card 2026-11-17) | `elevated` card under the switch row, right-aligned, max 360 px (mobile: map width - 24 px), padding 12 / 14, radius 12, 1 px `border`, card shadow; text Body S 14/21, link Body XS 13/19 `accent-text`. Opens with the (i), by itself on first use, or with the load error (no link, `role="alert"`). No button: closes on a click / tap outside, Esc, or the (i). Not a modal, no bottom sheet                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Status note** (2026-11-16)                   | full-width line under the header: `panel` bg, 1 px `border` bottom, 16 px icon in `text-2`, 13/19 `body-text` (mobile 12/17); calm, no colour, no close (stale data)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+
+**Detail card - built in VXM-011 (2026-11-18):**
+
+- **Header:** the badge for France is "Official · fixed radar" (board 19); under the title, the device ID line: "Radar ID: 12034", or for a same spot "Radar IDs: 5115-5120" (consecutive) / "Radar IDs: FE206031, FE206200". The badge is the comune indicator's green (tokens `official-border`, `official-text`, `official-bg`); the "OSM data" chip is the dashed `text-2` one
+- **Same spot:** title "6 speed cameras" (one type) or "2 devices" (mixed). Rows and the Direction that every device shares are shown once; then one block per device, labelled "RADAR ID: …" (H6), with only what differs - its rows, and its Direction when the devices don't share one (the chip and the note stay with their own direction)
+- **Dividers:** 1 px `border` in both themes (`border-subtle` is almost the card's own colour in dark)
+- **Selected marker:** round markers get a 3 px `accent` ring that grows with the icon size; a one-point section gets its own bar - line - bar shape in `accent`, 3 px around its halo and turned like the icon; a section drawn as a line gets a 3 px `accent` band along the whole line, under its halo
+- **Desktop only** for now; on mobile a tap on a marker opens nothing until the mobile card is designed
+
+All components with their states: canvas board "Components - dark (desktop + mobile)".
+
+### Not designed yet (later)
+
+- **Mobile side menu (burger)** - content and layout (TODO, 2026-11-02).
+- **Mobile table row → detail card in the bottom sheet** (idea 2026-11-02): tapping a row opens the same detail card inside the sheet shell; the map-pin button still flies to the device.
+- **Keyboard mode** (idea 2026-11-02): the first `Tab` / `Shift+Tab` sets `<html data-input="keyboard">`, the next pointer/touch use sets it back to `pointer`. Only in keyboard mode: the **pan pad** on the map (↑ ← → ↓ + zoom), the hint "Arrow keys move the map, + and - zoom" (MapLibre already pans with arrows when the map is focused), and a **skip link** "Skip to the device table" as the first focusable element of the map page. Mouse users never see them.
+- **Draggable detail card** (idea - think about it after the main development is done): based on the work `DraggablePopup` (position, onDrag, mapBounds clamp, close, pin). Width stays 360-380 px; a non-drag alternative is required (WCAG 2.5.7: pin / move button / arrow keys on the header); no drag on mobile (bottom sheet). v1: one card at a time; pinning several cards only if needed.
+- **Search** (after v1 works, with the table filter): desktop = icon button in the map header → field top-left over the map; mobile = at the top of the table sheet. Searches **our own data** first (comuni, roads in notes, operators: local, instant). Place/address search needs a geocoder: Nominatim forbids browser type-ahead → other provider or server cache, later.
+- **Table filter** (future): the removable filter chip on the components board ("Comune: Milano") is a later feature, not v1.
+- **Settings page** (future): suggested country on/off, language, theme, "Forget your choices" (the modal example). Would replace the v1 rule "settings live in header and footer".
+- Detail card and region view on **mobile** and in **light** theme; the "may not be active" marker on a real map (NO, SE, ES).
+- Search / filter inputs; light version of the components board
+
+Design them on the canvas first, then add them here.
+
+---
+
+## 7. Logo
+
+- **Concept: "Dapper Angled Top Hat".** A roadside speed-camera box on a pole, two round lenses (big and small), with a top hat tilted -9°. Friendly and calm: no flashes, bolts, sirens or warning shapes.
+- **Drawing:** 32 x 32 viewBox, line only (`fill="none"`), `stroke="currentColor"`, round caps and joins.
+- **Line weights (stroke hierarchy):** body + pole + brim **2**; crown **1.8**; big lens **1.6**; small lens + hat band **1.1**.
+- **Reference SVG:**
+    ```svg
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="7" y="13" width="18" height="11" rx="3"/>
+      <circle cx="13" cy="18.5" r="3" stroke-width="1.6"/>
+      <circle cx="20.5" cy="18.5" r="1.4" stroke-width="1.1"/>
+      <path d="M16 24 V30"/>
+      <g transform="rotate(-9 16 9)">
+        <path d="M7.5 11.5 Q16 9.8 24.5 11.5"/>
+        <path d="M11.5 10.6 V4 H20.5 V10.6" stroke-width="1.8"/>
+        <path d="M11.5 8.2 H20.5" stroke-width="1.1"/>
+      </g>
+    </svg>
+    ```
+- **Sizes:** 64 · 32 · 16. Small sizes get slightly thicker lines so they don't fade:
+    | Use                                                                                       | Body stroke | Notes                                                               |
+    | ----------------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------- |
+    | large (64 px)                                                                             | 2           | reference SVG above                                                 |
+    | header (26-30 px)                                                                         | 2.2         | same drawing                                                        |
+    | favicon (16 px)                                                                           | 2.6         | simplified: **no small lens, no hat band**; crown 2.1, big lens 1.5 |
+    | Files: `logo.svg` (`currentColor`) and `favicon.svg` (light/dark colour inside the file). |
+- **Colours:** `accent` on dark (`#38BDF8`), `accent` on light (`#0284C7`), single colour for monochrome use.
+- **Wordmark:** "VELOX MAP" in Tiny5 Duo, right of the icon (Logo style).

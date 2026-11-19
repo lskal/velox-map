@@ -1,0 +1,77 @@
+@use '../../styles/typography' as type;
+
+// Header placement (desktop): the card opens under the switch, right-aligned.
+.header {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+// Floating pill on the mobile map (DESIGN.md option B, canvas Components → 9):
+// top right, the (i) and the switch side by side.
+.pill {
+	position: absolute;
+	top: var(--space-3);
+	right: var(--space-3);
+	z-index: 2;
+	display: flex;
+	gap: var(--space-2);
+}
+
+// The switch as a pill: 44 px high, fully round, translucent panel.
+.pillSwitch {
+	padding: 0 var(--space-3);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-pill);
+	background: color-mix(in srgb, var(--color-panel) 95%, transparent);
+}
+
+.infoButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--touch-target);
+	height: var(--touch-target);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-pill);
+	background: color-mix(in srgb, var(--color-panel) 95%, transparent);
+	color: var(--color-text-2);
+	cursor: pointer;
+
+	&[aria-expanded='true'] {
+		border-color: var(--color-accent);
+	}
+}
+
+// The one card (the (i), the first use, the error): under the switch row, right-aligned
+// with it; on mobile the map's width minus 12 px on each side (canvas Components → 9).
+.card {
+	position: absolute;
+	top: calc(100% + var(--space-2));
+	right: 0;
+	z-index: 10;
+	width: calc(100vw - 2 * var(--space-3));
+	max-width: 360px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+	padding: var(--space-3) 14px; // as designed
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-card);
+	background: var(--color-elevated);
+	box-shadow: var(--shadow-card);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.cardText {
+	@include type.body-s;
+	color: var(--color-text-body);
+}
+
+.cardLink {
+	@include type.body-xs;
+	color: var(--color-accent-text);
+}

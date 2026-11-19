@@ -1,0 +1,103 @@
+@use '../../styles/typography' as type;
+
+// Loading / error cards over the map - VXM-007 plan D8, canvas MapLoading / MapError.
+// Card sizes (360 / 400 px) come from the canvas; padding and text from DESIGN.md tokens.
+
+// The dimmed basemap, with the card a bit above the centre (as on the canvas).
+.overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	display: grid;
+	place-items: center;
+	background: var(--color-map-dim);
+}
+
+.card {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+	padding: var(--space-4);
+	transform: translateY(-10%);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-card);
+	background: var(--color-elevated);
+	box-shadow: var(--shadow-card);
+	color: var(--color-text);
+}
+
+.loading {
+	width: min(360px, calc(100% - 32px));
+}
+
+.error {
+	width: min(400px, calc(100% - 32px));
+}
+
+.muted {
+	color: var(--color-text-2);
+}
+
+// Indeterminate bar: a 40% bar sliding across the track; still under reduced motion.
+.track {
+	position: relative;
+	height: 4px;
+	overflow: hidden;
+	border-radius: var(--radius-pill);
+	background: var(--color-active);
+}
+
+.bar {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 40%;
+	border-radius: var(--radius-pill);
+	background: var(--color-accent);
+	animation: slide 1.4s ease-in-out infinite;
+
+	@media (prefers-reduced-motion: reduce) {
+		animation: none;
+	}
+}
+
+@keyframes slide {
+	from {
+		transform: translateX(-100%);
+	}
+
+	to {
+		transform: translateX(250%);
+	}
+}
+
+.title {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	color: var(--color-text-2); // the icon
+}
+
+.heading {
+	color: var(--color-text);
+}
+
+.body {
+	color: var(--color-text-body);
+}
+
+// Try again - DESIGN.md chapter 6 button, the canvas's primary look
+.button {
+	@include type.body-s;
+	font-weight: 600;
+	height: var(--touch-target);
+	padding: 0 var(--space-4);
+	border: 1px solid var(--color-accent);
+	border-radius: var(--radius-control);
+	background: var(--color-active);
+	color: var(--color-text);
+	cursor: pointer;
+}
+
+.link {
+	color: var(--color-accent-text);
+}

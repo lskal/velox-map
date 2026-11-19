@@ -1,0 +1,6 @@
+// Default size from the design (26px mobile, 30px desktop).
+// Only when no size prop is passed - then the width/height attributes win.
+.icon:not([width]) {
+	width: var(--size-logo-icon);
+	height: var(--size-logo-icon);
+}

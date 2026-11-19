@@ -1,0 +1,44 @@
+// CSS reset - based on Andy Bell's "A (more) modern CSS reset" (piccalil.li),
+// trimmed to VXM-001 R6 + R8. Spacing, sizes and colours come from the design system.
+
+// Padding and borders don't change an element's declared size.
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+// No default margins: spacing is always set on purpose.
+* {
+	margin: 0;
+}
+
+// Media never overflow their container; block display removes the inline gap below images.
+img,
+picture,
+svg,
+video {
+	display: block;
+	max-width: 100%;
+}
+
+// Form elements use the page font instead of the OS default.
+input,
+button,
+textarea,
+select {
+	font: inherit;
+}
+
+// Reduced motion: animations and transitions effectively off.
+// 0.01ms instead of 0 so animationend / transitionend events still fire.
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}

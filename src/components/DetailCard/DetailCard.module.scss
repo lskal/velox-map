@@ -1,0 +1,133 @@
+@use '../../styles/typography' as type;
+
+// DESIGN.md chapter 6 → Detail card, board 19: 360 px, elevated, radius 12, card shadow.
+// Where it sits (top-right of the map) and how tall it may get are the parent's job,
+// through `className`; taller than that, it scrolls inside itself.
+.card {
+	width: 360px;
+	overflow-y: auto;
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-card);
+	background: var(--color-elevated);
+	box-shadow: var(--shadow-card);
+
+	// Focus lands on the card so a screen reader reads its title; the ring would only
+	// outline the whole card, so it's hidden here (the close button keeps its own).
+	&:focus {
+		outline: none;
+	}
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	gap: var(--space-2);
+	padding: var(--space-4) var(--space-2) var(--space-3) var(--space-4);
+}
+
+.heading {
+	display: grid;
+	justify-items: start;
+	gap: var(--space-2);
+}
+
+.titleRow {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+}
+
+.place {
+	color: var(--color-text-2);
+}
+
+.close {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: var(--touch-target);
+	height: var(--touch-target);
+	border: none;
+	border-radius: var(--radius-control);
+	background: none;
+	color: var(--color-text-2);
+	cursor: pointer;
+
+	&:hover {
+		color: var(--color-accent);
+	}
+}
+
+// One device: rows + Direction, a line above each. The lines use `border` (as on board
+// 19): `border-subtle` is almost the card's own colour in dark (Max, 2026-11-18).
+.device {
+	display: grid;
+	gap: var(--space-3);
+	padding: var(--space-3) var(--space-4);
+	border-top: 1px solid var(--color-border);
+}
+
+// The rows: two columns, label above value.
+.rows {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-3) var(--space-4);
+}
+
+.row {
+	display: grid;
+	align-content: start; // label and value stay together when the next cell is taller
+	gap: 2px;
+}
+
+.label {
+	@include type.caption;
+	color: var(--color-text-2);
+}
+
+.value {
+	@include type.body-s;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	color: var(--color-text);
+}
+
+// The Direction block - always shown, under the rows (R7).
+.direction {
+	display: grid;
+	gap: 2px;
+	padding-top: var(--space-3);
+	border-top: 1px solid var(--color-border);
+}
+
+.directionValue {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2);
+}
+
+.directionNote {
+	@include type.body-xs;
+	color: var(--color-text-2);
+}
+
+.footer {
+	display: grid;
+	gap: var(--space-2);
+	padding: var(--space-3) var(--space-4) var(--space-4);
+	border-top: 1px solid var(--color-border);
+}
+
+.note {
+	color: var(--color-text-body);
+}
+
+.source {
+	color: var(--color-text-2);
+
+	a {
+		color: var(--color-accent-text);
+	}
+}

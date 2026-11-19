@@ -1,0 +1,15 @@
+@use 'sass:map';
+
+// Breakpoints in px (decided 2026-11-10: px everywhere)
+
+$breakpoints: (
+	sm: 576px,
+	md: 768px,
+	lg: 1024px,
+);
+
+@mixin up($name) {
+	@media (min-width: map.get($breakpoints, $name)) {
+		@content;
+	}
+}

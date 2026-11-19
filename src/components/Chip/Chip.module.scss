@@ -1,0 +1,25 @@
+@use '../../styles/typography' as type;
+
+.chip {
+	@include type.caption;
+	display: inline-flex;
+	align-items: center;
+	padding: 1px var(--space-2);
+	border: 1px solid;
+	border-radius: var(--radius-pill);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.official {
+	border-color: var(--color-official-border);
+	background: var(--color-official-bg);
+	color: var(--color-official-text);
+}
+
+// Dashed = not official, the same language as the OSM report marker.
+.community {
+	border-style: dashed;
+	border-color: var(--color-text-2);
+	color: var(--color-text-2);
+}
