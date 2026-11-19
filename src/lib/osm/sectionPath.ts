@@ -1,4 +1,4 @@
-import { distance } from '@/lib/geo';
+import { distance } from '../geo.js';
 import type { Camera, LngLat } from '@/types/camera';
 import type {
 	OsmSectionCounts,

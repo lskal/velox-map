@@ -196,7 +196,7 @@ function points(element: OverpassElement): LngLat[] {
 
 async function probeSrcImports(): Promise<OsmTestLog['srcImports']> {
 	try {
-		const module = await import('../../src/lib/osm/matchCameras');
+		const module = await import('../../src/lib/osm/matchCameras.js');
 		return { ok: typeof module.matchCameraDirections === 'function' };
 	} catch (error) {
 		return {

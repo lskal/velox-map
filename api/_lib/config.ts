@@ -7,11 +7,11 @@ import type { CountryCode } from '../../src/types/map';
 
 // Public Overpass servers, tried in this order (VXM-012 R6). kumi.systems = private.coffee;
 // overpass.osm.ch is Switzerland only; the Russian instances are left out (Max, 2026-11-19).
-// overpass.osm.jp is a public test instance - the last resort.
+// overpass.osm.jp is gone (2026-11-19: its name no longer resolves). If both fail, the
+// previous OSM file stays and the next run tries again.
 export const OVERPASS_SERVERS = [
 	'https://overpass-api.de/api/interpreter',
 	'https://overpass.private.coffee/api/interpreter',
-	'https://overpass.osm.jp/api/interpreter',
 ];
 
 export const USER_AGENT = 'velox-map (+https://github.com/lskal/velox-map)';
