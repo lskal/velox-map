@@ -1,4 +1,4 @@
-import { bearing } from '@/lib/geo';
+import { bearing } from '../geo.js';
 import type { LngLat } from '@/types/camera';
 import type { OsmDirection, OverpassWay } from '@/types/osm';
 
