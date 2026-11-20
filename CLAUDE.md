@@ -7,6 +7,10 @@ data (IT, FR, NO, SE, PL, ES).
 
 React + Vite + TypeScript, Node 24, SCSS modules (`src/styles/`), Prettier (tabs),
 MapLibre + OpenFreeMap. Deployed on Vercel.
+- **Scheduled jobs** (VXM-012): Vercel Functions in `api/` (`api/cron/<job>.ts`, shared pieces in `api/_lib/`),
+  run by **Vercel Schedules** (`vercel.json` → `schedules`; Cron Jobs are legacy), data in a **private** Vercel Blob
+  store. Secrets (`CRON_SECRET`, `OVERPASS_CH_KEY`) only as Vercel env vars - never in code, docs or `.env` files
+  in the repo (`.env*` is ignored).
 - **Radix:** not used yet - the Switch is native (VXM-010). May come later for components
   (accessibility, uniformity); decide per component, don't add it on your own.
 - **Zustand:** only for state shared across the layout (e.g. header ↔ map), from VXM-013.
@@ -31,6 +35,8 @@ Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before 
   keyed by country code (`COUNTRY_MAP`, `COUNTRY_OSM`, `COUNTRY_CARD`); no file named after a country.
   Country decisions: `velox-map-design/docs/countries.md`.
 - Keep main components (`App`) clean: no hooks there; state lives in the narrowest component that needs it.
+- Code a job in `api/` loads from `src/` imports its **values** with relative `.js` paths (`'../geo.js'`): Vercel
+  doesn't resolve `@/` in functions. Type-only imports may keep `@/`. Files in `api/` import each other with `.js` too.
 
 ## Design
 
