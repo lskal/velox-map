@@ -1,9 +1,8 @@
 import type { ReadyFile } from '@/types/readyFile';
 
-// Reads a ready data file (VXM-010 R3b). Missing or not usable → null, and the caller
-// falls back to the live source. No retry: a missing file is normal (deployed site,
-// fresh clone). The dev server answers a missing file with the page's HTML, not a 404,
-// so the content type is checked too.
+// Reads a ready data file (VXM-010 R3b; served from Blob since VXM-012). Missing or not
+// usable → null, and the caller decides (France: the error card). The dev server answers a
+// missing file with the page's HTML, not a 404, so the content type is checked too.
 export async function loadReadyFile<Row>(
 	url: string,
 ): Promise<ReadyFile<Row> | null> {

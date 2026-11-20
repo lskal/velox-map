@@ -14,14 +14,16 @@ import {
 	COUNTRY_OVERPASS_BOX,
 	GRID,
 	PAUSE_MS,
+	REQUESTS_PER_RUN,
 	RUN_BUDGET_MS,
 } from '../_lib/config.js';
 import { askOverpass } from '../_lib/overpass.js';
 
-// VXM-012 T1 - the OSM test job (D1, R0). Runs every night until T5 replaces it. Asks the
-// five queries tile by tile for France, measures each answer and writes one log file per
-// run to Blob (logs/osm-test-<time>.json). Nothing the app reads. What the logs show sets
-// the real OSM job's tile size, time budget and retries, and VXM-014's scope.
+// VXM-012 T1 - the OSM test job (D1, R0). Runs every 20 minutes (vercel.json → schedules)
+// until T5 replaces it. Asks the five queries tile by tile for France, a few per run,
+// measures each answer and writes one log file per run to Blob (logs/osm-test-<time>.json).
+// Nothing the app reads. What the logs show sets the real OSM job's tile size, pace and
+// retries, and VXM-014's scope.
 
 const COUNTRY = 'FR';
 // The official cameras, uploaded by hand (M5). Read-only, so it's read from the
@@ -245,10 +247,12 @@ export async function GET(request: Request): Promise<Response> {
 		const start = (state?.next ?? 0) % pairs.length;
 
 		const found = new Map<TestQuery, Map<string, OverpassElement>>();
-		let done = 0;
-		for (; done < pairs.length; done++) {
+		// A few requests per run (REQUESTS_PER_RUN), then stop. A request no server answers
+		// ends the run at once - the servers rest, and the next run asks that pair again
+		let done = 0; // pairs answered in this run
+		while (log.requests.length < REQUESTS_PER_RUN && done < pairs.length) {
 			const { query, tile } = pairs[(start + done) % pairs.length];
-			if (done > 0) await sleep(PAUSE_MS);
+			if (log.requests.length > 0) await sleep(PAUSE_MS);
 			const box = boxes[tile].map(value => value.toFixed(4)).join(',');
 			const entry: TestRequestLog = {
 				query,
@@ -263,19 +267,14 @@ export async function GET(request: Request): Promise<Response> {
 			entry.attempts = attempts;
 			if (attempts.length === 0) break; // out of time before asking
 			log.requests.push(entry);
-			if (answer) {
-				entry.items = answer.elements.length;
-				const seen =
-					found.get(query) ?? new Map<string, OverpassElement>();
-				for (const element of answer.elements) {
-					seen.set(`${element.type}/${element.id}`, element);
-				}
-				found.set(query, seen);
+			if (!answer) break;
+			entry.items = answer.elements.length;
+			const seen = found.get(query) ?? new Map<string, OverpassElement>();
+			for (const element of answer.elements) {
+				seen.set(`${element.type}/${element.id}`, element);
 			}
-			if (timeLeft() <= 0) {
-				done++;
-				break;
-			}
+			found.set(query, seen);
+			done++;
 		}
 		log.skipped = pairs.length - done;
 		log.nextIndex = (start + done) % pairs.length;

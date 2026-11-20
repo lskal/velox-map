@@ -17,7 +17,7 @@ import { fetchJSON, toNumber, trimKeys } from './helpers';
 // France - fixed radars from data.gouv.fr (data-sources.md → France).
 // Two steps (VXM-010 D2): fetchFRSource() gets the rows as they are - used by the local
 // script now and the daily job later (VXM-012) - and toFRResult() normalises them in the
-// app. loadFR() is the app's way in: the ready file when there is one, else the live source.
+// app. loadFR() is the app's way in: the ready file, served from Blob (VXM-012).
 
 export const FR_SOURCE: DataSource = {
 	name: "Ministère de l'Intérieur - data.gouv.fr",
@@ -152,22 +152,13 @@ export function toFRResult({
 	return { dataAsOf, total, rowsFetched: rows.length, cameras, skipped };
 }
 
-// Straight from data.gouv.fr (VXM-005).
-export async function fetchFR(): Promise<FetchFRResult> {
-	return toFRResult(await fetchFRSource());
-}
-
-// The app's way in (VXM-010 R3b): the ready file (public/data/fr.json, written by
-// `npm run data:fr`) when there is one, else the live source as before - so the deployed
-// site keeps working until the scheduled job exists (VXM-012).
+// The app's way in (VXM-012 R7): only the ready file at /data/fr.json - served from the
+// Blob store by the /data/ function, locally through the dev server's proxy. No live
+// fallback any more: the browser never calls data.gouv.fr. Missing file → the error card.
 export async function loadFR(): Promise<FetchFRResult> {
 	const file = await loadReadyFile<RawFR>(DATA_FILES.FR);
-	if (file) {
-		console.info(
-			`France: ready file from ${file.fetchedAt.slice(0, 10)} (${file.rows.length} rows)`,
-		);
-		return toFRResult(file);
+	if (!file) {
+		throw new Error(`France: ready file not available (${DATA_FILES.FR})`);
 	}
-	console.info('France: no ready file, using the live source');
-	return fetchFR();
+	return toFRResult(file);
 }

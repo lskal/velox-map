@@ -26,3 +26,8 @@ velox-map-design/
 
 # Ready data files written by the local scripts (VXM-010) - Blob in VXM-012
 public/data/
+
+# Secrets - never committed (VXM-012). The values live in Vercel → Environment Variables
+.env
+.env.*
+!.env.example

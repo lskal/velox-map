@@ -51,7 +51,7 @@ export interface FRSource {
 	rows: RawFR[];
 }
 
-// What fetchFR() / loadFR() return (VXM-005 plan D6).
+// What toFRResult() / loadFR() return (VXM-005 plan D6).
 export interface FetchFRResult {
 	dataAsOf: string;
 	total: number; // rows the API says the file has

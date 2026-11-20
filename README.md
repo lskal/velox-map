@@ -60,12 +60,10 @@ Node 24 (see `.nvmrc`).
 
 ```
 npm install
-npm run data:fr   # optional: the French data into public/data/fr.json
-npm run osm:fr    # optional: the French OSM extras into public/data/osm-fr.json
 npm run dev
 ```
 
-Without the files in `public/data/` the app fetches the French data from data.gouv.fr directly; the OSM extras need `osm-fr.json`. `npm run build` runs the linter and the type check first.
+The data files (`/data/fr.json`, `/data/osm-fr.json`) are written by scheduled jobs on Vercel and kept in a private Vercel Blob store; the dev server forwards `/data/…` to the deployed site, so a fresh clone shows the same data without any setup. `npm run build` runs the linter and the type check first.
 
 ## Contact
 

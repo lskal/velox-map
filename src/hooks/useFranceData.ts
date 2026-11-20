@@ -3,7 +3,7 @@ import { loadFR } from '@/lib/fetchers/fr';
 import type { CountryData } from '@/types/data';
 
 // The French cameras for the page (VXM-007 plan D1): loaded once, again on retry() -
-// from the ready file if there is one, else from data.gouv.fr (VXM-010 R3b). App passes the result down - map, status card and footer.
+// from the ready file at /data/fr.json (VXM-012 R7). App passes the result down - map, status card and footer.
 export function useFranceData(): CountryData & { retry: () => void } {
 	const [data, setData] = useState<CountryData>({
 		status: 'loading',

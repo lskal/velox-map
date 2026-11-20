@@ -3,9 +3,13 @@
 	"functions": {
 		"api/cron/*.ts": { "maxDuration": 300 }
 	},
-	"crons": [
-		{ "path": "/api/cron/osm-test", "schedule": "13 2 * * *" },
-		{ "path": "/api/cron/osm-test", "schedule": "13 3 * * *" },
-		{ "path": "/api/cron/osm-test", "schedule": "13 4 * * *" }
-	]
+	"rewrites": [{ "source": "/data/:file", "destination": "/api/data/:file" }],
+	"schedules": {
+		"osm-test": {
+			"schedule": "*/20 * * * *",
+			"timezone": "Europe/Rome",
+			"path": "/api/cron/osm-test",
+			"requestMethod": "GET"
+		}
+	}
 }
