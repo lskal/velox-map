@@ -11,7 +11,7 @@ export interface OverpassAttempt {
 	outcome: 'ok' | 'timeout' | 'error' | number; // a number = the HTTP status
 	kb?: number; // size of the answer
 	error?: string; // network error or Overpass's own "remark"
-	slots?: string; // the server's /api/status just before: free slots or how long to wait
+	cause?: string; // what's behind a network error: ECONNRESET, UND_ERR_CONNECT_TIMEOUT…
 }
 
 // The five queries the test job measures (VXM-012 D1).

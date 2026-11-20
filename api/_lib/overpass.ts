@@ -1,43 +1,18 @@
 import type { OverpassAttempt } from '../../src/types/jobs';
 import type { OverpassResponse } from '../../src/types/osm';
-import {
-	OVERPASS_SERVERS,
-	REQUEST_MAX_MS,
-	REQUEST_MIN_MS,
-	USER_AGENT,
-} from './config.js';
+import { OVERPASS_SERVERS, REQUEST_MIN_MS, USER_AGENT } from './config.js';
 
-// One Overpass query (VXM-012 D2, R6): the servers in order, one try each - no waiting
-// retries, the run's time is short. The server that answered stays first for the next
-// query. A 400 is our query's fault, so the other servers aren't tried.
-
-let current = 0;
+// One Overpass query (VXM-012 D2, R6): the servers in order, always from the first, one
+// try each - no waiting retries, the run's time is short. A 400 is our query's fault, so
+// the other servers aren't tried.
 
 const host = (url: string) => new URL(url).host;
 
-// What the server says about our rate limit right now, from its /api/status page: e.g.
-// "Rate limit: 2 | 2 slots available now." or "Slot available after: …, in 45 seconds."
-// Only logged for now (T1) - it shows whether a quick 502 means "no free slot".
-async function slotStatus(server: string): Promise<string | undefined> {
-	const controller = new AbortController();
-	const timer = setTimeout(() => controller.abort(), 5_000);
-	try {
-		const response = await fetch(server.replace(/interpreter$/, 'status'), {
-			headers: { 'User-Agent': USER_AGENT },
-			signal: controller.signal,
-		});
-		const text = await response.text();
-		const lines = text
-			.split('\n')
-			.filter(line => /rate limit|available/i.test(line));
-		return lines.length > 0
-			? lines.join(' | ')
-			: `status ${response.status}`;
-	} catch {
-		return undefined;
-	} finally {
-		clearTimeout(timer);
-	}
+// The real reason behind Node's "fetch failed": refused, reset, timed out… (error.cause)
+function reason(error: unknown): string | undefined {
+	const cause = (error as { cause?: { code?: string; message?: string } })
+		.cause;
+	return cause?.code ?? cause?.message;
 }
 
 export async function askOverpass(
@@ -45,12 +20,11 @@ export async function askOverpass(
 	timeLeft: () => number,
 ): Promise<{ answer: OverpassResponse | null; attempts: OverpassAttempt[] }> {
 	const attempts: OverpassAttempt[] = [];
-	for (let tried = 0; tried < OVERPASS_SERVERS.length; tried++) {
-		const budget = Math.min(REQUEST_MAX_MS, timeLeft());
+	for (const { url: server, timeoutMs, keyEnv } of OVERPASS_SERVERS) {
+		const key = keyEnv ? process.env[keyEnv] : undefined;
+		if (keyEnv && !key) continue; // its key isn't set: skip this server
+		const budget = Math.min(timeoutMs, timeLeft());
 		if (budget < REQUEST_MIN_MS) break;
-		const index = (current + tried) % OVERPASS_SERVERS.length;
-		const server = OVERPASS_SERVERS[index];
-		const slots = await slotStatus(server);
 		const started = Date.now();
 		const controller = new AbortController();
 		const timer = setTimeout(() => controller.abort(), budget);
@@ -62,7 +36,10 @@ export async function askOverpass(
 				body: new URLSearchParams({
 					data: query(Math.max(5, Math.floor(budget / 1000) - 5)),
 				}),
-				headers: { 'User-Agent': USER_AGENT },
+				headers: {
+					'User-Agent': USER_AGENT,
+					...(key && { 'X-API-Key': key }),
+				},
 				signal: controller.signal,
 			});
 			const text = await response.text();
@@ -71,7 +48,6 @@ export async function askOverpass(
 			if (!response.ok) {
 				attempts.push({
 					server: host(server),
-					slots,
 					ms,
 					outcome: response.status,
 					kb,
@@ -86,7 +62,6 @@ export async function askOverpass(
 			if (answer.remark && /error/i.test(answer.remark)) {
 				attempts.push({
 					server: host(server),
-					slots,
 					ms,
 					outcome: 'error',
 					kb,
@@ -96,20 +71,18 @@ export async function askOverpass(
 			}
 			attempts.push({
 				server: host(server),
-				slots,
 				ms,
 				outcome: 'ok',
 				kb,
 			});
-			current = index;
 			return { answer, attempts };
 		} catch (error) {
 			attempts.push({
 				server: host(server),
-				slots,
 				ms: Date.now() - started,
 				outcome: controller.signal.aborted ? 'timeout' : 'error',
 				error: error instanceof Error ? error.message : String(error),
+				cause: reason(error),
 			});
 		} finally {
 			clearTimeout(timer);
