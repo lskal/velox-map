@@ -3,6 +3,7 @@
 	"functions": {
 		"api/cron/*.ts": { "maxDuration": 300 }
 	},
+	"rewrites": [{ "source": "/data/:file", "destination": "/api/data/:file" }],
 	"schedules": {
 		"osm-test": {
 			"schedule": "*/20 * * * *",

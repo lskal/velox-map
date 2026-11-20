@@ -22,6 +22,16 @@ export async function readJson<T>(pathname: string): Promise<T | null> {
 	return (await new Response(result.stream).json()) as T;
 }
 
+// The file as a stream, for passing it on unchanged (the /data/ function, D3), or null
+// when it doesn't exist.
+export async function openFile(
+	pathname: string,
+): Promise<{ stream: ReadableStream<Uint8Array>; contentType: string } | null> {
+	const result = await get(pathname, { access: 'private', useCache: false });
+	if (!result || result.statusCode !== 200 || !result.stream) return null;
+	return { stream: result.stream, contentType: result.blob.contentType };
+}
+
 // Creates or replaces the file. A short cache time, so a new version shows within minutes.
 export async function writeJson(
 	pathname: string,

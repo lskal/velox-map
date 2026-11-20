@@ -17,7 +17,8 @@ MapLibre + OpenFreeMap. Deployed on Vercel.
   Local state first; passing props down 2-3 levels is fine.
 - Icons: SVG components in `src/assets/icons/<Name>/` (may move to an icon service later).
 Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before build);
-`npm run data:fr`, `npm run osm:fr` write the local data files into `public/data/` (ignored by git).
+the app reads its data from `/data/…` - on Vercel a function serving the Blob files, locally the dev server's proxy to
+the deployed site. `npm run data:fr` / `osm:fr` (local scripts, until VXM-012 T8) are no longer read by the app.
 
 ## How we work (spec-driven)
 
