@@ -1,8 +1,31 @@
-// Scheduled jobs (VXM-012). T1: the test job's log; the status file and the rest come
-// with T2.
+// Scheduled jobs (VXM-012). T1: the test job's log; T2: the status file every job writes.
 
 // Where a job runs: Vercel's VERCEL_ENV; anything else (local) counts as development.
 export type JobEnv = 'production' | 'preview' | 'development';
+
+// A job's status file, data/status-<name>.json (VXM-012 D2, R10c), written at the end of
+// every run, success or not. The alert workflow reads it through /data/ (D9).
+export interface JobStatus {
+	job: string; // "fr", "osm-fr"
+	lastTry: string; // ISO - this run
+	lastSuccess: string | null; // ISO - the last run that wrote a new file; null = never
+	ok: boolean; // this run's result
+	error?: string; // why this run failed
+	failedCheck?: string; // which check failed, e.g. "change" (±25 %), "total"
+	missing?: string[]; // what's still missing (OSM: query + tile pairs)
+	counts?: Record<string, number>; // the numbers the checks used: new and previous
+}
+
+// What a run hands to writeStatus(): success with its counts, or why it failed.
+export type JobResult =
+	| { ok: true; counts?: Record<string, number> }
+	| {
+			ok: false;
+			error: string;
+			failedCheck?: string;
+			missing?: string[];
+			counts?: Record<string, number>;
+	  };
 
 // One try on one Overpass server.
 export interface OverpassAttempt {

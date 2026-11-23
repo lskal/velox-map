@@ -46,11 +46,21 @@ export const RUN_BUDGET_MS = 240_000;
 // server rests until the next run (every 20 minutes, vercel.json).
 export const REQUESTS_PER_RUN = 2;
 // Files the /data/ function serves (VXM-012 D3): only these names, never the previous,
-// partial or log files. The status files join in T2.
-export const SERVED_FILES = ['fr.json', 'osm-fr.json'];
+// partial or log files. The status files are served for the alert workflow (D9).
+export const SERVED_FILES = [
+	'fr.json',
+	'osm-fr.json',
+	'status-fr.json',
+	'status-osm-fr.json',
+];
 // How long Vercel's CDN keeps a served file: Blob is read about once an hour per file,
 // not once per visitor. The data changes daily (official) or weekly (OSM).
 export const SERVED_CACHE_SECONDS = 3600;
+
+// The sanity check (VXM-012 R3, R6b): a new file's counts may differ from the current
+// file's by at most this share, up or down (Max, 2026-11-19). A bigger change is never
+// published on its own: the current file stays, the status says why, the alert fires.
+export const MAX_CHANGE = 0.25;
 
 // Less time left than this: don't start a request at all.
 export const REQUEST_MIN_MS = 10_000;
