@@ -10,5 +10,5 @@ export const DATA_FILES = {
 // After how many days without a new file the stale line shows (VXM-012 R10b, Max
 // 2026-11-19). The job alert comes earlier, after 3 days (R10c).
 export const STALE_DAYS: Partial<Record<CountryCode, number>> = {
-	FR: 0,
+	FR: 8,
 };

@@ -1,10 +1,8 @@
-@use '../../styles/typography' as type;
 @use '../../styles/breakpoints' as bp;
 
 // DESIGN.md → Status note: full width under the header, panel background, 1 px border at
-// the bottom, Caption 12/17 on mobile, Body XS 13/19 from 768 px, text in body-text.
+// the bottom. The type styles come from <Text> (Body XS from 768 px, Caption below).
 .note {
-	@include type.caption;
 	display: flex;
 	align-items: center;
 	gap: var(--space-2);
@@ -15,7 +13,6 @@
 	border-bottom: 1px solid var(--color-border);
 
 	@include bp.up(md) {
-		@include type.body-xs;
 		padding: var(--space-2) var(--space-4);
 	}
 }
@@ -35,7 +32,10 @@
 	}
 }
 
+// Caption is text-2 by default; the status note keeps body-text at every size (DESIGN.md)
 .short {
+	color: var(--color-text-body);
+
 	@include bp.up(md) {
 		display: none;
 	}
