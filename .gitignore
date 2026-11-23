@@ -31,3 +31,6 @@ public/data/
 .env
 .env.*
 !.env.example
+
+# Patches from Claude, kept locally while a task is applied
+.patches/

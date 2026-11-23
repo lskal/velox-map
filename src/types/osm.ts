@@ -87,7 +87,26 @@ export interface OsmExtrasFile {
 	counts: { cameras: OsmCameraCounts; sections: OsmSectionCounts };
 	directions: Record<string, OsmDirection>; // official camera id → direction
 	sections: Record<string, { path: LngLat[] }>; // official section id → path, `from` → `to`
-	missingTiles?: string[]; // only in a partial local file: the Overpass tiles that failed
+	missingTiles?: string[]; // only in a partial file of the local script: the Overpass tiles that failed
+}
+
+// The OSM data collected but not shown yet (VXM-012 D6): red-light cameras and the road
+// under every OSM speed camera - for the card ticket (VXM-015) to design with. Raw OSM
+// values, only the useful tags kept. Not served by /data/ until the card uses it.
+export interface OsmMoreFile {
+	source: string;
+	licence: string;
+	generatedAt: string;
+	country: string;
+	counts: { redLight: number; cameras: number; camerasWithRoad: number };
+	redLight: { id: string; lat: number; lon: number; tags: OsmTags }[]; // id "node/123" / "relation/45"
+	cameras: {
+		id: number;
+		lat: number;
+		lon: number;
+		tags: OsmTags;
+		road?: OsmTags; // the tags of the road the camera sits on
+	}[];
 }
 
 // --- The switch in the app (VXM-010 D5, D7) ---

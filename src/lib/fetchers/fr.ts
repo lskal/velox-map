@@ -1,6 +1,8 @@
 import type { Camera, CameraType } from '@/types/camera';
-import { DATA_FILES } from '@/config/data';
-import { loadReadyFile } from '@/lib/data/readyFile';
+// Value imports as relative .js paths: the French job loads this file on Vercel, which
+// doesn't resolve @/ (VXM-012 D12). Type imports keep @/.
+import { DATA_FILES } from '../../config/data.js';
+import { loadReadyFile } from '../data/readyFile.js';
 import type {
 	DataGouvDataset,
 	DataGouvResource,
@@ -12,11 +14,11 @@ import type {
 	TrimmedFR,
 } from '@/types/fr';
 import type { DataSource } from '@/types/readyFile';
-import { fetchJSON, toNumber, trimKeys } from './helpers';
+import { fetchJSON, toNumber, trimKeys } from './helpers.js';
 
 // France - fixed radars from data.gouv.fr (data-sources.md → France).
 // Two steps (VXM-010 D2): fetchFRSource() gets the rows as they are - used by the local
-// script now and the daily job later (VXM-012) - and toFRResult() normalises them in the
+// script and the daily job (api/cron/fr.ts, VXM-012) - and toFRResult() normalises them in the
 // app. loadFR() is the app's way in: the ready file, served from Blob (VXM-012).
 
 export const FR_SOURCE: DataSource = {
