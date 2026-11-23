@@ -6,7 +6,7 @@ A free web map of **official** speed-camera open data in six European countries:
 
 ## What it is
 
-Velox Map is a personal, non-commercial learning project. It shows the speed-enforcement devices that public administrations publish themselves, fetched from the official sources and displayed on a map, one country at a time.
+Velox Map is a personal, non-commercial learning project. It shows the speed-enforcement devices that public administrations publish themselves, fetched from the official sources by scheduled jobs and displayed on a map, one country at a time. Official data is refreshed daily; the OpenStreetMap data twice a week.
 
 It uses **official data first**. Community data from OpenStreetMap is optional, off by default and always marked as **not official**:
 
@@ -45,12 +45,12 @@ Spain: the DGT feed does not cover Catalonia and the Basque Country, which have 
 
 The **code** in this repository is licensed under the [GNU Affero General Public License v3.0](LICENSE).
 
-The licence covers the code only. The **data** shown by the app belongs to its publishers and keeps its own licence (see the table above). This repository does not redistribute the datasets: the app fetches them from the official sources.
+The licence covers the code only. The **data** shown by the app belongs to its publishers and keeps its own licence (see the table above). This repository contains no datasets: scheduled jobs fetch them from the official sources, and the site serves that copy with each publisher's attribution and licence. OpenStreetMap data is always kept in its own file, never merged with official data.
 
 ## Privacy
 
 - No cookies, no analytics, no third-party scripts, no login.
-- Your country is estimated from the request's IP address only to suggest a country and a language. Nothing is stored.
+- Your country will be estimated from the request's IP address only to suggest a country and a language (planned). Nothing is stored.
 - Your choices (theme, language, country, and whether you've seen the OpenStreetMap explanation) are saved in your own browser (`localStorage`).
 - Like any hosting service, Vercel keeps short-lived request logs that include IP addresses.
 
