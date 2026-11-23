@@ -5,10 +5,16 @@
 	},
 	"rewrites": [{ "source": "/data/:file", "destination": "/api/data/:file" }],
 	"schedules": {
-		"osm-test": {
-			"schedule": "*/20 * * * *",
+		"fr": {
+			"schedule": "17 4 * * *",
 			"timezone": "Europe/Rome",
-			"path": "/api/cron/osm-test",
+			"path": "/api/cron/fr",
+			"requestMethod": "GET"
+		},
+		"osm-fr": {
+			"schedule": "*/20 3-4 * * 2,4",
+			"timezone": "Europe/Rome",
+			"path": "/api/cron/osm-fr",
 			"requestMethod": "GET"
 		}
 	}
