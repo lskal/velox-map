@@ -7,6 +7,7 @@ data (IT, FR, NO, SE, PL, ES).
 
 React + Vite + TypeScript, Node 24, SCSS modules (`src/styles/`), Prettier (tabs),
 MapLibre + OpenFreeMap. Deployed on Vercel.
+
 - **Scheduled jobs** (VXM-012): Vercel Functions in `api/` (`api/cron/<job>.ts`, shared pieces in `api/_lib/`),
   run by **Vercel Schedules** (`vercel.json` → `schedules`; Cron Jobs are legacy), data in a **private** Vercel Blob
   store. Secrets (`CRON_SECRET`, `OVERPASS_CH_KEY`) only as Vercel env vars - never in code, docs or `.env` files
@@ -16,9 +17,9 @@ MapLibre + OpenFreeMap. Deployed on Vercel.
 - **Zustand:** only for state shared across the layout (e.g. header ↔ map), from VXM-013.
   Local state first; passing props down 2-3 levels is fine.
 - Icons: SVG components in `src/assets/icons/<Name>/` (may move to an icon service later).
-Commands: `npm run dev`, `npm run lint`, `npm run build` (lint must pass before build);
-the app reads its data from `/data/…` - on Vercel a function serving the Blob files, locally the dev server's proxy to
-the deployed site. `npm run data:fr` / `osm:fr` (local scripts, until VXM-012 T8) are no longer read by the app.
+- **Commands:** `npm run dev`, `npm run lint`, `npm run build` (lint must pass before build). The app reads its
+  data from `/data/…` - on Vercel a function serving the Blob files, locally the dev server's proxy to the
+  deployed site. The data files are written only by the scheduled jobs (no local scripts since VXM-012 T8).
 
 ## How we work (spec-driven)
 

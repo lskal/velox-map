@@ -17,8 +17,8 @@ import type { DataSource } from '@/types/readyFile';
 import { fetchJSON, toNumber, trimKeys } from './helpers.js';
 
 // France - fixed radars from data.gouv.fr (data-sources.md → France).
-// Two steps (VXM-010 D2): fetchFRSource() gets the rows as they are - used by the local
-// script and the daily job (api/cron/fr.ts, VXM-012) - and toFRResult() normalises them in the
+// Two steps (VXM-010 D2): fetchFRSource() gets the rows as they are - used by the daily
+// job (api/cron/fr.ts, VXM-012) - and toFRResult() normalises them in the
 // app. loadFR() is the app's way in: the ready file, served from Blob (VXM-012).
 
 export const FR_SOURCE: DataSource = {
