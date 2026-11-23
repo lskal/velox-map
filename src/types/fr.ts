@@ -54,6 +54,7 @@ export interface FRSource {
 // What toFRResult() / loadFR() return (VXM-005 plan D6).
 export interface FetchFRResult {
 	dataAsOf: string;
+	fetchedAt?: string; // when the job wrote the ready file (loadFR only)
 	total: number; // rows the API says the file has
 	rowsFetched: number; // rows that actually arrived
 	cameras: Camera[];

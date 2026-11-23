@@ -5,13 +5,16 @@ import Header from '@/components/Header/Header';
 import MapStatus from '@/components/MapStatus/MapStatus';
 import MapView from '@/components/MapView/MapView';
 import OsmSwitch from '@/components/OsmSwitch/OsmSwitch';
+import StatusNote from '@/components/StatusNote/StatusNote';
 import { MEDIA_DESKTOP } from '@/config/breakpoints';
+import { STALE_DAYS } from '@/config/data';
 import { COUNTRY_OSM } from '@/config/osm';
 import { useFranceData } from '@/hooks/useFranceData';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOsmExtras } from '@/hooks/useOsmExtras';
 import { buildCard } from '@/lib/card/buildCard';
 import { COUNTRY_CARD } from '@/lib/card/countryCards';
+import { isStale, staleTexts } from '@/lib/stale';
 import type { SelectedSpot } from '@/types/markers';
 import styles from './App.module.scss';
 
@@ -52,6 +55,17 @@ export default function App() {
 					COUNTRY_CARD.FR,
 				)
 			: null;
+	// The stale-data line (VXM-012 D8): when the job hasn't written a new file for
+	// STALE_DAYS days. Moves to MapPage with the "MapPage + a small store" ticket.
+	const { fetchedAt, dataAsOf } = france;
+	const staleDays = STALE_DAYS.FR;
+	const staleNote =
+		fetchedAt &&
+		dataAsOf &&
+		staleDays !== undefined &&
+		isStale(fetchedAt, staleDays)
+			? staleTexts(fetchedAt, dataAsOf)
+			: null;
 	// One OSM switch, in the header on desktop, on the map on mobile (VXM-010 D7).
 	// Disabled while the country's data loads (DESIGN.md).
 	const osmSwitch = osmSettings && (
@@ -67,6 +81,7 @@ export default function App() {
 	return (
 		<div className={styles.layout}>
 			<Header>{desktop && osmSwitch}</Header>
+			{staleNote && <StatusNote {...staleNote} />}
 			<main
 				className={styles.main}
 				aria-busy={france.status === 'loading'}

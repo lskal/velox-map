@@ -258,8 +258,7 @@ export function addClusterClicks(
 			if (!feature || feature.geometry.type !== 'Point') return;
 			const center = feature.geometry.coordinates as [number, number];
 			const clusterId = feature.properties?.cluster_id as
-				| number
-				| undefined;
+				number | undefined;
 
 			const zoom =
 				clusterId === undefined

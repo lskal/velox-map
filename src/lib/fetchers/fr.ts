@@ -162,5 +162,5 @@ export async function loadFR(): Promise<FetchFRResult> {
 	if (!file) {
 		throw new Error(`France: ready file not available (${DATA_FILES.FR})`);
 	}
-	return toFRResult(file);
+	return { ...toFRResult(file), fetchedAt: file.fetchedAt };
 }

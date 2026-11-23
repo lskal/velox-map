@@ -87,7 +87,7 @@ export function useOsmExtras(
 				// silent: the switch tries again and shows the error card if it fails
 			});
 		};
-		if ('requestIdleCallback' in window) {
+		if (typeof window.requestIdleCallback === 'function') {
 			const id = window.requestIdleCallback(prefetch, { timeout: 5_000 });
 			return () => window.cancelIdleCallback(id);
 		}

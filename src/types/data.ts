@@ -7,4 +7,5 @@ export interface CountryData {
 	status: DataStatus;
 	cameras: Camera[];
 	dataAsOf: string | null; // the file's date, null until loaded
+	fetchedAt: string | null; // when the job wrote the file (the stale line), null until loaded
 }
