@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import InfoIcon from '@/assets/icons/InfoIcon/InfoIcon';
 import Switch from '@/components/Switch/Switch';
+import Text from '@/components/Text/Text';
 import Tooltip from '@/components/Tooltip/Tooltip';
 import { OSM_TEXTS } from '@/config/osm';
 import type { OsmSwitchProps } from '@/types/osm';
@@ -91,9 +92,9 @@ export default function OsmSwitch({
 				hidden={!open}
 				className={styles.card}
 			>
-				<p className={styles.cardText}>
+				<Text variant="body-s" className={styles.cardText}>
 					{error ? OSM_TEXTS.errorText : settings.tooltip}
-				</p>
+				</Text>
 				{!error && (
 					<a
 						href={OSM_TEXTS.legalLink.href}

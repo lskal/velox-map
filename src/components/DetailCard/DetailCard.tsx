@@ -125,8 +125,12 @@ function Rows({ rows }: { rows: CardRow[] }) {
 		<dl className={styles.rows}>
 			{rows.map(row => (
 				<div key={row.label} className={styles.row}>
-					<dt className={styles.label}>{row.label}</dt>
-					<dd className={styles.value}>{row.value}</dd>
+					<Text variant="caption" as="dt">
+						{row.label}
+					</Text>
+					<Text variant="body-s" as="dd" className={styles.value}>
+						{row.value}
+					</Text>
 				</div>
 			))}
 		</dl>
@@ -138,22 +142,34 @@ function Rows({ rows }: { rows: CardRow[] }) {
 function Direction({ direction }: { direction: CardDirection }) {
 	return (
 		<dl className={styles.direction}>
-			<dt className={styles.label}>Direction</dt>
+			<Text variant="caption" as="dt">
+				Direction
+			</Text>
 			<dd className={styles.directionValue}>
-				<span className={styles.value}>{direction.text}</span>
+				<Text variant="body-s" as="span" className={styles.value}>
+					{direction.text}
+				</Text>
 				{direction.fromOsm && (
 					<Chip look="community">{DIRECTION_TEXTS.osmChip}</Chip>
 				)}
 			</dd>
 			{direction.fromOsm && direction.oneWay && (
-				<dd className={styles.directionNote}>
+				<Text
+					variant="body-xs"
+					as="dd"
+					className={styles.directionNote}
+				>
 					{DIRECTION_TEXTS.otherWay}
-				</dd>
+				</Text>
 			)}
 			{direction.pathNote && (
-				<dd className={styles.directionNote}>
+				<Text
+					variant="body-xs"
+					as="dd"
+					className={styles.directionNote}
+				>
 					{DIRECTION_TEXTS.osmPath}
-				</dd>
+				</Text>
 			)}
 		</dl>
 	);

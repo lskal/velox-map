@@ -16,8 +16,13 @@ import type {
 // the very first time in this browser, the explanation card. A failed load goes back to
 // 'off' with the error card. The file is kept by loadOsmFile, so off / on again is
 // instant. No store: App is the only user (same reason as VXM-007 D1).
+// Prefetch (VXM-012 D7, R8): once the country's cameras are on the map, the file is
+// loaded quietly when the browser is idle, so the first "on" is usually instant. Its
+// errors stay silent; turning the switch on tries again.
 
 const SEEN_KEY = 'velox:osm-notice-seen';
+// When the browser has no requestIdleCallback (Safari): wait this long instead.
+const PREFETCH_FALLBACK_MS = 2_000;
 
 // localStorage can throw (private mode, blocked storage): then the card just opens
 // again the next time (VXM-010 D7).
@@ -71,6 +76,24 @@ export function useOsmExtras(
 				setNotice('error');
 			});
 	};
+
+	// The prefetch: after the cameras arrived, when the browser is idle - so it never
+	// competes with the official data or the first map tiles.
+	const ready = cameras.length > 0;
+	useEffect(() => {
+		if (!settings || !ready) return;
+		const prefetch = () => {
+			loadOsmFile(settings.fileUrl).catch(() => {
+				// silent: the switch tries again and shows the error card if it fails
+			});
+		};
+		if (typeof window.requestIdleCallback === 'function') {
+			const id = window.requestIdleCallback(prefetch, { timeout: 5_000 });
+			return () => window.cancelIdleCallback(id);
+		}
+		const timer = window.setTimeout(prefetch, PREFETCH_FALLBACK_MS);
+		return () => window.clearTimeout(timer);
+	}, [settings, ready]);
 
 	// Joined only while the switch is on; again if the cameras change (e.g. a retry).
 	const extras = useMemo<OsmExtras | null>(

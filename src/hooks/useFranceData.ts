@@ -9,6 +9,7 @@ export function useFranceData(): CountryData & { retry: () => void } {
 		status: 'loading',
 		cameras: [],
 		dataAsOf: null,
+		fetchedAt: null,
 	});
 	const [attempt, setAttempt] = useState(0);
 
@@ -29,6 +30,7 @@ export function useFranceData(): CountryData & { retry: () => void } {
 					status: 'ready',
 					cameras: result.cameras,
 					dataAsOf: result.dataAsOf,
+					fetchedAt: result.fetchedAt ?? null,
 				});
 			})
 			.catch((error: unknown) => {

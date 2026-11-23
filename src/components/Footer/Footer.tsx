@@ -20,9 +20,9 @@ export default function Footer({ status, dataAsOf }: FooterProps) {
 	return (
 		<footer className={styles.footer}>
 			<div className={styles.group}>
-				<p className={styles.notice}>
+				<Text variant="body-s" className={styles.notice}>
 					Information only - not for use while driving
-				</p>
+				</Text>
 				<Text variant="caption">Last update: {lastUpdate}</Text>
 			</div>
 			<Text variant="caption">
