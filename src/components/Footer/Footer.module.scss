@@ -1,5 +1,3 @@
-@use '../../styles/typography' as type;
-
 // VXM-002 plan D7; data date + attribution VXM-007 plan D9
 
 // Notice + date on the left, attribution on the right; they wrap on mobile.
@@ -24,9 +22,8 @@
 	gap: var(--space-2) var(--space-3);
 }
 
-// Notice pill - UI design: Body S, weight 500
+// Notice pill - UI design: Body S (from <Text>), weight 500
 .notice {
-	@include type.body-s;
 	font-weight: 500;
 	padding: var(--space-1) var(--space-3);
 	border: 1px solid var(--color-notice-border);

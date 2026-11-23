@@ -17,7 +17,17 @@ export type TextVariant =
 	| 'numbers';
 
 // HTML tags <Text> can render.
-export type TextTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span';
+export type TextTag =
+	| 'h1'
+	| 'h2'
+	| 'h3'
+	| 'h4'
+	| 'h5'
+	| 'h6'
+	| 'p'
+	| 'span'
+	| 'dt' // term and description of a <dl> (the detail card's rows)
+	| 'dd';
 
 export interface TextProps {
 	// The look. Optional: default 'body'.

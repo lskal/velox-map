@@ -1,5 +1,3 @@
-@use '../../styles/typography' as type;
-
 // DESIGN.md chapter 6 → Switch: track 36 x 20, off `elevated` + `border`, on `accent`;
 // 16 px white thumb; 44 px touch area; disabled while loading.
 
@@ -19,10 +17,6 @@
 		cursor: default;
 		opacity: 0.5;
 	}
-}
-
-.label {
-	@include type.body-s;
 }
 
 .track {

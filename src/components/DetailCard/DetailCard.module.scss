@@ -1,5 +1,3 @@
-@use '../../styles/typography' as type;
-
 // DESIGN.md chapter 6 → Detail card, board 19: 360 px, elevated, radius 12, card shadow.
 // Where it sits (top-right of the map) and how tall it may get are the parent's job,
 // through `className`; taller than that, it scrolls inside itself.
@@ -81,13 +79,8 @@
 	gap: 2px;
 }
 
-.label {
-	@include type.caption;
-	color: var(--color-text-2);
-}
-
+// Row values: Body S (from <Text>), emphasised - bold, numbers in columns.
 .value {
-	@include type.body-s;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
 	color: var(--color-text);
@@ -109,7 +102,6 @@
 }
 
 .directionNote {
-	@include type.body-xs;
 	color: var(--color-text-2);
 }
 
