@@ -11,10 +11,14 @@ export interface JobStatus {
 	lastSuccess: string | null; // ISO - the last run that wrote a new file; null = never
 	ok: boolean; // this run's result
 	error?: string; // why this run failed
-	failedCheck?: string; // which check failed, e.g. "change" (±25 %), "total"
+	failedCheck?: JobCheck; // which check failed
 	missing?: string[]; // what's still missing (OSM: query + tile pairs)
 	counts?: Record<string, number>; // the numbers the checks used: new and previous
 }
+
+// The checks a job runs before writing (VXM-012 R3, R6b): empty file, row count ≠ the
+// source's total, more than ±25 % change, duplicate ids, points outside the country.
+export type JobCheck = 'empty' | 'total' | 'change' | 'unique' | 'bounds';
 
 // What a run hands to writeStatus(): success with its counts, or why it failed.
 export type JobResult =
@@ -22,7 +26,7 @@ export type JobResult =
 	| {
 			ok: false;
 			error: string;
-			failedCheck?: string;
+			failedCheck?: JobCheck;
 			missing?: string[];
 			counts?: Record<string, number>;
 	  };

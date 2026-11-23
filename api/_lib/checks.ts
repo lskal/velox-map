@@ -1,4 +1,4 @@
-import { blobPath, readJson, writeJson } from './blob.js';
+import { blobPath, jobEnv, readJson, writeJson } from './blob.js';
 import { MAX_CHANGE } from './config.js';
 
 // The checks and the file swap every job shares (VXM-012 D2). Nothing country-specific
@@ -16,6 +16,18 @@ export function withinChange(
 	return Math.abs(newCount - oldCount) / oldCount <= maxChange;
 }
 
+// True when the point lies in one of the boxes ([south, west, north, east]).
+export function insideAny(
+	lat: number,
+	lng: number,
+	boxes: [number, number, number, number][],
+): boolean {
+	return boxes.some(
+		([south, west, north, east]) =>
+			lat >= south && lat <= north && lng >= west && lng <= east,
+	);
+}
+
 // Where a job's files live: data/<name>.json (what the app reads) and
 // data/<name>.previous.json (the backup to roll back to).
 export function currentPath(name: string): string {
@@ -24,6 +36,15 @@ export function currentPath(name: string): string {
 
 export function previousPath(name: string): string {
 	return blobPath(`data/${name}.previous.json`);
+}
+
+// The current file to compare with. Outside production, the job's own preview file if
+// there is one, else production's - read-only, like the /data/ function (D11), so a
+// preview run is checked against the real data.
+export async function readCurrent<T>(name: string): Promise<T | null> {
+	const own = await readJson<T>(currentPath(name));
+	if (own !== null || jobEnv() === 'production') return own;
+	return readJson<T>(`data/${name}.json`);
 }
 
 // Publishes a new file: the current one becomes the previous one, then the new one

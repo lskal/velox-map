@@ -76,3 +76,20 @@ export const COUNTRY_OVERPASS_BOX: Partial<
 	FR: [41.3, -5.2, 51.1, 9.6],
 };
 export const GRID = 3;
+
+// Where a country's points may lie, for the job's "every point inside" check (VXM-012
+// R3): [south, west, north, east] boxes, a little larger than the land. France: the
+// metropolitan box + the overseas departments in the official file (Guadeloupe,
+// Martinique, French Guiana, La Réunion - seen in VXM-007) + Mayotte, in case it's added.
+export const COUNTRY_BOXES: Partial<
+	Record<CountryCode, [number, number, number, number][]>
+> = {
+	FR: [
+		[41.3, -5.2, 51.1, 9.6], // metropolitan France + Corsica
+		[15.8, -61.9, 16.6, -60.9], // Guadeloupe
+		[14.3, -61.3, 15.0, -60.7], // Martinique
+		[2.0, -54.7, 5.9, -51.5], // French Guiana
+		[-21.5, 55.1, -20.8, 55.9], // La Réunion
+		[-13.1, 44.9, -12.5, 45.4], // Mayotte
+	],
+};
