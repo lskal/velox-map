@@ -3,13 +3,5 @@
 	"functions": {
 		"api/cron/*.ts": { "maxDuration": 300 }
 	},
-	"rewrites": [{ "source": "/data/:file", "destination": "/api/data/:file" }],
-	"schedules": {
-		"osm-test": {
-			"schedule": "*/20 * * * *",
-			"timezone": "Europe/Rome",
-			"path": "/api/cron/osm-test",
-			"requestMethod": "GET"
-		}
-	}
+	"rewrites": [{ "source": "/data/:file", "destination": "/api/data/:file" }]
 }
