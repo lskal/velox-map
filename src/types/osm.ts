@@ -87,7 +87,6 @@ export interface OsmExtrasFile {
 	counts: { cameras: OsmCameraCounts; sections: OsmSectionCounts };
 	directions: Record<string, OsmDirection>; // official camera id → direction
 	sections: Record<string, { path: LngLat[] }>; // official section id → path, `from` → `to`
-	missingTiles?: string[]; // only in a partial file of the local script: the Overpass tiles that failed
 }
 
 // The OSM data collected but not shown yet (VXM-012 D6): red-light cameras and the road

@@ -1,0 +1,42 @@
+@use '../../styles/breakpoints' as bp;
+
+// DESIGN.md → Status note: full width under the header, panel background, 1 px border at
+// the bottom. The type styles come from <Text> (Body XS from 768 px, Caption below).
+.note {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	margin: 0;
+	padding: 6px var(--space-3);
+	color: var(--color-text-body);
+	background: var(--color-panel);
+	border-bottom: 1px solid var(--color-border);
+
+	@include bp.up(md) {
+		padding: var(--space-2) var(--space-4);
+	}
+}
+
+.icon {
+	display: flex;
+	flex: none;
+	color: var(--color-text-2);
+}
+
+// One text per screen size: the hidden one isn't read by screen readers either.
+.long {
+	display: none;
+
+	@include bp.up(md) {
+		display: inline;
+	}
+}
+
+// Caption is text-2 by default; the status note keeps body-text at every size (DESIGN.md)
+.short {
+	color: var(--color-text-body);
+
+	@include bp.up(md) {
+		display: none;
+	}
+}

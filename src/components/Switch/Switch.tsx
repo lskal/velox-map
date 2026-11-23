@@ -1,3 +1,4 @@
+import Text from '@/components/Text/Text';
 import type { SwitchProps } from '@/types/controls';
 import styles from './Switch.module.scss';
 
@@ -28,7 +29,9 @@ export default function Switch({
 			}
 			onClick={() => onChange(!checked)}
 		>
-			<span className={styles.label}>{label}</span>
+			<Text variant="body-s" as="span">
+				{label}
+			</Text>
 			<span className={styles.track} aria-hidden="true">
 				<span className={styles.thumb} />
 			</span>
