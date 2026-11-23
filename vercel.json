@@ -10,6 +10,12 @@
 			"timezone": "Europe/Rome",
 			"path": "/api/cron/fr",
 			"requestMethod": "GET"
+		},
+		"osm-fr": {
+			"schedule": "*/20 3-4 * * 2,4",
+			"timezone": "Europe/Rome",
+			"path": "/api/cron/osm-fr",
+			"requestMethod": "GET"
 		}
 	}
 }
