@@ -66,6 +66,12 @@ export interface OsmSettings {
 // Compass degrees (0 = north), one or more; or 'both' directions.
 export type OsmDirection = number[] | 'both';
 
+// An OSM `direction` value read by parseOsmDirection() (lib/osm/direction.ts).
+export interface ParsedDirection {
+	direction: OsmDirection | null; // null = nothing readable
+	unreadable: number; // values that couldn't be read
+}
+
 export interface OsmCameraCounts {
 	cameras: number; // official cameras of a matched type
 	withDirection: number;

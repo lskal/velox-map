@@ -1,3 +1,5 @@
+import type { OverpassElement } from '@/types/osm';
+
 // Scheduled jobs (VXM-012): the status file every job writes (T2), the OSM job's log (T5).
 
 // Where a job runs: Vercel's VERCEL_ENV; anything else (local) counts as development.
@@ -53,8 +55,9 @@ export interface OsmRequestLog {
 	items?: number; // elements in the answer, when a server answered
 }
 
-// The log the OSM job writes to Blob after every run that had work to do (logs/osm-fr-<time>.json)
-// - read together after the first nights, then only kept for failed runs (D6).
+// The log the OSM job writes to Blob (logs/osm-fr-<time>.json) - only after a run that
+// wasn't clean: a retry, a fallback server, a partial run, a failed check or an error
+// (VXM-013 R3, D4).
 export interface OsmJobLog {
 	startedAt: string;
 	finishedAt: string;
@@ -64,5 +67,30 @@ export interface OsmJobLog {
 	pairsTotal: number;
 	requests: OsmRequestLog[];
 	result: 'incomplete' | 'written' | 'check failed' | 'error';
+	published?: PublishResult; // when written: whether the data changed (VXM-013 R4)
 	error?: string;
+}
+
+// What publish() did with a checked file (VXM-013 R1, R4).
+export type PublishResult = 'changed' | 'unchanged';
+
+// The first check a job's new file failed, and why (VXM-012 D2).
+export interface JobCheckFailure {
+	check: JobCheck;
+	error: string;
+}
+
+// A box on the map: south, west, north, east (the OSM job's tiles).
+export type Box = [number, number, number, number];
+
+// One Overpass answer kept for the next file, with the time it came in.
+export interface OsmPartialAnswer {
+	fetchedAt: string;
+	elements: OverpassElement[];
+}
+
+// The OSM job's partial file, work/<job>/partial.json (VXM-013 R2, D3): what a run that
+// couldn't finish collected, keyed "<query>-<tile>". The next run reads it once.
+export interface OsmPartialFile {
+	answers: Record<string, OsmPartialAnswer>;
 }

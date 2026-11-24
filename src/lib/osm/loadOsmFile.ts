@@ -19,7 +19,7 @@ export function loadOsmFile(url: string): Promise<OsmExtrasFile> {
 	return loading;
 }
 
-async function fetchOsmFile(url: string): Promise<OsmExtrasFile> {
+const fetchOsmFile = async (url: string): Promise<OsmExtrasFile> => {
 	const response = await fetch(url);
 	// The dev server answers a missing file with the page's HTML and status 200, so the
 	// content type is checked too (same as loadReadyFile).
@@ -32,7 +32,7 @@ async function fetchOsmFile(url: string): Promise<OsmExtrasFile> {
 		throw new Error(`OSM file not usable: ${url}`);
 	}
 	return file;
-}
+};
 
 function isObject(value: unknown): boolean {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);

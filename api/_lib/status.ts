@@ -5,9 +5,9 @@ import { blobPath, readJson, writeJson } from './blob.js';
 // every run - also when nothing else was written - so the alert workflow (D9) always
 // sees the last try and the last success.
 
-export function statusPath(name: string): string {
+const statusPath = (name: string): string => {
 	return blobPath(`data/status-${name}.json`);
-}
+};
 
 export async function readStatus(name: string): Promise<JobStatus | null> {
 	return readJson<JobStatus>(statusPath(name));

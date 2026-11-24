@@ -6,9 +6,18 @@ import styles from './MapStatus.module.scss';
 const SOURCE_URL =
 	'https://www.data.gouv.fr/datasets/liste-des-radars-fixes-en-france/';
 
+// A map that failed to start can't be restarted cleanly in place (VXM-013 D6).
+const reload = () => location.reload();
+
 // Loading and error cards over the map (VXM-007 plan D8, canvas MapLoading / MapError).
-export default function MapStatus({ status, onRetry }: MapStatusProps) {
+// error 'map': the map itself couldn't start (VXM-013 R8) - no data source link.
+export default function MapStatus({
+	status,
+	onRetry,
+	error = 'data',
+}: MapStatusProps) {
 	if (status === 'ready') return null;
+	const mapError = error === 'map';
 
 	return (
 		<div className={styles.overlay}>
@@ -36,29 +45,33 @@ export default function MapStatus({ status, onRetry }: MapStatusProps) {
 					<div className={styles.title}>
 						<RetryIcon />
 						<Text variant="h3" as="h2" className={styles.heading}>
-							France's data couldn't be loaded
+							{mapError
+								? "The map couldn't be loaded"
+								: "France's data couldn't be loaded"}
 						</Text>
 					</div>
 					<Text variant="body-s" className={styles.body}>
-						The official source (Ministère de l'Intérieur on
-						data.gouv.fr) didn't answer. This happens now and then:
-						try again in a minute.
+						{mapError
+							? 'Your browser or network may be blocking the map service (OpenFreeMap), or WebGL is turned off. Try again, or open the site in another browser.'
+							: "The official source (Ministère de l'Intérieur on data.gouv.fr) didn't answer. This happens now and then: try again in a minute."}
 					</Text>
 					<div>
 						<button
 							type="button"
 							className={styles.button}
-							onClick={onRetry}
+							onClick={mapError ? reload : onRetry}
 						>
 							Try again
 						</button>
 					</div>
-					<Text variant="caption" className={styles.muted}>
-						You can also check the source directly:{' '}
-						<a href={SOURCE_URL} className={styles.link}>
-							data.gouv.fr
-						</a>
-					</Text>
+					{!mapError && (
+						<Text variant="caption" className={styles.muted}>
+							You can also check the source directly:{' '}
+							<a href={SOURCE_URL} className={styles.link}>
+								data.gouv.fr
+							</a>
+						</Text>
+					)}
 				</section>
 			)}
 		</div>
