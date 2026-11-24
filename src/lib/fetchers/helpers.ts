@@ -1,3 +1,5 @@
+import type { FetchJSONOptions } from '@/types/fetch';
+
 // Helpers shared by the country fetchers (data-sources.md → Shared helpers).
 
 // Some APIs put stray spaces in their keys ("VMA ", " Longitude") - trim them.
@@ -26,14 +28,6 @@ const TIMEOUT_MS = 20_000;
 const RETRY_WAITS_MS = [2_000, 5_000]; // plan.md → Data flow: up to 2 retries, 2 s then 5 s
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
-// Optional request settings: a POST body (Overpass), headers, a longer timeout.
-export interface FetchJSONOptions {
-	method?: 'GET' | 'POST';
-	body?: string | URLSearchParams;
-	headers?: Record<string, string>;
-	timeoutMs?: number; // default 20 s
-}
 
 // A request + JSON with the retry rule of plan.md → Data flow (2026-11-13): a timeout, a
 // network error or a 5xx is tried again up to 2 times; a 4xx is not. Used by the app and

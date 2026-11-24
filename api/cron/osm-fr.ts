@@ -1,9 +1,13 @@
 import type { RawFR } from '../../src/types/fr';
 import type {
-	JobCheck,
+	Box,
+	JobCheckFailure,
 	OsmJobLog,
+	OsmPartialAnswer,
+	OsmPartialFile,
 	OsmQuery,
 	OsmRequestLog,
+	PublishResult,
 } from '../../src/types/jobs';
 import type {
 	OsmExtrasFile,
@@ -15,11 +19,17 @@ import type {
 } from '../../src/types/osm';
 import type { ReadyFile } from '../../src/types/readyFile';
 import { isAuthorized } from '../_lib/auth.js';
-import { blobPath, jobEnv, readJson, writeJson } from '../_lib/blob.js';
+import {
+	blobPath,
+	deleteFile,
+	jobEnv,
+	readJson,
+	writeJson,
+} from '../_lib/blob.js';
 import { deadline, sleep } from '../_lib/budget.js';
 import {
 	currentPath,
-	promote,
+	publish,
 	readCurrent,
 	withinChange,
 } from '../_lib/checks.js';
@@ -39,11 +49,13 @@ import { matchSectionPaths } from '../../src/lib/osm/sectionPath.js';
 
 // VXM-012 T5 (D6; R6, R6b, R6c) - the French OSM job. Runs every 20 minutes from 03:00 to
 // 05:00 on Tuesday and Thursday nights (vercel.json → schedules). Small requests: four
-// queries x 9 tiles, each tile limited to France by an area filter. Every answer is saved
-// at once (work/osm-fr/<query>-<tile>.json); each run asks only what's still missing and
-// stops in time. When all 36 are there: merge → the VXM-010 matching → ±25 % checks →
-// osm-fr.json (what the app reads) + osm-fr-more.json (red light and roads, collected for
-// the card ticket, not served yet). A run that finds a file younger than 12 hours stops.
+// queries x 9 tiles, each tile limited to France by an area filter. The answers stay in
+// memory; only a run that can't finish writes them to one partial file
+// (work/osm-fr/partial.json, VXM-013 R2), and the next run asks only what's missing. When
+// all 36 are there: merge → the VXM-010 matching → ±25 % checks → osm-fr.json (what the
+// app reads) + osm-fr-more.json (red light and roads, collected for the card ticket, not
+// served yet), each copied only when its data changed (R1). A log only when the run
+// wasn't clean (R3). A run that finds a file younger than 12 hours stops.
 // ?accept=1 skips the ±25 % checks; ?force=1 runs even when the file is fresh. Both need
 // the secret, like every run.
 
@@ -52,7 +64,8 @@ const JOB = 'osm-fr';
 const MORE = 'osm-fr-more';
 const settings = COUNTRY_OSM[COUNTRY]!;
 
-type Box = [number, number, number, number]; // south, west, north, east
+// Left out when comparing with the current files: it changes on every run (VXM-013 R1).
+const IGNORE = ['generatedAt'];
 
 // The area filter: only what lies inside the country (T1: the box alone reached into
 // Spain, Switzerland, Italy, Belgium and Germany).
@@ -101,7 +114,7 @@ const ROAD_TAGS = [
 	'tunnel',
 ];
 
-function tiles([south, west, north, east]: Box): Box[] {
+const tiles = ([south, west, north, east]: Box): Box[] => {
 	const height = (north - south) / GRID;
 	const width = (east - west) / GRID;
 	const result: Box[] = [];
@@ -116,41 +129,42 @@ function tiles([south, west, north, east]: Box): Box[] {
 		}
 	}
 	return result;
-}
+};
 
-// --- The answers collected for the next file: one Blob file per query + tile ---
+// --- The answers collected for the next file ---
 
-interface PairAnswer {
-	fetchedAt: string;
-	elements: OverpassElement[];
-}
-
-const pairPath = (query: OsmQuery, tile: number) =>
-	blobPath(`work/${JOB}/${query}-${tile}.json`);
+const partialPath = () => blobPath(`work/${JOB}/partial.json`);
 
 // An answer counts for the next file when it's newer than the current file and not
-// older than OSM_PARTIAL_DAYS. So a new file makes all of them old at once - nothing to
-// delete.
-function stillValid(answer: PairAnswer, since: number): boolean {
+// older than OSM_PARTIAL_DAYS. So a new file makes all of them old at once.
+const stillValid = (answer: OsmPartialAnswer, since: number): boolean => {
 	const time = Date.parse(answer.fetchedAt);
 	return time > since && Date.now() - time < OSM_PARTIAL_DAYS * 86_400_000;
-}
+};
+
+// Clean = every request answered by the first server on the first try, and the file
+// written (changed or not). Anything else goes in the log (VXM-013 D4).
+const isClean = (log: OsmJobLog): boolean =>
+	log.result === 'written' &&
+	log.requests.every(
+		({ attempts }) => attempts.length === 1 && attempts[0].outcome === 'ok',
+	);
 
 // --- From the merged answers to the two files ---
 
-function pick(tags: OsmTags | undefined, keys: string[]): OsmTags {
+const pick = (tags: OsmTags | undefined, keys: string[]): OsmTags => {
 	const result: OsmTags = {};
 	for (const key of keys) {
 		if (tags?.[key] !== undefined) result[key] = tags[key];
 	}
 	return result;
-}
+};
 
-function buildMore(
+const buildMore = (
 	redLight: OverpassElement[],
 	roads: OverpassElement[],
 	generatedAt: string,
-): OsmMoreFile {
+): OsmMoreFile => {
 	const cameras = roads.filter(
 		(element): element is OverpassNode => element.type === 'node',
 	);
@@ -198,15 +212,15 @@ function buildMore(
 		redLight: redLightItems,
 		cameras: cameraItems,
 	};
-}
+};
 
 // The ±25 % checks (R6b), on the numbers users see and the ones collected.
-function changeCheck(
+const changeCheck = (
 	extras: OsmExtrasFile,
 	more: OsmMoreFile,
 	current: OsmExtrasFile | null,
 	currentMore: OsmMoreFile | null,
-): { check: JobCheck; error: string } | null {
+): JobCheckFailure | null => {
 	const pairs: [string, number, number | null][] = [
 		[
 			'directions',
@@ -238,7 +252,7 @@ function changeCheck(
 		}
 	}
 	return null;
-}
+};
 
 export async function GET(request: Request): Promise<Response> {
 	if (!isAuthorized(request)) {
@@ -276,16 +290,16 @@ export async function GET(request: Request): Promise<Response> {
 		result: 'incomplete',
 	};
 	let httpStatus = 202;
+	let published: PublishResult | undefined;
 
 	try {
-		// The answers already collected for the next file
-		const answers = new Map<string, OverpassElement[]>();
-		for (const { query, tile } of pairs) {
-			const saved = await readJson<PairAnswer>(pairPath(query, tile));
-			if (saved && stillValid(saved, ownTime)) {
-				answers.set(`${query}-${tile}`, saved.elements);
-			}
+		// The answers an earlier run couldn't finish with: one file, read once (D3)
+		const answers = new Map<string, OsmPartialAnswer>();
+		const partial = await readJson<OsmPartialFile>(partialPath());
+		for (const [key, saved] of Object.entries(partial?.answers ?? {})) {
+			if (stillValid(saved, ownTime)) answers.set(key, saved);
 		}
+		let asked = 0;
 
 		// Ask what's missing, one request at a time. A request no server answers ends the
 		// run: the servers rest, the next run asks again.
@@ -304,15 +318,21 @@ export async function GET(request: Request): Promise<Response> {
 			log.requests.push(entry);
 			if (!answer) break;
 			entry.items = answer.elements.length;
-			await writeJson(pairPath(query, tile), {
+			answers.set(`${query}-${tile}`, {
 				fetchedAt: new Date().toISOString(),
 				elements: answer.elements,
-			} satisfies PairAnswer);
-			answers.set(`${query}-${tile}`, answer.elements);
+			});
+			asked++;
 		}
 		log.pairsDone = answers.size;
 
 		if (answers.size < pairs.length) {
+			// Can't finish: keep what's there for the next run (only when something new came in)
+			if (asked > 0) {
+				await writeJson(partialPath(), {
+					answers: Object.fromEntries(answers),
+				} satisfies OsmPartialFile);
+			}
 			const missing = pairs
 				.filter(({ query, tile }) => !answers.has(`${query}-${tile}`))
 				.map(({ query, tile }) => `${query} ${tile}`);
@@ -322,12 +342,15 @@ export async function GET(request: Request): Promise<Response> {
 				missing,
 			});
 		} else {
-			// All there: merge each query's tiles (an element on two tiles counts once)
+			// All there: the partial file isn't needed any more
+			if (partial) await deleteFile(partialPath()).catch(() => {});
+
+			// Merge each query's tiles (an element on two tiles counts once)
 			const merged = (query: OsmQuery) => {
 				const seen = new Map<string, OverpassElement>();
 				for (let tile = 1; tile <= boxes.length; tile++) {
-					for (const element of answers.get(`${query}-${tile}`) ??
-						[]) {
+					for (const element of answers.get(`${query}-${tile}`)
+						?.elements ?? []) {
 						seen.set(`${element.type}/${element.id}`, element);
 					}
 				}
@@ -389,10 +412,25 @@ export async function GET(request: Request): Promise<Response> {
 				log.result = 'check failed';
 				httpStatus = 422;
 			} else {
-				await promote(JOB, extras);
-				await promote(MORE, more);
+				const extrasResult = await publish(
+					JOB,
+					extras,
+					current,
+					IGNORE,
+				);
+				const moreResult = await publish(
+					MORE,
+					more,
+					currentMore,
+					IGNORE,
+				);
+				published =
+					extrasResult === 'changed' || moreResult === 'changed'
+						? 'changed'
+						: 'unchanged';
 				await writeStatus(JOB, { ok: true, counts });
 				log.result = 'written';
+				log.published = published;
 				httpStatus = 200;
 			}
 		}
@@ -405,13 +443,25 @@ export async function GET(request: Request): Promise<Response> {
 
 	log.finishedAt = new Date().toISOString();
 	log.totalMs = Date.now() - started;
-	const stamp = log.startedAt.replace(/[:.]/g, '-');
-	await writeJson(blobPath(`logs/${JOB}-${stamp}.json`), log).catch(() => {});
+	const logged = !isClean(log);
+	if (logged) {
+		const stamp = log.startedAt.replace(/[:.]/g, '-');
+		await writeJson(blobPath(`logs/${JOB}-${stamp}.json`), log).catch(
+			() => {},
+		);
+	}
 
-	// The answer of a run by hand: the log without the request details
+	// The answer of a run by hand: the log without the request details, plus what was
+	// published and whether a log was written (VXM-013 R4)
 	const { requests, ...short } = log;
 	return Response.json(
-		{ ...short, requests: requests.length, accepted: accept },
+		{
+			...short,
+			requests: requests.length,
+			accepted: accept,
+			published,
+			logged,
+		},
 		{ status: httpStatus },
 	);
 }

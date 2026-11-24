@@ -10,7 +10,7 @@ import { COUNTRY_MAP, MAP_STYLE_URLS } from '@/config/map';
 import { useTheme } from '@/hooks/useTheme';
 import { toCameraFeatures } from '@/lib/cameraFeatures';
 import { getTheme } from '@/lib/theme';
-import type { Camera } from '@/types/camera';
+import type { MapViewProps } from '@/types/mapView';
 import type {
 	CameraFeatureCollection,
 	CameraSpot,
@@ -18,7 +18,6 @@ import type {
 	SectionLineCollection,
 	SelectedSpot,
 } from '@/types/markers';
-import type { OsmExtras } from '@/types/osm';
 import {
 	addClusterClicks,
 	addMarkers,
@@ -56,17 +55,14 @@ setWorkerUrl(workerUrl);
 // `osm`: the OSM extras while the switch is on, else null (VXM-010).
 // `onSelect` / `selected`: a marker click and the ring around the selected one
 // (VXM-011 D6). No `onSelect` (mobile) → a marker click does nothing.
+// `onError`: the map couldn't start (VXM-013 R6, R7) - the page shows the map card.
 export default function MapView({
 	cameras,
 	osm,
 	onSelect,
 	selected = null,
-}: {
-	cameras: Camera[];
-	osm: OsmExtras | null;
-	onSelect?: (spot: SelectedSpot | null) => void;
-	selected?: SelectedSpot | null;
-}) {
+	onError,
+}: MapViewProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const mapRef = useRef<MapLibreMap | null>(null);
 	const styleUrlRef = useRef(''); // the style the map has now
@@ -79,6 +75,7 @@ export default function MapView({
 	const drawnAsLinesRef = useRef(new Set<string>()); // their ids: no one-point icon for them
 	const selectedRef = useRef<SelectedSpot | null>(null); // kept for the next style load
 	const onSelectRef = useRef(onSelect); // the latest handler, read by the click listener
+	const onErrorRef = useRef(onError); // the latest handler, read by the error listener
 	const theme = useTheme();
 
 	// Create the map once, with the basemap for the current theme.
@@ -86,18 +83,37 @@ export default function MapView({
 		if (!containerRef.current) return;
 
 		const styleUrl = MAP_STYLE_URLS[getTheme()];
-		const map = new MapLibreMap({
-			container: containerRef.current,
-			style: styleUrl,
-			bounds: COUNTRY_MAP.FR.bounds,
-			fitBoundsOptions: { padding: 16 },
-			// No attribution box on the map: the footer, always visible right below it,
-			// carries the full credit (OSM guidelines allow "adjacent to the map").
-			attributionControl: false,
+		// No WebGL (turned off, or the browser can't) → MapLibre throws here (VXM-013 R6).
+		let map: MapLibreMap;
+		try {
+			map = new MapLibreMap({
+				container: containerRef.current,
+				style: styleUrl,
+				bounds: COUNTRY_MAP.FR.bounds,
+				fitBoundsOptions: { padding: 16 },
+				// No attribution box on the map: the footer, always visible right below it,
+				// carries the full credit (OSM guidelines allow "adjacent to the map").
+				attributionControl: false,
+			});
+		} catch (error) {
+			console.error('Map: could not start', error);
+			onErrorRef.current?.();
+			return;
+		}
+
+		// An error before the first style has loaded means there's no map on screen (the
+		// basemap blocked or down) → the map card. Later errors (a missing tile, a failed
+		// theme switch) only go to the console (VXM-013 R7, D5). With this listener
+		// MapLibre no longer logs them itself, so we do (R9).
+		let styleLoaded = false;
+		map.on('error', ({ error }) => {
+			console.error('Map:', error);
+			if (!styleLoaded) onErrorRef.current?.();
 		});
 
 		// Markers on every style load: the first one and each theme switch (VXM-006 D6).
 		map.on('style.load', () => {
+			styleLoaded = true;
 			addMarkers(map, camerasRef.current, COUNTRY_MAP.FR);
 			addSectionIcons(
 				map,
@@ -254,6 +270,10 @@ export default function MapView({
 	useEffect(() => {
 		onSelectRef.current = onSelect;
 	}, [onSelect]);
+
+	useEffect(() => {
+		onErrorRef.current = onError;
+	}, [onError]);
 
 	// The ring around the selected marker (VXM-011 R2).
 	useEffect(() => {

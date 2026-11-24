@@ -1,4 +1,4 @@
-import { get, put } from '@vercel/blob';
+import { del, get, put } from '@vercel/blob';
 import type { JobEnv } from '../../src/types/jobs';
 
 // Reading and writing JSON in the private Blob store (VXM-012 D2). The functions sign in
@@ -44,4 +44,9 @@ export async function writeJson(
 		contentType: 'application/json',
 		cacheControlMaxAge: 60,
 	});
+}
+
+// Deletes the file (VXM-013 R2: the OSM job's partial file once a run finishes).
+export async function deleteFile(pathname: string): Promise<void> {
+	await del(pathname);
 }

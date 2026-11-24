@@ -98,7 +98,7 @@ function relationPoints(relation: OverpassRelation): LngLat[] {
 }
 
 // One relation → its path from `from` to `to`, or null if the pieces don't allow it.
-export function relationPath(relation: OverpassRelation): LngLat[] | null {
+const relationPath = (relation: OverpassRelation): LngLat[] | null => {
 	const from = memberPoint(relation, 'from');
 	const to = memberPoint(relation, 'to');
 	const pieces = relation.members
@@ -118,7 +118,7 @@ export function relationPath(relation: OverpassRelation): LngLat[] | null {
 			? line.slice(start.index, end.index + 1)
 			: line.slice(end.index, start.index + 1).reverse();
 	return [from, ...path.slice(1, -1), to];
-}
+};
 
 export function matchSectionPaths(
 	cameras: Camera[],

@@ -1,6 +1,6 @@
 import { bearing } from '../geo.js';
 import type { LngLat } from '@/types/camera';
-import type { OsmDirection, OverpassWay } from '@/types/osm';
+import type { OsmDirection, OverpassWay, ParsedDirection } from '@/types/osm';
 
 // OSM `direction` values → compass degrees (VXM-010 D3). The tag can hold: degrees
 // ("45"), compass letters ("NE"), "forward" / "backward" (along / against the road way
@@ -11,11 +11,6 @@ const COMPASS = [
 	'N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE',
 	'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW',
 ];
-
-export interface ParsedDirection {
-	direction: OsmDirection | null; // null = nothing readable
-	unreadable: number; // values that couldn't be read
-}
 
 // `roadBearing` = bearing of the road way at the camera, if it sits on one (for
 // forward / backward).
