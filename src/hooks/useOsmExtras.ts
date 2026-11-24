@@ -1,81 +1,26 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { joinExtras } from '@/lib/osm/joinExtras';
 import { loadOsmFile } from '@/lib/osm/loadOsmFile';
+import { useMapStore } from '@/stores/map.store';
 import type { Camera } from '@/types/camera';
-import type {
-	OsmExtras,
-	OsmExtrasFile,
-	OsmExtrasState,
-	OsmNotice,
-	OsmSettings,
-	OsmStatus,
-} from '@/types/osm';
+import type { OsmExtras, OsmSettings } from '@/types/osm';
 
-// The OSM switch's state (VXM-010 D5, D7). First "on": load the country's OSM file -
-// 'loading' (the switch is busy and can't be clicked) until it's read, then 'on' and,
-// the very first time in this browser, the explanation card. A failed load goes back to
-// 'off' with the error card. The file is kept by loadOsmFile, so off / on again is
-// instant. No store: App is the only user (same reason as VXM-007 D1).
+// The OSM extras for the map page (VXM-010 D5, VXM-013 D9): the switch itself lives in
+// the store (header and pill share it); this hook prefetches the file and joins it to
+// the cameras while the switch is on. MapPage is its only user.
 // Prefetch (VXM-012 D7, R8): once the country's cameras are on the map, the file is
 // loaded quietly when the browser is idle, so the first "on" is usually instant. Its
 // errors stay silent; turning the switch on tries again.
 
-const SEEN_KEY = 'velox:osm-notice-seen';
 // When the browser has no requestIdleCallback (Safari): wait this long instead.
 const PREFETCH_FALLBACK_MS = 2_000;
-
-// localStorage can throw (private mode, blocked storage): then the card just opens
-// again the next time (VXM-010 D7).
-function seen(): boolean {
-	try {
-		return localStorage.getItem(SEEN_KEY) === '1';
-	} catch {
-		return false;
-	}
-}
-
-function remember() {
-	try {
-		localStorage.setItem(SEEN_KEY, '1');
-	} catch {
-		// nothing to do: opens again next time
-	}
-}
 
 export function useOsmExtras(
 	settings: OsmSettings | undefined,
 	cameras: Camera[],
-): OsmExtrasState {
-	const [status, setStatus] = useState<OsmStatus>('off');
-	const [notice, setNotice] = useState<OsmNotice | null>(null);
-	const [file, setFile] = useState<OsmExtrasFile | null>(null);
-
-	const turnOn = (loaded: OsmExtrasFile) => {
-		setFile(loaded);
-		setStatus('on');
-		if (!seen()) {
-			setNotice('first-use');
-			remember(); // shown once - there is no OK to wait for
-		}
-	};
-
-	const toggle = (on: boolean) => {
-		if (!settings) return;
-		if (!on) {
-			setStatus('off');
-			setNotice(null);
-			return;
-		}
-		setNotice(null);
-		setStatus('loading');
-		loadOsmFile(settings.fileUrl)
-			.then(turnOn)
-			.catch((error: unknown) => {
-				console.error('OSM extras: file could not be loaded', error);
-				setStatus('off');
-				setNotice('error');
-			});
-	};
+): OsmExtras | null {
+	const status = useMapStore(s => s.osmStatus);
+	const file = useMapStore(s => s.osmFile);
 
 	// The prefetch: after the cameras arrived, when the browser is idle - so it never
 	// competes with the official data or the first map tiles.
@@ -113,11 +58,5 @@ export function useOsmExtras(
 		}
 	}, [extras]);
 
-	return {
-		status,
-		notice,
-		extras,
-		toggle,
-		closeNotice: () => setNotice(null),
-	};
+	return extras;
 }

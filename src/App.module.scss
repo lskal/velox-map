@@ -5,20 +5,3 @@
 	flex-direction: column;
 	min-height: 100dvh;
 }
-
-.main {
-	position: relative; // MapStatus covers the map
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-}
-
-// The detail card, top-right of the map (VXM-011 D5): 12 px from the edges, never
-// taller than the map - it scrolls inside itself.
-.card {
-	position: absolute;
-	top: var(--space-3);
-	right: var(--space-3);
-	z-index: 3;
-	max-height: calc(100% - 2 * var(--space-3));
-}

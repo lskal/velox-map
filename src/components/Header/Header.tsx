@@ -1,13 +1,24 @@
 import LogoIcon from '@/assets/icons/LogoIcon/LogoIcon';
 import MenuIcon from '@/assets/icons/MenuIcon/MenuIcon';
 import MoonIcon from '@/assets/icons/MoonIcon/MoonIcon';
+import OsmSwitch from '@/components/OsmSwitch/OsmSwitch';
 import Text from '@/components/Text/Text';
+import { MEDIA_DESKTOP } from '@/config/breakpoints';
+import { COUNTRY_OSM } from '@/config/osm';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { HeaderProps } from '@/types/header';
 import styles from './Header.module.scss';
 
 // Page header - DESIGN.md chapter 5 "Every page".
-// Controls are static for now (VXM-002): real, accessible elements without behaviour.
-export default function Header({ children }: HeaderProps) {
+// Language + theme are static for now (VXM-002): real, accessible elements without
+// behaviour. The OSM switch reads the map store (VXM-013 R12), so a click re-renders
+// the switch, not the header.
+export default function Header({ country }: HeaderProps) {
+	// Only mounted on desktop, not just hidden by CSS: two mounted switches would both
+	// close the shared card on a click outside them (VXM-010 D7).
+	const desktop = useMediaQuery(MEDIA_DESKTOP);
+	const osmSettings = COUNTRY_OSM[country];
+
 	return (
 		<header className={styles.header}>
 			<div className={styles.inner}>
@@ -20,7 +31,9 @@ export default function Header({ children }: HeaderProps) {
 
 				{/* Desktop (768px and up): page controls (OSM switch), language + theme */}
 				<div className={styles.controls}>
-					{children}
+					{desktop && osmSettings && (
+						<OsmSwitch settings={osmSettings} placement="header" />
+					)}
 					<select
 						className={styles.select}
 						name="language"

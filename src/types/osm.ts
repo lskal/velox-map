@@ -1,5 +1,4 @@
 import type { CameraType, LngLat } from '@/types/camera';
-import type { CountryCode } from '@/types/map';
 
 // OpenStreetMap extras (VXM-010): what the Overpass API returns, the per-country
 // settings and the file the matching writes.
@@ -133,18 +132,7 @@ export interface OsmExtras {
 	sectionPaths: OsmSectionPath[]; // official sections that get a line
 }
 
-export interface OsmExtrasState {
-	status: OsmStatus;
-	notice: OsmNotice | null;
-	extras: OsmExtras | null; // only while the switch is on
-	toggle: (on: boolean) => void;
-	closeNotice: () => void;
-}
-
 export interface OsmSwitchProps {
-	country: CountryCode;
-	settings: OsmSettings;
+	settings: OsmSettings; // the country's switch: label, texts, file (COUNTRY_OSM)
 	placement: 'header' | 'pill'; // desktop header / floating pill on the mobile map
-	state: OsmExtrasState;
-	disabled?: boolean; // e.g. while the country's data loads
 }

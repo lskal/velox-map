@@ -4,6 +4,7 @@ import Switch from '@/components/Switch/Switch';
 import Text from '@/components/Text/Text';
 import Tooltip from '@/components/Tooltip/Tooltip';
 import { OSM_TEXTS } from '@/config/osm';
+import { useMapStore } from '@/stores/map.store';
 import type { OsmSwitchProps } from '@/types/osm';
 import styles from './OsmSwitch.module.scss';
 
@@ -16,13 +17,15 @@ import styles from './OsmSwitch.module.scss';
 // the same small card opens under the switch when the (i) is tapped, by itself the first
 // time the switch is turned on, and with the error text if the OSM file can't load.
 // It closes with a tap / click anywhere else, Esc, or the (i) again.
-export default function OsmSwitch({
-	settings,
-	placement,
-	state,
-	disabled = false,
-}: OsmSwitchProps) {
-	const { status, notice, toggle, closeNotice } = state;
+// The state lives in the map store (VXM-013 R12), so the header switch and the pill are
+// one switch; disabled while the country's data loads (DESIGN.md).
+export default function OsmSwitch({ settings, placement }: OsmSwitchProps) {
+	const status = useMapStore(s => s.osmStatus);
+	const notice = useMapStore(s => s.osmNotice);
+	const disabled = useMapStore(s => s.dataStatus !== 'ready');
+	const toggleOsm = useMapStore(s => s.toggleOsm);
+	const closeNotice = useMapStore(s => s.closeOsmNotice);
+	const toggle = (on: boolean) => toggleOsm(on, settings.fileUrl);
 	const [infoOpen, setInfoOpen] = useState(false);
 	const cardId = useId();
 	const wrapper = useRef<HTMLDivElement>(null);
