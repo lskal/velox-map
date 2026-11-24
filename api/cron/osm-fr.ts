@@ -1,6 +1,7 @@
 import type { RawFR } from '../../src/types/fr';
 import type {
-	JobCheck,
+	Box,
+	JobCheckFailure,
 	OsmJobLog,
 	OsmQuery,
 	OsmRequestLog,
@@ -51,8 +52,6 @@ const COUNTRY = 'FR';
 const JOB = 'osm-fr';
 const MORE = 'osm-fr-more';
 const settings = COUNTRY_OSM[COUNTRY]!;
-
-type Box = [number, number, number, number]; // south, west, north, east
 
 // The area filter: only what lies inside the country (T1: the box alone reached into
 // Spain, Switzerland, Italy, Belgium and Germany).
@@ -206,7 +205,7 @@ function changeCheck(
 	more: OsmMoreFile,
 	current: OsmExtrasFile | null,
 	currentMore: OsmMoreFile | null,
-): { check: JobCheck; error: string } | null {
+): JobCheckFailure | null {
 	const pairs: [string, number, number | null][] = [
 		[
 			'directions',

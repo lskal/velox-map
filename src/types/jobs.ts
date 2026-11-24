@@ -69,3 +69,12 @@ export interface OsmJobLog {
 
 // What publish() did with a checked file (VXM-013 R1, R4).
 export type PublishResult = 'changed' | 'unchanged';
+
+// The first check a job's new file failed, and why (VXM-012 D2).
+export interface JobCheckFailure {
+	check: JobCheck;
+	error: string;
+}
+
+// A box on the map: south, west, north, east (the OSM job's tiles).
+export type Box = [number, number, number, number];

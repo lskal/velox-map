@@ -1,4 +1,4 @@
-import type { JobCheck } from '../../src/types/jobs';
+import type { JobCheckFailure } from '../../src/types/jobs';
 import type { RawFR, TrimmedFR } from '../../src/types/fr';
 import type { ReadyFile } from '../../src/types/readyFile';
 import { isAuthorized } from '../_lib/auth.js';
@@ -25,11 +25,6 @@ const JOB = 'fr';
 // Left out when comparing with the current file: it changes on every run.
 const IGNORE = ['fetchedAt'];
 
-interface CheckFailure {
-	check: JobCheck;
-	error: string;
-}
-
 // The radar number of a raw row (its keys have stray spaces, hence trimKeys).
 function radarId(raw: RawFR): string {
 	return String(trimKeys<TrimmedFR>(raw)['Numéro de radar'] ?? '').trim();
@@ -49,7 +44,7 @@ function checkRows(
 	file: ReadyFile<RawFR>,
 	currentRows: number | null,
 	accept: boolean,
-): CheckFailure | null {
+): JobCheckFailure | null {
 	const { rows, total } = file;
 	if (rows.length === 0) {
 		return { check: 'empty', error: 'the source returned no rows' };

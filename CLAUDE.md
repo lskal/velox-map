@@ -30,9 +30,12 @@ MapLibre + OpenFreeMap. Deployed on Vercel.
 - One task at a time. Don't add anything that isn't in the spec.
 - If the spec is unclear, ask - don't guess.
 - Simple over clever: smallest solution that works, no abstractions "for later".
-- Exported TypeScript types and interfaces live in `src/types/` (one file per area), never inside components -
-  including literal unions (`type ClusterLayer = 'clusters' | 'singles'`, not `string[]`). What can't move
-  there (values, type guards) stays with its code.
+- TypeScript types and interfaces live in `src/types/` (one file per area), exported from there - never
+  inside components, lib files or jobs, even when only one file uses them; including literal unions
+  (`type ClusterLayer = 'clusters' | 'singles'`, not `string[]`). What can't move there (values, type
+  guards) stays with its code.
+- Export only what another file uses; helpers used only inside their file stay unexported (arrow or
+  `function`, both fine).
 - Forward thinking: build pieces the next countries reuse. Per-country values go in `COUNTRY_*` entries
   keyed by country code (`COUNTRY_MAP`, `COUNTRY_OSM`, `COUNTRY_CARD`); no file named after a country.
   Country decisions: `velox-map-design/docs/countries.md`.
