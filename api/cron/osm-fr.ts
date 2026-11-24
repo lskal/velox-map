@@ -273,15 +273,8 @@ export async function GET(request: Request): Promise<Response> {
 		});
 	}
 
-	// Temporary, VXM-013 D7 (removed in T3b): ?budget=<ms> shortens the run outside
-	// production, so it stops early on purpose and the partial file can be tested (A4).
-	const testBudget =
-		jobEnv() === 'production' ? 0 : Number(params.get('budget'));
-	const runBudget =
-		testBudget > 0 ? Math.min(testBudget, RUN_BUDGET_MS) : RUN_BUDGET_MS;
-
 	const started = Date.now();
-	const { timeLeft } = deadline(runBudget);
+	const { timeLeft } = deadline(RUN_BUDGET_MS);
 	const boxes = tiles(settings.overpassBox);
 	const pairs = QUERY_NAMES.flatMap(query =>
 		boxes.map((_, index) => ({ query, tile: index + 1 })),
