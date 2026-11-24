@@ -40,6 +40,10 @@ export default function App() {
 	// the "MapPage + a small store" ticket (Backlog).
 	const [selected, setSelected] = useState<SelectedSpot | null>(null);
 	const closeCard = useCallback(() => setSelected(null), []);
+	// The map couldn't start (VXM-013 R8): its card wins over the data cards. Moves to
+	// MapPage in part 2.
+	const [mapFailed, setMapFailed] = useState(false);
+	const failMap = useCallback(() => setMapFailed(true), []);
 	// The cameras at that spot - the map tells which (VXM-011 T5).
 	const spotCameras = useMemo(() => {
 		const ids = new Set(selected?.ids);
@@ -101,6 +105,7 @@ export default function App() {
 							osm={osm.extras}
 							onSelect={desktop ? setSelected : undefined}
 							selected={desktop ? selected : null}
+							onError={failMap}
 						/>
 						{card && (
 							<DetailCard
@@ -111,8 +116,9 @@ export default function App() {
 						)}
 						{!desktop && osmSwitch}
 						<MapStatus
-							status={france.status}
+							status={mapFailed ? 'error' : france.status}
 							onRetry={france.retry}
+							error={mapFailed ? 'map' : 'data'}
 						/>
 					</>
 				)}
