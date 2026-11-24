@@ -36,8 +36,8 @@ MapLibre + OpenFreeMap. Deployed on Vercel.
   guards) stays with its code.
 - Export only what another file uses. Exported functions use `export function`; helpers used only inside
   their file are arrow consts (`const name = () => {}`), so the form shows at a glance whether a function
-  is used elsewhere. A plain `function` only when it's needed (e.g. called at the top of the file before
-  it's defined).
+  is used elsewhere. A plain `function` only when an arrow can't do it: called at the top of the file
+  before it's defined, overloads, generators, or `this`.
 - Forward thinking: build pieces the next countries reuse. Per-country values go in `COUNTRY_*` entries
   keyed by country code (`COUNTRY_MAP`, `COUNTRY_OSM`, `COUNTRY_CARD`); no file named after a country.
   Country decisions: `velox-map-design/docs/countries.md`.
