@@ -74,11 +74,11 @@ const sameData = (
 
 // Publishes a new file: the current one becomes the previous one, then the new one
 // becomes current. Call it only after every check passed.
-export async function promote(name: string, data: unknown): Promise<void> {
+const promote = async (name: string, data: unknown): Promise<void> => {
 	const current = await readJson<unknown>(currentPath(name));
 	if (current !== null) await writeJson(previousPath(name), current);
 	await writeJson(currentPath(name), data);
-}
+};
 
 // Publishes a checked file, writing to Blob only what's needed (VXM-013 R1, D2):
 // unchanged → only the current file again (its date stays fresh for the stale line and
