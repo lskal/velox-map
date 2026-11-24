@@ -66,3 +66,6 @@ export interface OsmJobLog {
 	result: 'incomplete' | 'written' | 'check failed' | 'error';
 	error?: string;
 }
+
+// What publish() did with a checked file (VXM-013 R1, R4).
+export type PublishResult = 'changed' | 'unchanged';

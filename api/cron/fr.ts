@@ -4,7 +4,7 @@ import type { ReadyFile } from '../../src/types/readyFile';
 import { isAuthorized } from '../_lib/auth.js';
 import {
 	insideAny,
-	promote,
+	publish,
 	readCurrent,
 	withinChange,
 } from '../_lib/checks.js';
@@ -15,16 +15,33 @@ import { toNumber, trimKeys } from '../../src/lib/fetchers/helpers.js';
 
 // VXM-012 T3 (D5; R2, R3, R4) - the official French job, daily (vercel.json → schedules).
 // Fetches the newest file from data.gouv.fr (fetchFRSource(): every page, each retried),
-// runs the checks, and only if all pass writes data/fr.json (the previous one kept as
-// data/fr.previous.json). Every run writes data/status-fr.json, success or not.
+// runs the checks, and only if all pass writes data/fr.json - the previous one kept as
+// data/fr.previous.json only when the data changed (VXM-013 R1). Every run writes
+// data/status-fr.json, success or not.
 // ?accept=1 (needs the secret like every run) skips only the ±25 % check - for a real
 // big change, after the alert (Max, 2026-11-19).
 
 const JOB = 'fr';
+// Left out when comparing with the current file: it changes on every run.
+const IGNORE = ['fetchedAt'];
 
 interface CheckFailure {
 	check: JobCheck;
 	error: string;
+}
+
+// The radar number of a raw row (its keys have stray spaces, hence trimKeys).
+function radarId(raw: RawFR): string {
+	return String(trimKeys<TrimmedFR>(raw)['Numéro de radar'] ?? '').trim();
+}
+
+// The rows sorted by radar number, so the file's order is always the same and an
+// unchanged source compares as unchanged (VXM-013 D1). The app doesn't use the order.
+function sortByRadar(rows: RawFR[]): RawFR[] {
+	return rows
+		.map(row => ({ row, id: radarId(row) }))
+		.sort((a, b) => a.id.localeCompare(b.id, 'en', { numeric: true }))
+		.map(({ row }) => row);
 }
 
 // The checks, in order; the first one that fails stops the run.
@@ -92,7 +109,7 @@ export async function GET(request: Request): Promise<Response> {
 			fetchedAt: new Date().toISOString(),
 			dataAsOf: source.dataAsOf,
 			total: source.total,
-			rows: source.rows,
+			rows: sortByRadar(source.rows),
 		};
 	} catch (error) {
 		// data.gouv.fr not answering, even after the retries: nothing written
@@ -119,10 +136,11 @@ export async function GET(request: Request): Promise<Response> {
 		return Response.json(status, { status: 422 });
 	}
 
-	await promote(JOB, file);
+	const published = await publish(JOB, file, current, IGNORE);
 	const status = await writeStatus(JOB, { ok: true, counts });
 	return Response.json({
 		...status,
+		published,
 		accepted: accept,
 		dataAsOf: file.dataAsOf,
 	});
