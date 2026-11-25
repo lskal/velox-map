@@ -5,7 +5,7 @@ import Text from '@/components/Text/Text';
 import Tooltip from '@/components/Tooltip/Tooltip';
 import { OSM_TEXTS } from '@/config/osm';
 import { useMapStore } from '@/stores/map.store';
-import type { OsmSwitchProps } from '@/types/osm';
+import type { OsmSwitchProps } from '@/types/props';
 import styles from './OsmSwitch.module.scss';
 
 // The OSM switch (DESIGN.md chapter 5 → Header, chapter 6; VXM-010 D7). One component,

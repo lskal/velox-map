@@ -1,6 +1,6 @@
 import RetryIcon from '@/assets/icons/RetryIcon/RetryIcon';
 import Text from '@/components/Text/Text';
-import type { MapStatusProps } from '@/types/mapStatus';
+import type { MapStatusProps } from '@/types/props';
 import styles from './MapStatus.module.scss';
 
 const SOURCE_URL =

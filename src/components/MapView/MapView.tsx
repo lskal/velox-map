@@ -10,7 +10,7 @@ import { COUNTRY_MAP, MAP_STYLE_URLS } from '@/config/map';
 import { useTheme } from '@/hooks/useTheme';
 import { toCameraFeatures } from '@/lib/cameraFeatures';
 import { getTheme } from '@/lib/theme';
-import type { MapViewProps } from '@/types/mapView';
+import type { MapViewProps } from '@/types/props';
 import type {
 	CameraFeatureCollection,
 	CameraSpot,

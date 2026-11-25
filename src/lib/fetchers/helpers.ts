@@ -1,4 +1,4 @@
-import type { FetchJSONOptions } from '@/types/fetch';
+import type { FetchJSONOptions } from '@/types/data';
 
 // Helpers shared by the country fetchers (data-sources.md → Shared helpers).
 

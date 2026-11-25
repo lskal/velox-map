@@ -1,6 +1,6 @@
 import ClockIcon from '@/assets/icons/ClockIcon/ClockIcon';
 import Text from '@/components/Text/Text';
-import type { StatusNoteProps } from '@/types/statusNote';
+import type { StatusNoteProps } from '@/types/props';
 import styles from './StatusNote.module.scss';
 
 // A calm line under the header (DESIGN.md → Status note, VXM-012 D8): panel background,

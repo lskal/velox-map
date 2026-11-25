@@ -1,5 +1,5 @@
 import Text from '@/components/Text/Text';
-import type { SwitchProps } from '@/types/controls';
+import type { SwitchProps } from '@/types/props';
 import styles from './Switch.module.scss';
 
 // On / off switch (DESIGN.md chapter 6 → Switch; VXM-010 D6): a native button with

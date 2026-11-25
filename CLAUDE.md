@@ -30,8 +30,9 @@ MapLibre + OpenFreeMap. Deployed on Vercel.
 - One task at a time. Don't add anything that isn't in the spec.
 - If the spec is unclear, ask - don't guess.
 - Simple over clever: smallest solution that works, no abstractions "for later".
-- TypeScript types and interfaces live in `src/types/` (one file per area), exported from there - never
-  inside components, lib files or jobs, even when only one file uses them; including literal unions
+- TypeScript types and interfaces live in `src/types/` (one file per area; every component's props in
+  `props.ts`), exported from there - never inside components, lib files or jobs, even when only one file
+  uses them; including literal unions
   (`type ClusterLayer = 'clusters' | 'singles'`, not `string[]`). What can't move there (values, type
   guards) stays with its code.
 - Export only what another file uses. Exported functions use `export function`; helpers used only inside

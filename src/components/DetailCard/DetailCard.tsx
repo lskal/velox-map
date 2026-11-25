@@ -5,7 +5,8 @@ import MarkerIcon from '@/components/MarkerIcon/MarkerIcon';
 import Text from '@/components/Text/Text';
 import { DIRECTION_TEXTS } from '@/config/card';
 import { formatDate } from '@/lib/format';
-import type { CardDirection, CardRow, DetailCardProps } from '@/types/card';
+import type { CardDirection, CardRow } from '@/types/card';
+import type { DetailCardProps } from '@/types/props';
 import styles from './DetailCard.module.scss';
 
 // The detail card (VXM-011 D5; DESIGN.md chapter 6 → Detail card, board 19). Shared by

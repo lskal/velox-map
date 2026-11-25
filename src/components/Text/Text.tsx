@@ -1,4 +1,4 @@
-import type { TextProps, TextTag, TextVariant } from '@/types/text';
+import type { TextProps, TextTag, TextVariant } from '@/types/props';
 import styles from './Text.module.scss';
 
 // Tag used when `as` is not given.

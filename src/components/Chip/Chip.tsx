@@ -1,4 +1,4 @@
-import type { ChipProps } from '@/types/card';
+import type { ChipProps } from '@/types/props';
 import styles from './Chip.module.scss';
 
 // A small label (DESIGN.md chapter 6 → Detail card): `official` = the green badge

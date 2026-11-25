@@ -1,6 +1,6 @@
 import type { JobCheckFailure } from '../../src/types/jobs';
 import type { RawFR, TrimmedFR } from '../../src/types/fr';
-import type { ReadyFile } from '../../src/types/readyFile';
+import type { ReadyFile } from '../../src/types/data';
 import { isAuthorized } from '../_lib/auth.js';
 import {
 	insideAny,

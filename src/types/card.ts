@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type { Camera } from '@/types/camera';
 import type { MarkerKind } from '@/types/markers';
 import type { OsmExtras } from '@/types/osm';
@@ -67,22 +66,4 @@ export interface CountryCard {
 	place?: (camera: Camera) => string | undefined;
 	rows: (camera: Camera) => CardRow[];
 	direction: (camera: Camera, osm: OsmExtras | null) => CardDirection;
-}
-
-// --- Components (VXM-011 D4, D5) ---
-
-export interface ChipProps {
-	look: 'official' | 'community'; // green solid / dashed grey (= not official)
-	children: ReactNode;
-}
-
-export interface MarkerIconProps {
-	kind: MarkerKind;
-	size?: number; // px, the icon's height; default 18
-}
-
-export interface DetailCardProps {
-	content: CardContent;
-	onClose: () => void;
-	className?: string; // placement from the parent
 }

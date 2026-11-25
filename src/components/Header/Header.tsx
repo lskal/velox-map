@@ -6,7 +6,7 @@ import Text from '@/components/Text/Text';
 import { MEDIA_DESKTOP } from '@/config/breakpoints';
 import { COUNTRY_OSM } from '@/config/osm';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
-import type { HeaderProps } from '@/types/header';
+import type { HeaderProps } from '@/types/props';
 import styles from './Header.module.scss';
 
 // Page header - DESIGN.md chapter 5 "Every page".

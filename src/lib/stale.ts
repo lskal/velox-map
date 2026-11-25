@@ -1,4 +1,4 @@
-import type { StatusNoteProps } from '@/types/statusNote';
+import type { StatusNoteProps } from '@/types/props';
 import { formatDate } from './format';
 
 // The stale-data line (VXM-012 R10b, DESIGN.md → Stale data). fetchedAt = when the job

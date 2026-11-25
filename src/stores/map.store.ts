@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { loadOsmFile } from '@/lib/osm/loadOsmFile';
-import type { MapStore } from '@/types/mapStore';
+import type { MapStore } from '@/types/map';
 
 // The map store (VXM-013 R12, D8). Created once, when this file is first imported;
 // nothing in it survives a reload - the OSM switch starts off, as before.

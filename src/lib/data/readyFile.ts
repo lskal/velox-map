@@ -1,4 +1,4 @@
-import type { ReadyFile } from '@/types/readyFile';
+import type { ReadyFile } from '@/types/data';
 
 // Reads a ready data file (VXM-010 R3b; served from Blob since VXM-012). Missing or not
 // usable → null, and the caller decides (France: the error card). The dev server answers a

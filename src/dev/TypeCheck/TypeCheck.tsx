@@ -1,5 +1,5 @@
 import Text from '@/components/Text/Text';
-import type { TextVariant } from '@/types/text';
+import type { TextVariant } from '@/types/props';
 import styles from './TypeCheck.module.scss';
 
 // Dev-only page: every type style side by side (VXM-003 plan D7). Open localhost:5173/#type.

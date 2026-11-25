@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import type { FocusEvent, KeyboardEvent, PointerEvent } from 'react';
-import type { TooltipProps } from '@/types/controls';
+import type { TooltipProps } from '@/types/props';
 import styles from './Tooltip.module.scss';
 
 const OPEN_DELAY_MS = 300; // passing the mouse over the trigger doesn't flash it

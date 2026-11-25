@@ -4,7 +4,7 @@ import {
 	MARKER_RING_WIDTH,
 	MARKER_SHAPES,
 } from '@/config/markers';
-import type { MarkerIconProps } from '@/types/card';
+import type { MarkerIconProps } from '@/types/props';
 
 // A map marker as a small inline SVG - the same paths and colours the map draws
 // (config/markers.ts), so the card's header icon always matches the marker.

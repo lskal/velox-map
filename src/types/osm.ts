@@ -131,8 +131,3 @@ export interface OsmExtras {
 	directions: Record<string, OsmDirection>; // official camera id → direction
 	sectionPaths: OsmSectionPath[]; // official sections that get a line
 }
-
-export interface OsmSwitchProps {
-	settings: OsmSettings; // the country's switch: label, texts, file (COUNTRY_OSM)
-	placement: 'header' | 'pill'; // desktop header / floating pill on the mobile map
-}

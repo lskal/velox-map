@@ -14,7 +14,7 @@ import { buildCard } from '@/lib/card/buildCard';
 import { COUNTRY_CARD } from '@/lib/card/countryCards';
 import { isStale, staleTexts } from '@/lib/stale';
 import { useMapStore } from '@/stores/map.store';
-import type { MapPageProps } from '@/types/mapPage';
+import type { MapPageProps } from '@/types/props';
 import type { SelectedSpot } from '@/types/markers';
 import styles from './MapPage.module.scss';
 

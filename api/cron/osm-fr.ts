@@ -17,7 +17,7 @@ import type {
 	OverpassNode,
 	OverpassWay,
 } from '../../src/types/osm';
-import type { ReadyFile } from '../../src/types/readyFile';
+import type { ReadyFile } from '../../src/types/data';
 import { isAuthorized } from '../_lib/auth.js';
 import {
 	blobPath,

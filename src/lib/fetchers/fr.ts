@@ -13,7 +13,7 @@ import type {
 	TabularPage,
 	TrimmedFR,
 } from '@/types/fr';
-import type { DataSource } from '@/types/readyFile';
+import type { DataSource } from '@/types/data';
 import { fetchJSON, toNumber, trimKeys } from './helpers.js';
 
 // France - fixed radars from data.gouv.fr (data-sources.md → France).
